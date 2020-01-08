@@ -1,0 +1,58 @@
+﻿@model DrogSystem.Models.Product
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Product</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreProducto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreProducto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MinStock)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MinStock)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MaxStock)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaxStock)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Componentes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Componentes)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ProductoId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

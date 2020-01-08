@@ -1,0 +1,58 @@
+﻿@model DrogSystem.Models.ProductDetail
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>ProductDetail</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Marker.NombreFabricante)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Marker.NombreFabricante)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Product.NombreProducto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Product.NombreProducto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodBarras)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodBarras)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RegInvima)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RegInvima)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Existencias)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Existencias)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ProductDetailId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

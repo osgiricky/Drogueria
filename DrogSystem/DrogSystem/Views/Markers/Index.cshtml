@@ -1,0 +1,33 @@
+﻿@model IEnumerable<DrogSystem.Models.Marker>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NombreFabricante)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NombreFabricante)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MarkerId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MarkerId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MarkerId })
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<DrogSystem.Models.Product>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NombreProducto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MinStock)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MaxStock)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Componentes)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.NombreProducto)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MinStock)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaxStock)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Componentes)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ProductoId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ProductoId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ProductoId })
+        </td>
+    </tr>
+}
+
+</table>

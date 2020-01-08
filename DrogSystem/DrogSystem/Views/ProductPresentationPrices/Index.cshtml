@@ -1,0 +1,45 @@
+﻿@model IEnumerable<DrogSystem.Models.ProductPresentationPrice>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Presentation.PresentationId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Precio)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DetailProductId)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Presentation.PresentationId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Precio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DetailProductId)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.PrecioProductoId }) |
+            @Html.ActionLink("Details", "Details", new { id=item.PrecioProductoId }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PrecioProductoId })
+        </td>
+    </tr>
+}
+
+</table>

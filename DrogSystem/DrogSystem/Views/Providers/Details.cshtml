@@ -1,0 +1,34 @@
+﻿@model DrogSystem.Models.Provider
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Provider</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreTercero)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NombreTercero)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Codtercero)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Codtercero)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TerceroId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
