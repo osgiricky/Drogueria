@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
 
 namespace DrogSystem.Controllers
 {
@@ -17,7 +18,64 @@ namespace DrogSystem.Controllers
         // GET: Markers
         public ActionResult Index()
         {
-            return View(db.Markers.ToList());
+            return View();
+           
+        }
+
+        public JsonResult List()
+        {
+            List<EDMarker> ListaFabric = new List<EDMarker>();
+            var Listaux = (from s in db.Markers
+                           select s).ToList<Marker>();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDMarker EDMarker = new EDMarker();
+                    EDMarker.MarkerId = item.MarkerId;
+                    EDMarker.NombreFabricante = item.NombreFabricante;
+                    ListaFabric.Add(EDMarker);
+                }
+            }
+            return Json(ListaFabric, JsonRequestBehavior.AllowGet);
+
+        }
+        public JsonResult GetbyID(int ID)
+        {
+            var Marker = (from s in db.Markers
+                          where s.MarkerId == ID
+                          select s).ToList<Marker>(); 
+            return Json(Marker, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Delete(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            Marker marker = db.Markers.Find(ID);
+            if (marker == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + marker.NombreFabricante;
+            }
+            else
+            {
+                try
+                {
+                    Marker marker1 = db.Markers.Find(ID);
+                    db.Markers.Remove(marker1);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(Probar, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Markers/Details/5
@@ -82,6 +140,7 @@ namespace DrogSystem.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 db.Entry(marker).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

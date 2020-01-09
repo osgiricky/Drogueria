@@ -1,33 +1,29 @@
-﻿@model IEnumerable<DrogSystem.Models.Marker>
-
+﻿@model DrogSystem.EntidadesDominio.EDMarker
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.NombreFabricante)
-        </th>
-        <th></th>
-    </tr>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/Marker.js"></script> 
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.NombreFabricante)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.MarkerId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.MarkerId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.MarkerId })
-        </td>
-    </tr>
-}
 
-</table>
+<div class="container">
+    <h2>Listado de Fabricantes</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Fabricante</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Nombre Fabricante</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+</th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
+</div>  

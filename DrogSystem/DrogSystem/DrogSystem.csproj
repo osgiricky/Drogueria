@@ -219,11 +219,12 @@
     <Compile Include="Controllers\ProviderTypesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
+    <Compile Include="EntidadesDominio\EDMarker.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="ModelsViews\AccountViewModels.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Entry.cs" />
     <Compile Include="Models\EntryDetail.cs" />
     <Compile Include="Models\ProviderType.cs" />
@@ -231,7 +232,7 @@
     <Compile Include="Models\ProductDetail.cs" />
     <Compile Include="Models\DrogSystemContext.cs" />
     <Compile Include="Models\IdentityModels.cs" />
-    <Compile Include="ModelsViews\ManageViewModels.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Marker.cs" />
     <Compile Include="Models\PaymentProvider.cs" />
     <Compile Include="Models\Presentation.cs" />
@@ -267,6 +268,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\Marker.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
