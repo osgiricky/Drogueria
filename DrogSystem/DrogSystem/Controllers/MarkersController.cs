@@ -19,7 +19,7 @@ namespace DrogSystem.Controllers
         public ActionResult Index()
         {
             return View();
-           
+
         }
 
         public JsonResult List()
@@ -44,9 +44,9 @@ namespace DrogSystem.Controllers
             Marker marker = db.Markers.Find(ID);
             EDMarker EDMarker = new EDMarker();
             if (marker != null)
-            {               
+            {
                 EDMarker.MarkerId = marker.MarkerId;
-                EDMarker.NombreFabricante = marker.NombreFabricante;                
+                EDMarker.NombreFabricante = marker.NombreFabricante;
             }
             return Json(EDMarker, JsonRequestBehavior.AllowGet);
         }
@@ -77,7 +77,7 @@ namespace DrogSystem.Controllers
                 }
             }
 
-            return Json(new { Probar, Mensaje}, JsonRequestBehavior.AllowGet);
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
         public JsonResult Editar(EDMarker Fabric)
@@ -136,7 +136,7 @@ namespace DrogSystem.Controllers
                 Mensaje = " Se produjo un error al modificar el registro.";
 
             }
-            
+
 
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }

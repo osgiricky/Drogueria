@@ -140,6 +140,7 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
+
         // GET: PresentationTypes/Details/5
         public ActionResult Details(int? id)
         {

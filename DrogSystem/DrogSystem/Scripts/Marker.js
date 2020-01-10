@@ -187,8 +187,9 @@ function Add() {
 }
 
 function clearTextBox() {
-    
-   /* $('#btnUpdate').hide();
+    $('#MarkerId').val("");
+    $('#NombreFabricante').val("");
+    $('#btnUpdate').hide();
     $('#btnAdd').show();
-    $('#NombreFabricante').css('border-color', 'lightgrey');*/
+    $('#NombreFabricante').css('border-color', 'lightgrey');
 }
