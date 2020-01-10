@@ -38,17 +38,20 @@ namespace DrogSystem.Controllers
                 }
             }
             return Json(ListaFabric, JsonRequestBehavior.AllowGet);
-
         }
-        public JsonResult GetbyID(int ID)
+        public JsonResult GetbyID(int? ID)
         {
-            var Marker = (from s in db.Markers
-                          where s.MarkerId == ID
-                          select s).ToList<Marker>(); 
-            return Json(Marker, JsonRequestBehavior.AllowGet);
+            Marker marker = db.Markers.Find(ID);
+            EDMarker EDMarker = new EDMarker();
+            if (marker != null)
+            {               
+                EDMarker.MarkerId = marker.MarkerId;
+                EDMarker.NombreFabricante = marker.NombreFabricante;                
+            }
+            return Json(EDMarker, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Delete(int ID)
+        public JsonResult Borrar(int ID)
         {
             bool Probar = true;
             string Mensaje = "";
@@ -62,8 +65,7 @@ namespace DrogSystem.Controllers
             {
                 try
                 {
-                    Marker marker1 = db.Markers.Find(ID);
-                    db.Markers.Remove(marker1);
+                    db.Markers.Remove(marker);
                     db.SaveChanges();
                     Mensaje = " Registro eliminado con exito.";
                 }
@@ -75,7 +77,68 @@ namespace DrogSystem.Controllers
                 }
             }
 
-            return Json(Probar, JsonRequestBehavior.AllowGet);
+            return Json(new { Probar, Mensaje}, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDMarker Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDMarker EDMarker = new EDMarker();
+            EDMarker.MarkerId = Fabric.MarkerId;
+            EDMarker.NombreFabricante = Fabric.NombreFabricante;
+
+
+            Marker marker = db.Markers.Find(EDMarker.MarkerId);
+            if (marker == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDMarker.MarkerId;
+            }
+            else
+            {
+                try
+                {
+                    marker.NombreFabricante = EDMarker.NombreFabricante;
+                    db.Entry(marker).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDMarker Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDMarker EDMarker = new EDMarker();
+            EDMarker.MarkerId = Fabric.MarkerId;
+            EDMarker.NombreFabricante = Fabric.NombreFabricante;
+            try
+            {
+                Marker marker = new Marker();
+                marker.NombreFabricante = EDMarker.NombreFabricante;
+                db.Markers.Add(marker);
+                db.SaveChanges();
+                Mensaje = " Registro modificado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al modificar el registro.";
+
+            }
+            
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Markers/Details/5

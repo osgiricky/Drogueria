@@ -5,8 +5,7 @@
 //Load Data function  
 function loadData() {
     $.ajax({
-        url: "/Markers/List",
-        //data: '1',
+        url: "/PresentationTypes/List",
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -14,8 +13,8 @@ function loadData() {
             var html = '';
             $.each(result, function (key, item) {
                 html += '<tr>';
-                html += '<td>' + item.NombreFabricante + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.MarkerId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.MarkerId + ')">Eliminar</a></center></td>';
+                html += '<td>' + item.NombrePresentacion + '</td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.PresentationTypeId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.PresentationTypeId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
             $('.tbody').html(html);
@@ -26,17 +25,17 @@ function loadData() {
     });
 }
 
-function getbyID(MarkerId) {
+function getbyID(PresentationTypeId) {
     document.title = 'Modificar Fabricante';
-    $('#NombreFabricante').css('border-color', 'lightgrey');
+    $('#NombrePresentacion').css('border-color', 'lightgrey');
     $.ajax({
-        url: "/Markers/getbyID/" + MarkerId,
+        url: "/PresentationTypes/getbyID/" + PresentationTypeId,
         typr: "GET",
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
-            $('#MarkerId').val(result.MarkerId);
-            $('#NombreFabricante').val(result.NombreFabricante);
+            $('#PresentationTypeId').val(result.PresentationTypeId);
+            $('#NombrePresentacion').val(result.NombrePresentacion);
 
             $('#myModal').modal('show');
             $('#btnUpdate').show();
@@ -62,7 +61,7 @@ function Delete(ID) {
     }).then((result) => {
         if (result.value == true) {
             $.ajax({
-                url: "/Markers/Borrar/" + ID,
+                url: "/PresentationTypes/Borrar/" + ID,
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -111,11 +110,11 @@ function Update() {
         return false;
     }
     var empObj = {
-        MarkerId: $('#MarkerId').val(),
-        NombreFabricante: $('#NombreFabricante').val(),
+        PresentationTypeId: $('#PresentationTypeId').val(),
+        NombrePresentacion: $('#NombrePresentacion').val(),
     };
     $.ajax({
-        url: "/Markers/Editar",
+        url: "/PresentationTypes/Editar",
         data: JSON.stringify(empObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -131,12 +130,11 @@ function Update() {
                     closeOnConfirm: false
                 });
             }
-            else
-            {
+            else {
                 loadData();
                 $('#myModal').modal('hide');
-                $('#MarkerId').val("");
-                $('#NombreFabricante').val("");
+                $('#PresentationTypeId').val("");
+                $('#NombrePresentacion').val("");
             }
         },
         error: function (errormessage) {
@@ -147,13 +145,13 @@ function Update() {
 
 function validate() {
     var isValid = true;
-    if ($('#NombreFabricante').val().trim() == "") {
-        $('#NombreFabricante').css('border-color', 'Red');
+    if ($('#NombrePresentacion').val().trim() == "") {
+        $('#NombrePresentacion').css('border-color', 'Red');
         isValid = false;
     }
     else {
-        $('#NombreFabricante').css('border-color', 'lightgrey');
-    }    
+        $('#NombrePresentacion').css('border-color', 'lightgrey');
+    }
     return isValid;
 }
 
@@ -163,22 +161,21 @@ function Add() {
         return false;
     }
     var empObj = {
-        MarkerId: $('#MarkerId').val(),
-        NombreFabricante: $('#NombreFabricante').val(),
+        PresentationTypeId: $('#PresentationTypeId').val(),
+        NombrePresentacion: $('#NombrePresentacion').val(),
     };
     $.ajax({
-        url: "/Markers/Crear",
+        url: "/PresentationTypes/Crear",
         data: JSON.stringify(empObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (response) {
             loadData();
-                 $('#myModal').modal('hide')
-                 $('#MarkerId').val("");
-                 $('#NombreFabricante').val("");                 
-                 //$('#cerrar').click(); //Esto simula un click sobre el botón close de la modal, por lo que no se debe preocupar por qué clases agregar o qué clases sacar.
-                 $('.modal-backdrop').remove();
+            $('#myModal').modal('hide')
+            $('#PresentationTypeId').val("");
+            $('#NombrePresentacion').val("");
+            $('.modal-backdrop').remove();
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -187,8 +184,9 @@ function Add() {
 }
 
 function clearTextBox() {
-    
-   /* $('#btnUpdate').hide();
+    $('#PresentationTypeId').val("");
+    $('#NombrePresentacion').val("");
+    $('#btnUpdate').hide();
     $('#btnAdd').show();
-    $('#NombreFabricante').css('border-color', 'lightgrey');*/
+    $('#NombrePresentacion').css('border-color', 'lightgrey');
 }

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
 
 namespace DrogSystem.Controllers
 {
@@ -17,7 +18,126 @@ namespace DrogSystem.Controllers
         // GET: PresentationTypes
         public ActionResult Index()
         {
-            return View(db.PresentationTypes.ToList());
+            return View();
+        }
+
+        public JsonResult List()
+        {
+            List<EDPresentationType> TipoUser = new List<EDPresentationType>();
+            var Listaux = (from s in db.PresentationTypes
+                           select s).ToList<PresentationType>();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDPresentationType EDPresentationType = new EDPresentationType();
+                    EDPresentationType.PresentationTypeId = item.PresentationTypeId;
+                    EDPresentationType.NombrePresentacion = item.NombrePresentacion;
+                    TipoUser.Add(EDPresentationType);
+                }
+            }
+            return Json(TipoUser, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetbyID(int? ID)
+        {
+            PresentationType PresentationType = db.PresentationTypes.Find(ID);
+            EDPresentationType EDPresentationType = new EDPresentationType();
+            if (PresentationType != null)
+            {
+                EDPresentationType.PresentationTypeId = PresentationType.PresentationTypeId;
+                EDPresentationType.NombrePresentacion = PresentationType.NombrePresentacion;
+            }
+            return Json(EDPresentationType, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Borrar(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            PresentationType PresentationType = db.PresentationTypes.Find(ID);
+            if (PresentationType == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + PresentationType.NombrePresentacion;
+            }
+            else
+            {
+                try
+                {
+                    db.PresentationTypes.Remove(PresentationType);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDPresentationType Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPresentationType EDPresentationType = new EDPresentationType();
+            EDPresentationType.PresentationTypeId = Fabric.PresentationTypeId;
+            EDPresentationType.NombrePresentacion = Fabric.NombrePresentacion;
+
+
+            PresentationType PresentationType = db.PresentationTypes.Find(EDPresentationType.PresentationTypeId);
+            if (PresentationType == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDPresentationType.PresentationTypeId;
+            }
+            else
+            {
+                try
+                {
+                    PresentationType.NombrePresentacion = EDPresentationType.NombrePresentacion;
+                    db.Entry(PresentationType).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDPresentationType Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPresentationType EDPresentationType = new EDPresentationType();
+            EDPresentationType.PresentationTypeId = Fabric.PresentationTypeId;
+            EDPresentationType.NombrePresentacion = Fabric.NombrePresentacion;
+            try
+            {
+                PresentationType PresentationType = new PresentationType();
+                PresentationType.NombrePresentacion = EDPresentationType.NombrePresentacion;
+                db.PresentationTypes.Add(PresentationType);
+                db.SaveChanges();
+                Mensaje = " Registro modificado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al modificar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: PresentationTypes/Details/5
