@@ -211,7 +211,6 @@
     <Compile Include="Controllers\MarkersController.cs" />
     <Compile Include="Controllers\PaymentProvidersController.cs" />
     <Compile Include="Controllers\PresentationsController.cs" />
-    <Compile Include="Controllers\PresentationTypesController.cs" />
     <Compile Include="Controllers\ProductDetailsController.cs" />
     <Compile Include="Controllers\ProductPresentationPricesController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
@@ -220,12 +219,14 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="EntidadesDominio\EDMarker.cs" />
-    <Compile Include="EntidadesDominio\EDPresentationType.cs" />
+    <Compile Include="EntidadesDominio\EDPresentacion.cs" />
+    <Compile Include="EntidadesDominio\EDUser.cs" />
     <Compile Include="EntidadesDominio\EDUserType.cs" />
+    <Compile Include="Funciones\FuncUsuarios.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="fonts\Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Entry.cs" />
     <Compile Include="Models\EntryDetail.cs" />
@@ -238,7 +239,6 @@
     <Compile Include="Models\Marker.cs" />
     <Compile Include="Models\PaymentProvider.cs" />
     <Compile Include="Models\Presentation.cs" />
-    <Compile Include="Models\PresentationType.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductPresentationPrice.cs" />
     <Compile Include="Models\Provider.cs" />
@@ -272,7 +272,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\Marker.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
-    <Content Include="Scripts\PresentationType.js" />
+    <Content Include="Scripts\Presentation.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Sweetalert.js" />
@@ -347,11 +347,6 @@
     <Content Include="Views\Presentations\Details.cshtml" />
     <Content Include="Views\Presentations\Edit.cshtml" />
     <Content Include="Views\Presentations\Index.cshtml" />
-    <Content Include="Views\PresentationTypes\Create.cshtml" />
-    <Content Include="Views\PresentationTypes\Delete.cshtml" />
-    <Content Include="Views\PresentationTypes\Details.cshtml" />
-    <Content Include="Views\PresentationTypes\Edit.cshtml" />
-    <Content Include="Views\PresentationTypes\Index.cshtml" />
     <Content Include="Views\ProductDetails\Create.cshtml" />
     <Content Include="Views\ProductDetails\Delete.cshtml" />
     <Content Include="Views\ProductDetails\Details.cshtml" />

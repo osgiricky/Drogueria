@@ -15,12 +15,14 @@ namespace DrogSystem.Models
         public int PresentationId { get; set; }
 
         [Required()]
+        [MaxLength(50)]
+        [DisplayName("Descripción Presentación")]
+        public string NombrePresentacion { get; set; }
+
+        [Required()]
         [DisplayName("Cantidad Presentación")]
         public int CantPresentacion { get; set; }
 
-        public int PresentationTypeId { get; set; }
-
-        public virtual PresentationType PresentationType { get; set; }
 
         public virtual ICollection<ProductPresentationPrice> ProductPresentationPrices { get; set; }
         public virtual ICollection<SaleDetail> SaleDetails { get; set; }

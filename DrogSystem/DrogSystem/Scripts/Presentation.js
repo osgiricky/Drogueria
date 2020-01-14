@@ -5,7 +5,7 @@
 //Load Data function  
 function loadData() {
     $.ajax({
-        url: "/PresentationTypes/List",
+        url: "/Presentations/List",
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -14,7 +14,8 @@ function loadData() {
             $.each(result, function (key, item) {
                 html += '<tr>';
                 html += '<td>' + item.NombrePresentacion + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.PresentationTypeId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.PresentationTypeId + ')">Eliminar</a></center></td>';
+                html += '<td>' + item.CantPresentacion + '</td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.PresentationId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.PresentationId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
             $('.tbody').html(html);
@@ -25,17 +26,18 @@ function loadData() {
     });
 }
 
-function getbyID(PresentationTypeId) {
+function getbyID(PresentationId) {
     document.title = 'Modificar Fabricante';
     $('#NombrePresentacion').css('border-color', 'lightgrey');
     $.ajax({
-        url: "/PresentationTypes/getbyID/" + PresentationTypeId,
+        url: "/Presentations/getbyID/" + PresentationId,
         typr: "GET",
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
-            $('#PresentationTypeId').val(result.PresentationTypeId);
+            $('#PresentationId').val(result.PresentationId);
             $('#NombrePresentacion').val(result.NombrePresentacion);
+            $('#CantPresentacion').val(result.CantPresentacion);
 
             $('#myModal').modal('show');
             $('#btnUpdate').show();
@@ -48,7 +50,7 @@ function getbyID(PresentationTypeId) {
     return false;
 }
 
-function Delete(ID) {
+function Delete(PresentationId) {
     Swal.fire({
         title: "Estimado Usuario",
         text: "Esta seguro(a) que desea eliminar registro?",
@@ -61,7 +63,7 @@ function Delete(ID) {
     }).then((result) => {
         if (result.value == true) {
             $.ajax({
-                url: "/PresentationTypes/Borrar/" + ID,
+                url: "/Presentations/Borrar/" + PresentationId,
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -110,11 +112,12 @@ function Update() {
         return false;
     }
     var empObj = {
-        PresentationTypeId: $('#PresentationTypeId').val(),
+        PresentationId: $('#PresentationId').val(),
         NombrePresentacion: $('#NombrePresentacion').val(),
+        CantPresentacion: $('#CantPresentacion').val(),
     };
     $.ajax({
-        url: "/PresentationTypes/Editar",
+        url: "/Presentations/Editar",
         data: JSON.stringify(empObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -133,8 +136,9 @@ function Update() {
             else {
                 loadData();
                 $('#myModal').modal('hide');
-                $('#PresentationTypeId').val("");
+                $('#PresentationId').val("");
                 $('#NombrePresentacion').val("");
+                $('#CantPresentacion').val("");
             }
         },
         error: function (errormessage) {
@@ -152,6 +156,13 @@ function validate() {
     else {
         $('#NombrePresentacion').css('border-color', 'lightgrey');
     }
+    if ($('#CantPresentacion').val().trim() == "") {
+        $('#CantPresentacion').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#CantPresentacion').css('border-color', 'lightgrey');
+    }
     return isValid;
 }
 
@@ -161,11 +172,12 @@ function Add() {
         return false;
     }
     var empObj = {
-        PresentationTypeId: $('#PresentationTypeId').val(),
+        PresentationId: $('#PresentationId').val(),
         NombrePresentacion: $('#NombrePresentacion').val(),
+        CantPresentacion: $('#CantPresentacion').val(),
     };
     $.ajax({
-        url: "/PresentationTypes/Crear",
+        url: "/Presentations/Crear",
         data: JSON.stringify(empObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -173,8 +185,9 @@ function Add() {
         success: function (response) {
             loadData();
             $('#myModal').modal('hide')
-            $('#PresentationTypeId').val("");
+            $('#PresentationId').val("");
             $('#NombrePresentacion').val("");
+            $('#CantPresentacion').val("");
             $('.modal-backdrop').remove();
         },
         error: function (errormessage) {
@@ -184,8 +197,9 @@ function Add() {
 }
 
 function clearTextBox() {
-    $('#PresentationTypeId').val("");
+    $('#PresentationId').val("");
     $('#NombrePresentacion').val("");
+    $('#CantPresentacion').val("");
     $('#btnUpdate').hide();
     $('#btnAdd').show();
     $('#NombrePresentacion').css('border-color', 'lightgrey');

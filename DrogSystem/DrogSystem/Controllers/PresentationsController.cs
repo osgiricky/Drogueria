@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
 
 namespace DrogSystem.Controllers
 {
@@ -15,10 +16,132 @@ namespace DrogSystem.Controllers
         private DrogSystemContext db = new DrogSystemContext();
 
         // GET: Presentations
-        public ActionResult Index()
+         public ActionResult Index()
         {
-            var presentations = db.Presentations.Include(p => p.PresentationType);
-            return View(presentations.ToList());
+            return View();
+        }
+
+        public JsonResult List()
+        {
+            List<EDPresentacion> EDPresenta = new List<EDPresentacion>();
+            var Listaux = (from s in db.Presentations select s).ToList<Presentation>();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDPresentacion EDPresentacion = new EDPresentacion();
+                    EDPresentacion.PresentationId = item.PresentationId;
+                    EDPresentacion.NombrePresentacion = item.NombrePresentacion;
+                    EDPresentacion.CantPresentacion = item.CantPresentacion;
+                    EDPresenta.Add(EDPresentacion);
+                }
+            }
+            return Json(EDPresenta, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetbyID(int? ID)
+        {
+            Presentation Presentation = db.Presentations.Find(ID);
+            EDPresentacion EDPresentacion = new EDPresentacion();
+            if (Presentation != null)
+            {
+                EDPresentacion.PresentationId = Presentation.PresentationId;
+                EDPresentacion.NombrePresentacion = Presentation.NombrePresentacion;
+                EDPresentacion.CantPresentacion = Presentation.CantPresentacion;
+            }
+            return Json(EDPresentacion, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Borrar(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            Presentation Presentation = db.Presentations.Find(ID);
+            if (Presentation == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + Presentation.NombrePresentacion;
+            }
+            else
+            {
+                try
+                {
+                    db.Presentations.Remove(Presentation);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDPresentacion Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPresentacion EDPresentacion = new EDPresentacion();
+            EDPresentacion.PresentationId = Fabric.PresentationId;
+            EDPresentacion.NombrePresentacion = Fabric.NombrePresentacion;
+            EDPresentacion.CantPresentacion = Fabric.CantPresentacion;
+
+            Presentation Presentation = db.Presentations.Find(EDPresentacion.PresentationId);
+            if (Presentation == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDPresentacion.PresentationId;
+            }
+            else
+            {
+                try
+                {
+                    Presentation.NombrePresentacion = EDPresentacion.NombrePresentacion;
+                    Presentation.CantPresentacion = EDPresentacion.CantPresentacion;
+                    db.Entry(Presentation).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDPresentacion Fabric)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPresentacion EDPresentacion = new EDPresentacion();
+            EDPresentacion.PresentationId = Fabric.PresentationId;
+            EDPresentacion.NombrePresentacion = Fabric.NombrePresentacion;
+            EDPresentacion.CantPresentacion = Fabric.CantPresentacion;
+            try
+            {
+                Presentation Presentation = new Presentation();
+                Presentation.NombrePresentacion = EDPresentacion.NombrePresentacion;
+                Presentation.CantPresentacion = EDPresentacion.CantPresentacion;
+                db.Presentations.Add(Presentation);
+                db.SaveChanges();
+                Mensaje = " Registro modificado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al modificar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Presentations/Details/5
@@ -39,7 +162,7 @@ namespace DrogSystem.Controllers
         // GET: Presentations/Create
         public ActionResult Create()
         {
-            ViewBag.PresentationTypeId = new SelectList(db.PresentationTypes, "PresentationTypeId", "NombrePresentacion");
+            //ViewBag.PresentationsId = new SelectList(db.Presentation, "PresentationsId", "NombrePresentacion");
             return View();
         }
 
@@ -48,7 +171,7 @@ namespace DrogSystem.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PresentationId,CantPresentacion,PresentationTypeId")] Presentation presentation)
+        public ActionResult Create([Bind(Include = "PresentationId,CantPresentacion,PresentationsId")] Presentation presentation)
         {
             if (ModelState.IsValid)
             {
@@ -57,7 +180,7 @@ namespace DrogSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.PresentationTypeId = new SelectList(db.PresentationTypes, "PresentationTypeId", "NombrePresentacion", presentation.PresentationTypeId);
+            //ViewBag.PresentationsId = new SelectList(db.Presentation, "PresentationsId", "NombrePresentacion", presentation.PresentationsId);
             return View(presentation);
         }
 
@@ -73,7 +196,7 @@ namespace DrogSystem.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.PresentationTypeId = new SelectList(db.PresentationTypes, "PresentationTypeId", "NombrePresentacion", presentation.PresentationTypeId);
+            //ViewBag.PresentationsId = new SelectList(db.Presentation, "PresentationsId", "NombrePresentacion", presentation.PresentationsId);
             return View(presentation);
         }
 
@@ -82,7 +205,7 @@ namespace DrogSystem.Controllers
         // más información vea http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PresentationId,CantPresentacion,PresentationTypeId")] Presentation presentation)
+        public ActionResult Edit([Bind(Include = "PresentationId,CantPresentacion,PresentationsId")] Presentation presentation)
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +213,7 @@ namespace DrogSystem.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.PresentationTypeId = new SelectList(db.PresentationTypes, "PresentationTypeId", "NombrePresentacion", presentation.PresentationTypeId);
+            //ViewBag.PresentationsId = new SelectList(db.Presentation, "PresentationsId", "NombrePresentacion", presentation.PresentationsId);
             return View(presentation);
         }
 

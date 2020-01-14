@@ -5,9 +5,13 @@ using System.Web;
 
 namespace DrogSystem.EntidadesDominio
 {
-    public class EDPresentationType
+    public class EDPresentacion
     {
-        public int PresentationTypeId { get; set; }
+        public int PresentationId { get; set; }
+
         public string NombrePresentacion { get; set; }
+
+        public int CantPresentacion { get; set; }
+
     }
 }

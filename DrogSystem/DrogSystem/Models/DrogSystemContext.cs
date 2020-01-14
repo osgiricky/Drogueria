@@ -41,8 +41,6 @@ namespace DrogSystem.Models
 
         public System.Data.Entity.DbSet<DrogSystem.Models.Presentation> Presentations { get; set; }
 
-        public System.Data.Entity.DbSet<DrogSystem.Models.PresentationType> PresentationTypes { get; set; }
-
         public System.Data.Entity.DbSet<DrogSystem.Models.ProductPresentationPrice> ProductPresentationPrices { get; set; }
 
         public System.Data.Entity.DbSet<DrogSystem.Models.ProviderType> ProviderTypes { get; set; }

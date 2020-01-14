@@ -1,39 +1,62 @@
-﻿@model IEnumerable<DrogSystem.Models.Presentation>
-
+﻿@model DrogSystem.EntidadesDominio.EDPresentacion
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/Presentation.js"></script>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PresentationType.NombrePresentacion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CantPresentacion)
-        </th>
-        <th></th>
-    </tr>
+<div class="container">
+    <h2>Listado de Presentación</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Presentación</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Descripción Presentación</center>
+                </th>
+                <th>
+                    <center>Cantidad Presentación</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Presentación</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <input type="text" class="form-control" id="PresentationId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Descripcion">Descripción Presentación</label>
+                        <input type="text" class="form-control" id="NombrePresentacion" placeholder="Descripción" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Descripcion">Cantidad Presentación</label>
+                        <input type="number" class="form-control" id="CantPresentacion" placeholder="Cantidad" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
+                <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.PresentationType.NombrePresentacion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CantPresentacion)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.PresentationId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.PresentationId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PresentationId })
-        </td>
-    </tr>
-}
-
-</table>
