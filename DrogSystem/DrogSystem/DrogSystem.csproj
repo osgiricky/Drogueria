@@ -220,6 +220,8 @@
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="EntidadesDominio\EDMarker.cs" />
     <Compile Include="EntidadesDominio\EDPresentacion.cs" />
+    <Compile Include="EntidadesDominio\EDProvider.cs" />
+    <Compile Include="EntidadesDominio\EDProviderType.cs" />
     <Compile Include="EntidadesDominio\EDUser.cs" />
     <Compile Include="EntidadesDominio\EDUserType.cs" />
     <Compile Include="Funciones\FuncUsuarios.cs" />
@@ -276,7 +278,9 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Sweetalert.js" />
+    <Content Include="Scripts\ProviderType.js" />
     <Content Include="Scripts\UserType.js" />
+    <Content Include="Scripts\Usuario.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

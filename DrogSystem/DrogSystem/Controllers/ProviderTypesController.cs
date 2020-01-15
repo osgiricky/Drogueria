@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
+using DrogSystem.Funciones;
 
 namespace DrogSystem.Controllers
 {
@@ -17,7 +19,116 @@ namespace DrogSystem.Controllers
         // GET: ProviderTypes
         public ActionResult Index()
         {
-            return View(db.ProviderTypes.ToList());
+            return View();
+        }
+
+        public JsonResult List()
+        {
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            List<EDProviderType> TipoProveedor = new List<EDProviderType>();
+            TipoProveedor = FuncUsuarios.ListaTiposTerceros();
+
+            return Json(TipoProveedor, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetbyID(int? ID)
+        {
+            ProviderType ProviderType = db.ProviderTypes.Find(ID);
+            EDProviderType EDProviderType = new EDProviderType();
+            if (ProviderType != null)
+            {
+                EDProviderType.ProviderTypeId = ProviderType.ProviderTypeId;
+                EDProviderType.TipoTercero = ProviderType.TipoTercero;
+            }
+            return Json(EDProviderType, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Borrar(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            ProviderType ProviderType = db.ProviderTypes.Find(ID);
+            if (ProviderType == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + ProviderType.TipoTercero;
+            }
+            else
+            {
+                try
+                {
+                    db.ProviderTypes.Remove(ProviderType);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDProviderType TipoProv)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDProviderType EDProviderType = new EDProviderType();
+            EDProviderType.ProviderTypeId = TipoProv.ProviderTypeId;
+            EDProviderType.TipoTercero = TipoProv.TipoTercero;
+
+
+            ProviderType ProviderType = db.ProviderTypes.Find(EDProviderType.ProviderTypeId);
+            if (ProviderType == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDProviderType.TipoTercero;
+            }
+            else
+            {
+                try
+                {
+                    ProviderType.TipoTercero = EDProviderType.TipoTercero;
+                    db.Entry(ProviderType).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDProviderType TipoProv)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDProviderType EDProviderType = new EDProviderType();
+            EDProviderType.TipoTercero = TipoProv.TipoTercero;
+            try
+            {
+                ProviderType ProviderType = new ProviderType();
+                ProviderType.TipoTercero = EDProviderType.TipoTercero;
+                db.ProviderTypes.Add(ProviderType);
+                db.SaveChanges();
+                Mensaje = " Registro creado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al modificar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProviderTypes/Details/5

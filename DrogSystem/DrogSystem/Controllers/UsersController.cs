@@ -52,14 +52,15 @@ namespace DrogSystem.Controllers
             {
                 FuncUsuarios FuncUsuarios = new FuncUsuarios();
                 List<EDUserType> ListaTipos = new List<EDUserType>();
-                ListaTipos = FuncUsuarios.ListaTiposUsuario();                
+                ListaTipos = FuncUsuarios.ListaTiposUsuario();
                 EDUsuario.UsuarioId = user.UsuarioId;
                 EDUsuario.CodUsuario = user.CodUsuario;
                 EDUsuario.Nombre = user.Nombre;
                 EDUsuario.Clave = user.Clave;
                 EDUsuario.TipoUsuarioId = user.TipoUsuarioId;
+                EDUserType userdescrip = ListaTipos.Find(u => u.TipoUsuarioId == EDUsuario.TipoUsuarioId);
+                EDUsuario.Descripcion = userdescrip.Descripcion;
                 EDUsuario.ListaTipoUsuario = ListaTipos;
-
             }
             return Json(EDUsuario, JsonRequestBehavior.AllowGet);
         }
@@ -68,17 +69,17 @@ namespace DrogSystem.Controllers
         {
             bool Probar = true;
             string Mensaje = "";
-            Presentation Presentation = db.Presentations.Find(ID);
-            if (Presentation == null)
+            User user = db.Users.Find(ID);
+            if (user == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + Presentation.NombrePresentacion;
+                Mensaje = " No se encuntra el registro: " + user.Nombre;
             }
             else
             {
                 try
                 {
-                    db.Presentations.Remove(Presentation);
+                    db.Users.Remove(user);
                     db.SaveChanges();
                     Mensaje = " Registro eliminado con exito.";
                 }
@@ -93,28 +94,32 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Editar(EDUser Fabric)
+        public JsonResult Editar(EDUser usuario)
         {
             bool Probar = true;
             string Mensaje = "";
             EDUser EDUser = new EDUser();
-            EDUser.PresentationId = Fabric.PresentationId;
-            EDUser.NombrePresentacion = Fabric.NombrePresentacion;
-            EDUser.CantPresentacion = Fabric.CantPresentacion;
+            EDUser.UsuarioId = usuario.UsuarioId;
+            EDUser.CodUsuario = usuario.CodUsuario;
+            EDUser.Nombre = usuario.Nombre;
+            EDUser.Clave = usuario.Clave;
+            EDUser.TipoUsuarioId = usuario.TipoUsuarioId;
 
-            Presentation Presentation = db.Presentations.Find(EDUser.PresentationId);
-            if (Presentation == null)
+            User user = db.Users.Find(EDUser.UsuarioId);
+            if (user == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + EDUser.PresentationId;
+                Mensaje = " No se encuntra el registro: " + EDUser.Nombre;
             }
             else
             {
                 try
                 {
-                    Presentation.NombrePresentacion = EDUser.NombrePresentacion;
-                    Presentation.CantPresentacion = EDUser.CantPresentacion;
-                    db.Entry(Presentation).State = EntityState.Modified;
+                    user.CodUsuario = EDUser.CodUsuario;
+                    user.Nombre = EDUser.Nombre;
+                    user.Clave = EDUser.Clave;
+                    user.TipoUsuarioId = EDUser.TipoUsuarioId;
+                    db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                     Mensaje = " Registro modificado con exito.";
                 }
@@ -129,20 +134,24 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Crear(EDUser Fabric)
+        public JsonResult Crear(EDUser usuario)
         {
             bool Probar = true;
             string Mensaje = "";
             EDUser EDUser = new EDUser();
-            EDUser.PresentationId = Fabric.PresentationId;
-            EDUser.NombrePresentacion = Fabric.NombrePresentacion;
-            EDUser.CantPresentacion = Fabric.CantPresentacion;
+            EDUser.UsuarioId = usuario.UsuarioId;
+            EDUser.CodUsuario = usuario.CodUsuario;
+            EDUser.Nombre = usuario.Nombre;
+            EDUser.Clave = usuario.Clave;
+            EDUser.TipoUsuarioId = usuario.TipoUsuarioId;
             try
             {
-                Presentation Presentation = new Presentation();
-                Presentation.NombrePresentacion = EDUser.NombrePresentacion;
-                Presentation.CantPresentacion = EDUser.CantPresentacion;
-                db.Presentations.Add(Presentation);
+                User user = new User();
+                user.CodUsuario = EDUser.CodUsuario;
+                user.Nombre = EDUser.Nombre;
+                user.Clave = EDUser.Clave;
+                user.TipoUsuarioId = EDUser.TipoUsuarioId;
+                db.Users.Add(user);
                 db.SaveChanges();
                 Mensaje = " Registro modificado con exito.";
             }
@@ -156,6 +165,15 @@ namespace DrogSystem.Controllers
 
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult listatipos()
+        {
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            List<EDUserType> ListaTipos = new List<EDUserType>();
+            ListaTipos = FuncUsuarios.ListaTiposUsuario();            
+            return Json(ListaTipos, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: Users/Details/5
         public ActionResult Details(int? id)
