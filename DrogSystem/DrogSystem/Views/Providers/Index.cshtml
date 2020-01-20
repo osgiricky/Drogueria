@@ -1,39 +1,77 @@
-﻿@model IEnumerable<DrogSystem.Models.Provider>
-
+﻿@model DrogSystem.EntidadesDominio.EDProvider
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Usuarios";
 }
 
-<h2>Index</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<link href="~/Content/sweetalert2.css" rel="stylesheet" />
+<script src="~/Scripts/Provider.js"></script>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.NombreTercero)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Codtercero)
-        </th>
-        <th></th>
-    </tr>
+<div class="container">
+    <h2>Listado de Terceros</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Tercero</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Tercero</center>
+                </th>
+                <th>
+                    <center>Identificación Tercero</center>
+                </th>
+                <th>
+                    <center>Tipo de Tercero</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Tercero</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <input type="text" class="form-control" id="TerceroId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreTercero" class="col-md-4 col-form-label">Nombre Tercero</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreTercero" placeholder="Nombre Tercero" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Codtercero" class="col-md-4 col-form-label">Número Documento</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Codtercero" placeholder="Identificación Tercero" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ProviderTypeId" class="col-md-4 col-form-label">Tipo de Tercero</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="ProviderTypeId"></select>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.NombreTercero)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Codtercero)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TerceroId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TerceroId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TerceroId })
-        </td>
-    </tr>
-}
 
-</table>
+

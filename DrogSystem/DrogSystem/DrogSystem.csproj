@@ -219,6 +219,7 @@
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="EntidadesDominio\EDMarker.cs" />
+    <Compile Include="EntidadesDominio\EDPaymentProvider.cs" />
     <Compile Include="EntidadesDominio\EDPresentacion.cs" />
     <Compile Include="EntidadesDominio\EDProvider.cs" />
     <Compile Include="EntidadesDominio\EDProviderType.cs" />
@@ -253,6 +254,8 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap1.css" />
+    <Content Include="Content\sweetalert2.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -274,7 +277,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\Marker.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\PaymentProvider.js" />
     <Content Include="Scripts\Presentation.js" />
+    <Content Include="Scripts\Provider.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\Sweetalert.js" />

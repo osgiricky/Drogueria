@@ -1,51 +1,89 @@
-﻿@model IEnumerable<DrogSystem.Models.PaymentProvider>
-
+﻿@model DrogSystem.EntidadesDominio.EDPaymentProvider
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Pago Terceros";
 }
 
-<h2>Index</h2>
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<link href="~/Content/sweetalert2.css" rel="stylesheet" />
+<script src="~/Scripts/PaymentProvider.js"></script>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Provider.NombreTercero)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Valor_Pago)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Fecha_Pago)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Observacion)
-        </th>
-        <th></th>
-    </tr>
+<div class="container">
+    <h2>Listado de Terceros</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Fecha Pago</center>
+                </th>
+                <th>
+                    <center>Nombre Tercero</center>
+                </th>
+                <th>
+                    <center>Valor Pago</center>
+                </th>
+                <th>
+                    <center>Observaciones</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Tercero</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="Id_Pago" class="col-md-4 col-form-label">Pago Número</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Id_Pago" placeholder="Id" disabled ="disabled"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Fecha_Pago" class="col-md-4 col-form-label">Fecha Pago</label>
+                        <div class="col-md-8">
+                            <input type="date" class="form-control" id="Fecha_Pago" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="TerceroId" class="col-md-4 col-form-label">Tipo de Tercero</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="TerceroId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Valor_Pago" class="col-md-4 col-form-label">Valor a Pagar</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="Valor_Pago" placeholder="Valor a Pagar" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Observacion" class="col-md-4 col-form-label">Observaciones</label>
+                        <div class="col-md-8">
+                            <textarea class="form-control" id="Observacion" placeholder="Observaciones" > </textarea>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Provider.NombreTercero)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Valor_Pago)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Fecha_Pago)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Observacion)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id_Pago }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id_Pago }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id_Pago })
-        </td>
-    </tr>
-}
 
-</table>
+

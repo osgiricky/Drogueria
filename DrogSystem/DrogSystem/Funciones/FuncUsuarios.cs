@@ -56,5 +56,30 @@ namespace DrogSystem.Funciones
             }
             return ListaEDTipoTercero;
         }
+
+        public List<EDProvider> ListaTerceros()
+        {
+            List<EDProvider> ListaEDTercero = new List<EDProvider>();
+            List<Provider> ListaProvider = new List<Provider>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+
+                var Terceros = (from s in db.Providers
+                                select s).ToList<Provider>();
+                if (Terceros != null)
+                {
+                    ListaProvider = Terceros;
+                }
+            }
+            foreach (var item in ListaProvider)
+            {
+                EDProvider EDProvider = new EDProvider();
+                EDProvider.TerceroId = item.TerceroId;
+                EDProvider.NombreTercero = item.NombreTercero;
+                EDProvider.Codtercero = item.Codtercero;
+                ListaEDTercero.Add(EDProvider);
+            }
+            return ListaEDTercero;
+        }
     }
 }

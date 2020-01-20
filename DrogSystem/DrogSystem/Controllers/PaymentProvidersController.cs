@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
+using DrogSystem.Funciones;
 
 namespace DrogSystem.Controllers
 {
@@ -17,8 +19,160 @@ namespace DrogSystem.Controllers
         // GET: PaymentProviders
         public ActionResult Index()
         {
-            var paymentProviders = db.PaymentProviders.Include(p => p.Provider);
-            return View(paymentProviders.ToList());
+            return View();
+        }
+
+        public JsonResult List()
+        {
+            List<EDPaymentProvider> EDPaymentProviderLista = new List<EDPaymentProvider>();
+            var Listaux = (from P in db.PaymentProviders
+                           join T in db.Providers on P.TerceroId equals T.TerceroId
+                           select new { P, T }).ToList();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDPaymentProvider EDPaymentProvider = new EDPaymentProvider();
+                    EDPaymentProvider.Id_Pago = item.P.Id_Pago;
+                    EDPaymentProvider.Valor_Pago = item.P.Valor_Pago;
+                    EDPaymentProvider.Fecha_Pago = item.P.Fecha_Pago.ToString("dd/MM/yyyy");
+                    EDPaymentProvider.Observacion = item.P.Observacion;
+                    EDPaymentProvider.TerceroId = item.P.TerceroId;
+                    EDPaymentProvider.NombreTercero = item.T.NombreTercero;
+                    EDPaymentProviderLista.Add(EDPaymentProvider);
+                }
+            }
+            return Json(EDPaymentProviderLista, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetbyID(int? ID)
+        {
+            PaymentProvider PaymentProvider = db.PaymentProviders.Find(ID);
+            EDPaymentProvider EDPaymentProvider = new EDPaymentProvider();
+            if (PaymentProvider != null)
+            {
+                FuncUsuarios FuncUsuarios = new FuncUsuarios();
+                List<EDProvider> ListaTerceros = new List<EDProvider>();
+                ListaTerceros = FuncUsuarios.ListaTerceros();
+                EDPaymentProvider.Id_Pago = PaymentProvider.Id_Pago;
+                EDPaymentProvider.Valor_Pago = PaymentProvider.Valor_Pago;
+                EDPaymentProvider.Fecha_Pago = PaymentProvider.Fecha_Pago.ToString("dd/MM/yyyy");
+                EDPaymentProvider.Observacion = PaymentProvider.Observacion;
+                EDPaymentProvider.TerceroId = PaymentProvider.TerceroId;
+                EDProvider providername = ListaTerceros.Find(u => u.TerceroId == EDPaymentProvider.TerceroId);
+                EDPaymentProvider.NombreTercero = providername.NombreTercero;
+                EDPaymentProvider.ListaTerceros = ListaTerceros;
+            }
+            return Json(EDPaymentProvider, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Borrar(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            PaymentProvider PaymentProvider = db.PaymentProviders.Find(ID);
+            if (PaymentProvider == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + PaymentProvider.Id_Pago;
+            }
+            else
+            {
+                try
+                {
+                    db.PaymentProviders.Remove(PaymentProvider);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDPaymentProvider Payment)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPaymentProvider EDPaymentProvider = new EDPaymentProvider();
+            EDPaymentProvider.Id_Pago = Payment.Id_Pago;
+            EDPaymentProvider.Valor_Pago = Payment.Valor_Pago;
+            EDPaymentProvider.Fecha_Pago = Payment.Fecha_Pago;
+            EDPaymentProvider.Observacion = Payment.Observacion;
+            EDPaymentProvider.TerceroId = Payment.TerceroId;
+
+            PaymentProvider PaymentProvider = db.PaymentProviders.Find(EDPaymentProvider.TerceroId);
+            if (PaymentProvider == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDPaymentProvider.Id_Pago;
+            }
+            else
+            {
+                try
+                {
+                    PaymentProvider.Valor_Pago = EDPaymentProvider.Valor_Pago;
+                    PaymentProvider.Fecha_Pago = DateTime.Parse(EDPaymentProvider.Fecha_Pago);
+                    PaymentProvider.Observacion = EDPaymentProvider.Observacion;
+                    PaymentProvider.TerceroId = EDPaymentProvider.TerceroId;
+                    db.Entry(PaymentProvider).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDPaymentProvider Payment)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDPaymentProvider EDPaymentProvider = new EDPaymentProvider();
+            EDPaymentProvider.Id_Pago = Payment.Id_Pago;
+            EDPaymentProvider.Valor_Pago = Payment.Valor_Pago;
+            EDPaymentProvider.Fecha_Pago = Payment.Fecha_Pago;
+            EDPaymentProvider.Observacion = Payment.Observacion;
+            EDPaymentProvider.TerceroId = Payment.TerceroId;
+            try
+            {
+                PaymentProvider PaymentProvider = new PaymentProvider();
+                PaymentProvider.Valor_Pago =  EDPaymentProvider.Valor_Pago;
+                PaymentProvider.Valor_Pago = EDPaymentProvider.Valor_Pago;
+                PaymentProvider.Fecha_Pago = DateTime.Parse(EDPaymentProvider.Fecha_Pago);
+                PaymentProvider.Observacion = EDPaymentProvider.Observacion;
+                PaymentProvider.TerceroId = EDPaymentProvider.TerceroId;
+                db.PaymentProviders.Add(PaymentProvider);
+                db.SaveChanges();
+                Mensaje = " Registro Agregado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al agregar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult listaTerceros()
+        {
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            List<EDProvider> ListaTerceros = new List<EDProvider>();
+            ListaTerceros = FuncUsuarios.ListaTerceros();
+            return Json(ListaTerceros, JsonRequestBehavior.AllowGet);
         }
 
         // GET: PaymentProviders/Details/5
