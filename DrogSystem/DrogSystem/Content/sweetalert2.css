@@ -410,7 +410,7 @@
   background: initial;
   background-color: #3085d6;
   color: #fff;
-  font-size: 1.3625em;
+  font-size: 1.8625em;
 }
 .swal2-styled.swal2-cancel {
   border: 0;
@@ -418,7 +418,7 @@
   background: initial;
   background-color: #aaa;
   color: #fff;
-  font-size: 1.3625em;
+  font-size: 1.8625em;
 }
 .swal2-styled:focus {
   outline: none;

@@ -83,7 +83,6 @@ function Delete(Id) {
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
-                //data: ID,
                 success: function (response) {
                     if (response.Probar == false) {
                         swal.fire({
@@ -228,7 +227,7 @@ function Add() {
 }
 
 function clearTextBox() {
-    document.getElementById('myModalLabel').innerHTML = "Agregar Tercero";
+    document.getElementById('myModalLabel').innerHTML = "Agregar Pago Tercero";
     $('#Id_Pago').val("");
     $('#Valor_Pago').val("");
     $('#Fecha_Pago').val("");
@@ -238,6 +237,8 @@ function clearTextBox() {
     $('#Fecha_Pago').css('border-color', 'lightgrey');
     $('#TerceroId').css('border-color', 'lightgrey');
     $('#btnUpdate').hide();
+    $('#Id_Pago').hide("");
+    $('#IdPagoText').hide("");
     $('#btnAdd').show();
     $.ajax({
         url: "/PaymentProviders/listaTerceros/",

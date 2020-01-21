@@ -10,7 +10,7 @@
 <script src="~/Scripts/PaymentProvider.js"></script>
 
 <div class="container">
-    <h2>Listado de Terceros</h2>
+    <h2>Listado de Pagos a Terceros</h2>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
     <table class="table table-bordered table-hover">
         <thead>
@@ -45,7 +45,7 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group row">
-                        <label for="Id_Pago" class="col-md-4 col-form-label">Pago Número</label>
+                        <label for="Id_Pago" id="IdPagoText" class="col-md-4 col-form-label">Pago Número</label>
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="Id_Pago" placeholder="Id" disabled ="disabled"/>
                         </div>
