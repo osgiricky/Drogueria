@@ -256,6 +256,12 @@ function clearTextBox() {
             alert(errormessage.responseText);
         }
     });
+    var fecha = new Date();
+    var d = fecha.getDate();
+    var m = fecha.getMonth() + 1;
+    var y = fecha.getFullYear();
+    var dateString = (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
+    $("#Fecha_Pago").val(dateString);
     $('#myModal').modal('show');
 
 }
