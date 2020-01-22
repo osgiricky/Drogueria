@@ -221,6 +221,7 @@
     <Compile Include="EntidadesDominio\EDMarker.cs" />
     <Compile Include="EntidadesDominio\EDPaymentProvider.cs" />
     <Compile Include="EntidadesDominio\EDPresentacion.cs" />
+    <Compile Include="EntidadesDominio\EDProduct.cs" />
     <Compile Include="EntidadesDominio\EDProvider.cs" />
     <Compile Include="EntidadesDominio\EDProviderType.cs" />
     <Compile Include="EntidadesDominio\EDUser.cs" />
@@ -327,6 +328,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\PaymentProvider.js" />
     <Content Include="Scripts\Presentation.js" />
+    <Content Include="Scripts\Product.js" />
     <Content Include="Scripts\Provider.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />

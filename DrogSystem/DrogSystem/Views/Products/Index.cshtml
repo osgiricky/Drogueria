@@ -1,57 +1,111 @@
-﻿@model IEnumerable<DrogSystem.Models.Product>
-
+﻿@model DrogSystem.EntidadesDominio.EDProduct
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Productos";
 }
 
-<h2>Index</h2>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<script src="~/Scripts/Product.js"></script>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.NombreProducto)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MinStock)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MaxStock)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Componentes)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.NombreProducto)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MinStock)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MaxStock)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Descripcion)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Componentes)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ProductoId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ProductoId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ProductoId })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="container">
+    <h2>Listado de Pagos a Terceros</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Producto</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Nombre Producto</center>
+                </th>
+                <th>
+                    <center>Descripción</center>
+                </th>
+                <th>
+                    <center>Componentes</center>
+                </th>
+                <th>
+                    <center>Minimo Stock</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody" id="maestro"></tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <input type="text" class="form-control" id="ProductoId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreProducto" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Descripcion" class="col-md-4 col-form-label">Descripción</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Descripcion" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Componentes" class="col-md-4 col-form-label">Componentes</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Componentes" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="MinStock" class="col-md-4 col-form-label">Minimo Stock</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="MinStock"/>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+                <hr>
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLabelDetail">Detalle del Producto</h4>
+                </div>
+                <br>
+                <form>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Detalle</button><br /><br />
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <center>Codigo de Barras</center>
+                                </th>
+                                <th>
+                                    <center>Registro Invima</center>
+                                </th>
+                                <th>
+                                    <center>Existencias</center>
+                                </th>
+                                <th>
+                                    <center>Operación</center>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody" id="Detalle"></tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

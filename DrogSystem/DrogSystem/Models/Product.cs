@@ -19,9 +19,6 @@ namespace DrogSystem.Models
         [DisplayName("Minimo Stock")]
         public int MinStock { get; set; }
 
-        [DisplayName("Maximo Stock")]
-        public int MaxStock { get; set; }
-
         [MaxLength(200)]
         [DisplayName("Descripción")]
         public string Descripcion { get; set; }
