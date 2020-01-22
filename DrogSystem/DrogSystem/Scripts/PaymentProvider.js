@@ -54,6 +54,9 @@ function getbyID(Id) {
             $('#TerceroId').html(html);
             $('#Valor_Pago').val(result.Valor_Pago);
             $('#Observacion').val(result.Observacion);
+            $('#IdPagoText').show();
+            $('#Id_Pago').show();
+
 
             $('#myModal').modal('show');
             $('#btnUpdate').show();

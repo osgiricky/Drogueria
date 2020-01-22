@@ -105,7 +105,7 @@ namespace DrogSystem.Controllers
             EDPaymentProvider.Observacion = Payment.Observacion;
             EDPaymentProvider.TerceroId = Payment.TerceroId;
 
-            PaymentProvider PaymentProvider = db.PaymentProviders.Find(EDPaymentProvider.TerceroId);
+            PaymentProvider PaymentProvider = db.PaymentProviders.Find(EDPaymentProvider.Id_Pago);
             if (PaymentProvider == null)
             {
                 Probar = false;
@@ -123,7 +123,7 @@ namespace DrogSystem.Controllers
                     db.SaveChanges();
                     Mensaje = " Registro modificado con exito.";
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     Probar = false;
                     Mensaje = " Se produjo un error al modificar el registro.";
