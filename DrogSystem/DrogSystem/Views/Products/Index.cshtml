@@ -11,7 +11,7 @@
 
 
 <div class="container">
-    <h2>Listado de Pagos a Terceros</h2>
+    <h2>Listado de Productos</h2>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Producto</button><br /><br />
     <table class="table table-bordered table-hover">
         <thead>
@@ -78,33 +78,6 @@
                     <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
                 </div>
-                <hr>
-                <div class="modal-header">
-                    <h4 class="modal-title" id="myLabelDetail">Detalle del Producto</h4>
-                </div>
-                <br>
-                <form>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Detalle</button><br /><br />
-                    <table class="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>
-                                    <center>Codigo de Barras</center>
-                                </th>
-                                <th>
-                                    <center>Registro Invima</center>
-                                </th>
-                                <th>
-                                    <center>Existencias</center>
-                                </th>
-                                <th>
-                                    <center>Operación</center>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody" id="Detalle"></tbody>
-                    </table>
-                </form>
             </div>
         </div>
     </div>

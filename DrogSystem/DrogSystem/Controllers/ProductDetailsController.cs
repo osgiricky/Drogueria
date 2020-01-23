@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
+using DrogSystem.EntidadesDominio;
+using DrogSystem.Funciones;
 
 namespace DrogSystem.Controllers
 {
@@ -17,8 +19,172 @@ namespace DrogSystem.Controllers
         // GET: ProductDetails
         public ActionResult Index()
         {
-            var productDetails = db.ProductDetails.Include(p => p.Marker).Include(p => p.Product);
-            return View(productDetails.ToList());
+            return View();
+        }
+
+        public JsonResult List()
+        {
+            List<EDProductDetail> EDProductDetailLista = new List<EDProductDetail>();
+            var Listaux = (from PD in db.ProductDetails
+                           join P in db.Products on PD.ProductoId equals P.ProductoId
+                           join M in db.Markers on PD.MarkerId equals M.MarkerId
+                           select new { PD, P, M }).ToList();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDProductDetail EDProductDetail = new EDProductDetail();
+                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
+                    EDProductDetail.CodBarras = item.PD.CodBarras;
+                    EDProductDetail.RegInvima = item.PD.RegInvima;
+                    EDProductDetail.Existencias = item.PD.Existencias;
+                    EDProductDetail.ProductoId = item.PD.ProductoId;
+                    EDProductDetail.NombreProducto = item.P.NombreProducto;
+                    EDProductDetail.MarkerId = item.M.MarkerId;
+                    EDProductDetail.NombreFabricante = item.M.NombreFabricante;
+                    EDProductDetailLista.Add(EDProductDetail);
+                }
+            }
+            return Json(EDProductDetailLista, JsonRequestBehavior.AllowGet);
+        }
+        public JsonResult GetbyID(int? ID)
+        {
+            var ProductoDetalle = (from PD in db.ProductDetails
+                                   join P in db.Products on PD.ProductoId equals P.ProductoId
+                                   where PD.ProductDetailId == ID
+                                   select new { PD, P }).ToList();
+ 
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            if (ProductoDetalle != null)
+            {
+                foreach (var item in ProductoDetalle)
+                {
+                    FuncUsuarios FuncUsuarios = new FuncUsuarios();
+                    List<EDMarker> ListaEDMarker = new List<EDMarker>();
+                    ListaEDMarker = FuncUsuarios.ListaFabricante();
+                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
+                    EDProductDetail.CodBarras = item.PD.CodBarras;
+                    EDProductDetail.RegInvima = item.PD.RegInvima;
+                    EDProductDetail.Existencias = item.PD.Existencias;
+                    EDProductDetail.ProductoId = item.PD.ProductoId;
+                    EDProductDetail.NombreProducto = item.P.NombreProducto;
+                    EDProductDetail.MarkerId = item.PD.MarkerId;
+                    EDMarker EDMarker = ListaEDMarker.Find(u => u.MarkerId == EDProductDetail.MarkerId);
+                    EDProductDetail.NombreFabricante = EDMarker.NombreFabricante;
+                    EDProductDetail.ListaFabricantes = ListaEDMarker;
+                }
+            }
+            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Borrar(int ID)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            Product Product = db.Products.Find(ID);
+            if (Product == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + Product.ProductoId;
+            }
+            else
+            {
+                try
+                {
+                    db.Products.Remove(Product);
+                    db.SaveChanges();
+                    Mensaje = " Registro eliminado con exito.";
+                }
+                catch (Exception)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al borrar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Editar(EDProductDetail ProductoDetalle)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            EDProductDetail.CodBarras = ProductoDetalle.CodBarras;
+            EDProductDetail.RegInvima = ProductoDetalle.RegInvima;
+            EDProductDetail.Existencias = ProductoDetalle.Existencias;
+            EDProductDetail.ProductoId = ProductoDetalle.ProductoId;
+            EDProductDetail.MarkerId = ProductoDetalle.MarkerId;
+
+            ProductDetail ProductDetail = db.ProductDetails.Find(ProductoDetalle.ProductDetailId);
+            if (ProductDetail == null)
+            {
+                Probar = false;
+                Mensaje = " No se encuntra el registro: " + EDProductDetail.CodBarras;
+            }
+            else
+            {
+                try
+                {
+                    ProductDetail.CodBarras = EDProductDetail.CodBarras;
+                    ProductDetail.RegInvima = EDProductDetail.RegInvima;
+                    ProductDetail.Existencias = EDProductDetail.Existencias;
+                    ProductDetail.MarkerId = EDProductDetail.MarkerId;
+                    db.Entry(ProductDetail).State = EntityState.Modified;
+                    db.SaveChanges();
+                    Mensaje = " Registro modificado con exito.";
+                }
+                catch (Exception e)
+                {
+                    Probar = false;
+                    Mensaje = " Se produjo un error al modificar el registro.";
+
+                }
+            }
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDProductDetail ProductoDetalle)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            EDProductDetail.CodBarras = ProductoDetalle.CodBarras;
+            EDProductDetail.RegInvima = ProductoDetalle.RegInvima;
+            EDProductDetail.Existencias = ProductoDetalle.Existencias;
+            EDProductDetail.ProductoId = ProductoDetalle.ProductoId;
+            EDProductDetail.MarkerId = ProductoDetalle.MarkerId;
+            try
+            {
+                ProductDetail ProductDetail = new ProductDetail();
+                ProductDetail.CodBarras = EDProductDetail.CodBarras;
+                ProductDetail.RegInvima = EDProductDetail.RegInvima;
+                ProductDetail.Existencias = EDProductDetail.Existencias;
+                ProductDetail.ProductoId = EDProductDetail.ProductoId;
+                ProductDetail.MarkerId = EDProductDetail.MarkerId;
+                db.ProductDetails.Add(ProductDetail);
+                db.SaveChanges();
+                Mensaje = " Registro Agregado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al agregar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult listaFabricantes()
+        {
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            List<EDMarker> ListaEDMarker = new List<EDMarker>();
+            ListaEDMarker = FuncUsuarios.ListaFabricante();
+            return Json(ListaEDMarker, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProductDetails/Details/5

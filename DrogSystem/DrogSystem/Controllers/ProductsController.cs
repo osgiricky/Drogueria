@@ -8,7 +8,6 @@ using System.Web;
 using System.Web.Mvc;
 using DrogSystem.Models;
 using DrogSystem.EntidadesDominio;
-using DrogSystem.Funciones;
 
 namespace DrogSystem.Controllers
 {
@@ -47,17 +46,11 @@ namespace DrogSystem.Controllers
             EDProduct EDProduct = new EDProduct();
             if (Product != null)
             {
-                FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                List<EDProvider> ListaTerceros = new List<EDProvider>();
-                ListaTerceros = FuncUsuarios.ListaTerceros();
                 EDProduct.ProductoId = Product.ProductoId;
                 EDProduct.NombreProducto = Product.NombreProducto;
                 EDProduct.MinStock = Product.MinStock;
                 EDProduct.Descripcion = Product.Descripcion;
                 EDProduct.Componentes = Product.Componentes;
-                //EDProvider providername = ListaTerceros.Find(u => u.Descripcion == EDProduct.Descripcion);
-                //EDProduct.Componentes = providername.Componentes;
-                //EDProduct.ListaTerceros = ListaTerceros;
             }
             return Json(EDProduct, JsonRequestBehavior.AllowGet);
         }
@@ -162,14 +155,6 @@ namespace DrogSystem.Controllers
 
 
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult listaTerceros()
-        {
-            FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            List<EDProvider> ListaTerceros = new List<EDProvider>();
-            ListaTerceros = FuncUsuarios.ListaTerceros();
-            return Json(ListaTerceros, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Products/Details/5

@@ -1,57 +1,86 @@
-﻿@model IEnumerable<DrogSystem.Models.ProductDetail>
-
+﻿@model DrogSystem.EntidadesDominio.EDProductDetail
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Productos";
 }
 
-<h2>Index</h2>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<script src="~/Scripts/ProductDetail.js"></script>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Marker.NombreFabricante)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Product.NombreProducto)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CodBarras)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RegInvima)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Existencias)
-        </th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Marker.NombreFabricante)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Product.NombreProducto)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CodBarras)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RegInvima)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Existencias)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ProductDetailId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ProductDetailId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ProductDetailId })
-        </td>
-    </tr>
-}
+<div class="container">
+    <h2>Listado de Productos</h2>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Producto</button><br /><br />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Nombre Producto</center>
+                </th>
+                <th>
+                    <center>Descripción</center>
+                </th>
+                <th>
+                    <center>Componentes</center>
+                </th>
+                <th>
+                    <center>Minimo Stock</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody" id="maestro"></tbody>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <input type="text" class="form-control" id="ProductoId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreProducto" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Descripcion" class="col-md-4 col-form-label">Descripción</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Descripcion" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Componentes" class="col-md-4 col-form-label">Componentes</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Componentes" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="MinStock" class="col-md-4 col-form-label">Minimo Stock</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="MinStock" />
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-</table>
+
