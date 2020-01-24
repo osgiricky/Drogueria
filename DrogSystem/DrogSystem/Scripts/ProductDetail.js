@@ -5,7 +5,7 @@
 //Load Data function  
 function loadData() {
     $.ajax({
-        url: "/Products/List",
+        url: "/ProductDetails/List",
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -13,11 +13,12 @@ function loadData() {
             var html = '';
             $.each(result, function (key, item) {
                 html += '<tr>';
+                html += '<td>' + item.CodBarras + '</td>';
+                html += '<td>' + item.RegInvima + '</td>';
+                html += '<td>' + item.Existencias + '</td>';
                 html += '<td>' + item.NombreProducto + '</td>';
-                html += '<td>' + item.Descripcion + '</td>';
-                html += '<td>' + item.Componentes + '</td>';
-                html += '<td>' + item.MinStock + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.ProductoId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.ProductoId + ')">Eliminar</a></center></td>';
+                html += '<td>' + item.NombreFabricante + '</td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.ProductDetailId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.ProductDetailId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
             $('#maestro').html(html);
@@ -35,7 +36,7 @@ function getbyID(Id) {
     $('#Componentes').css('border-color', 'lightgrey');
     $('#MinStock').css('border-color', 'lightgrey');
     $.ajax({
-        url: "/Products/getbyID/" + Id,
+        url: "/ProductDetails/getbyID/" + Id,
         typr: "GET",
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
@@ -80,7 +81,7 @@ function Delete(Id) {
     }).then((result) => {
         if (result.value == true) {
             $.ajax({
-                url: "/Products/Borrar/" + Id,
+                url: "/ProductDetails/Borrar/" + Id,
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -135,7 +136,7 @@ function Update() {
         Componentes: $('#Componentes').val(),
     };
     $.ajax({
-        url: "/Products/Editar",
+        url: "/ProductDetails/Editar",
         data: JSON.stringify(userObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -206,7 +207,7 @@ function Add() {
         Componentes: $('#Componentes').val(),
     };
     $.ajax({
-        url: "/Products/Crear",
+        url: "/ProductDetails/Crear",
         data: JSON.stringify(userObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -227,37 +228,70 @@ function Add() {
     });
 }
 
-function clearTextBox() {
+function clearTextBox(ID) {
+    $('#myModal1').modal('hide');
+    $('.modal-backdrop').remove();
     document.getElementById('myModalLabel').innerHTML = "Agregar Pago Tercero";
-    $('#ProductoId').val("");
-    $('#NombreProducto').val("");
-    $('#Componentes').val("");
-    $('#MinStock').val("");
-    $('#Descripcion').val("");
-
+    $('#ProductoId').val(ID);
+    $('#CodBarras').val("");
+    $('#RegInvima').val("");
+    $('#Existencias').val("");
+    $('#Fabricante').html("");
     $('#NombreProducto').css('border-color', 'lightgrey');
     $('#Componentes').css('border-color', 'lightgrey');
     $('#MinStock').css('border-color', 'lightgrey');
-    $('#Descripcion').css('border-color', 'lightgrey');
+    $('#Descripcion').css('border-color', 'lightgrey');    
 
     $('#btnUpdate').hide();
     $('#btnAdd').show();
-    /*$.ajax({
-        url: "/Products/listaTerceros/",
+    $.ajax({
+        url: "/ProductDetails/listaFabricantes/" + ID,
         typr: "GET",
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
+            $('#NombreProducto').val(result.EDProduct.NombreProducto);
             var html = html += '<option value="" selected> Selecione una Opción</option>';;
-            $.each(result, function (key, item) {
-                html += '<option value="' + item.TerceroId + '" >' + item.Descripcion + '</option>';
+            $.each(result.ListaEDMarker, function (key, item) {
+                html += '<option value="' + item.MarkerId + '" >' + item.NombreFabricante + '</option>';
             });
-            $('#TerceroId').html(html);
+            $('#MarkerId').html(html);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
         }
-    });*/
+    });
     $('#myModal').modal('show');
+}
+function clearBuscar() {
+    $('#BuscarProducto').val("");
+    $('#detalle').html("");
+    $('#myModal1').modal('show');
+}
 
+function buscar() {
+    var ProductName = {
+        NombreProducto: $('#BuscarProducto').val(),
+    };
+    $.ajax({
+        url: "/ProductDetails/BuscarXNombre/",
+        data: JSON.stringify(ProductName),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            var html = '';
+            $.each(result.ListaProductos, function (key, item) {
+                html += '<tr>';
+                html += '<td>' + item.NombreProducto + '</td>';
+                html += '<td>' + item.Descripcion + '</td>';
+                html += '<td><center><a href="#" onclick="return clearTextBox(' + item.ProductoId  + ')">Seleccionar</a></center></td>';
+                html += '</tr>';
+            });
+            $('#detalle').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
 }

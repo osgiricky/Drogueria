@@ -1,6 +1,6 @@
 ﻿@model DrogSystem.EntidadesDominio.EDProductDetail
 @{
-    ViewBag.Title = "Productos";
+    ViewBag.Title = "Detalle de Productos";
 }
 
 <link href="~/Content/bootstrap.css" rel="stylesheet" />
@@ -12,21 +12,24 @@
 
 <div class="container">
     <h2>Listado de Productos</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Producto</button><br /><br />
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1" onclick="clearBuscar();">Agregar Detalle Producto</button><br /><br />
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
                 <th>
-                    <center>Nombre Producto</center>
+                    <center>Codigo de Barras</center>
                 </th>
                 <th>
-                    <center>Descripción</center>
+                    <center>Registro Invima</center>
                 </th>
                 <th>
-                    <center>Componentes</center>
+                    <center>Existencias</center>
                 </th>
                 <th>
-                    <center>Minimo Stock</center>
+                    <center>Producto</center>
+                </th>
+                <th>
+                    <center>Fabricante</center>
                 </th>
                 <th>
                     <center>Operación</center>
@@ -46,30 +49,37 @@
             <div class="modal-body">
                 <form>
                     <div class="form-row">
+                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
                         <input type="text" class="form-control" id="ProductoId" placeholder="Id" style="visibility:hidden" />
                     </div>
                     <div class="form-group row">
                         <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="NombreProducto" />
+                            <input type="text" class="form-control" id="NombreProducto" disabled/>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Descripcion" class="col-md-4 col-form-label">Descripción</label>
+                        <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Descripcion" />
+                            <input type="text" class="form-control" id="CodBarras" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Componentes" class="col-md-4 col-form-label">Componentes</label>
+                        <label for="RegInvima" class="col-md-4 col-form-label">Registro Invima</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Componentes" />
+                            <input type="text" class="form-control" id="RegInvima" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="MinStock" class="col-md-4 col-form-label">Minimo Stock</label>
+                        <label for="Existencias" class="col-md-4 col-form-label">Existencias</label>
                         <div class="col-md-8">
-                            <input type="number" class="form-control" id="MinStock" />
+                            <input type="text" class="form-control" id="Existencias" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="MarkerId" class="col-md-4 col-form-label">Fabricante</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="MarkerId"></select>
                         </div>
                     </div>
                 </form>
@@ -83,4 +93,47 @@
     </div>
 </div>
 
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Buscar Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="BuscarProducto" />
+                        </div>
+                    </div>
+                    <div class="form-group row" style="text-align: right;width:480px">
+                        <button type="button" class="btn btn-primary btn-lg" id="btnAdd" onclick="return buscar();"> Buscar </button>
+                    </div>
+                </form>
+            </div>
+            <div class="container">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <center>Nombre Producto</center>
+                            </th>
+                            <th>
+                                <center>Descripción</center>
+                            </th>
+                            <th>
+                                <center>Opción</center>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody" id="detalle"></tbody>
+                </table>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 

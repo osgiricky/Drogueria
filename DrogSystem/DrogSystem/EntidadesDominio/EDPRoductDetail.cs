@@ -16,5 +16,7 @@ namespace DrogSystem.EntidadesDominio
         public int MarkerId { get; set; }
         public string NombreFabricante { get; set; }
         public List<EDMarker> ListaFabricantes { get; set; }
+        public List<EDProduct> ListaProductos { get; set; }
+
     }
 }

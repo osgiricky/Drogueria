@@ -179,12 +179,45 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult listaFabricantes()
+        public JsonResult listaFabricantes(int? ID)
         {
             FuncUsuarios FuncUsuarios = new FuncUsuarios();
             List<EDMarker> ListaEDMarker = new List<EDMarker>();
             ListaEDMarker = FuncUsuarios.ListaFabricante();
-            return Json(ListaEDMarker, JsonRequestBehavior.AllowGet);
+            Product Product = db.Products.Find(ID);
+            EDProduct EDProduct = new EDProduct();
+            if (Product != null)
+            {
+                EDProduct.ProductoId = Product.ProductoId;
+                EDProduct.NombreProducto = Product.NombreProducto;
+                EDProduct.MinStock = Product.MinStock;
+                EDProduct.Descripcion = Product.Descripcion;
+                EDProduct.Componentes = Product.Componentes;
+            }
+            return Json(new{ ListaEDMarker,EDProduct}, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BuscarXNombre(EDProduct producto)
+        {
+            var Productos = (from PD in db.Products
+                                   where PD.NombreProducto.Contains(producto.NombreProducto)
+                                   select new { PD }).ToList();
+
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            if (Productos != null)
+            {
+                List<EDProduct> ListaEDProduct = new List<EDProduct>();
+                foreach (var item in Productos)
+                {
+                    EDProduct EDProduct = new EDProduct();
+                    EDProduct.ProductoId = item.PD.ProductoId;
+                    EDProduct.NombreProducto = item.PD.NombreProducto;
+                    EDProduct.Descripcion = item.PD.Descripcion;
+                    ListaEDProduct.Add(EDProduct);
+                }
+                EDProductDetail.ListaProductos = ListaEDProduct;
+            }
+            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
         }
 
         // GET: ProductDetails/Details/5
