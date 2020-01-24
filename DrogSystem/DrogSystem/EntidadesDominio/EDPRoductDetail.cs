@@ -8,7 +8,7 @@ namespace DrogSystem.EntidadesDominio
     public class EDProductDetail
     {
         public int ProductDetailId { get; set; }
-        public int CodBarras { get; set; }
+        public string CodBarras { get; set; }
         public string RegInvima { get; set; }
         public int Existencias { get; set; }
         public int ProductoId { get; set; }

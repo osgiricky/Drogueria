@@ -16,7 +16,7 @@ namespace DrogSystem.Models
         public decimal Precio { get; set; }
 
         public int PresentationId { get; set; }
-        public int DetailProductId { get; set; }
+        public int ProductDetailId { get; set; }
         public virtual Presentation Presentation { get; set; }
         public virtual ProductDetail ProductDetail { get; set; }
 

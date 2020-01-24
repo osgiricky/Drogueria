@@ -81,17 +81,17 @@ namespace DrogSystem.Controllers
         {
             bool Probar = true;
             string Mensaje = "";
-            Product Product = db.Products.Find(ID);
-            if (Product == null)
+            ProductDetail ProductDetail = db.ProductDetails.Find(ID);
+            if (ProductDetail == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + Product.ProductoId;
+                Mensaje = " No se encuntra el registro: " + ProductDetail.ProductDetailId;
             }
             else
             {
                 try
                 {
-                    db.Products.Remove(Product);
+                    db.ProductDetails.Remove(ProductDetail);
                     db.SaveChanges();
                     Mensaje = " Registro eliminado con exito.";
                 }

@@ -223,6 +223,7 @@
     <Compile Include="EntidadesDominio\EDPresentacion.cs" />
     <Compile Include="EntidadesDominio\EDProduct.cs" />
     <Compile Include="EntidadesDominio\EDProductDetail.cs" />
+    <Compile Include="EntidadesDominio\EDProductPresentationPrice.cs" />
     <Compile Include="EntidadesDominio\EDProvider.cs" />
     <Compile Include="EntidadesDominio\EDProviderType.cs" />
     <Compile Include="EntidadesDominio\EDUser.cs" />
@@ -331,6 +332,7 @@
     <Content Include="Scripts\Presentation.js" />
     <Content Include="Scripts\Product.js" />
     <Content Include="Scripts\ProductDetail.js" />
+    <Content Include="Scripts\ProductPresentationPrice.js" />
     <Content Include="Scripts\Provider.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />

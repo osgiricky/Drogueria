@@ -108,5 +108,31 @@ namespace DrogSystem.Funciones
             ListaEDMarker = ListaEDMarker.OrderBy(o => o.NombreFabricante).ToList();
             return ListaEDMarker;
         }
+
+        public List<EDPresentacion> ListaPresentacion()
+        {
+            List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+            List<Presentation> ListaPresentation = new List<Presentation>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+
+                var Presentation = (from s in db.Presentations
+                                    orderby s.NombrePresentacion, s.CantPresentacion
+                                    select s ).Distinct().ToList<Presentation>();
+                if (Presentation != null)
+                {
+                    ListaPresentation = Presentation;
+                }
+            }
+            foreach (var item in ListaPresentation)
+            {
+                EDPresentacion EDPresentacion = new EDPresentacion();
+                EDPresentacion.PresentationId = item.PresentationId;
+                EDPresentacion.NombrePresentacion = item.NombrePresentacion;
+                EDPresentacion.CantPresentacion = item.CantPresentacion;
+                ListaEDPresentacion.Add(EDPresentacion);
+            }
+            return ListaEDPresentacion;
+        }
     }
 }

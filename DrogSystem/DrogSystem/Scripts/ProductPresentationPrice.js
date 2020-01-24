@@ -40,7 +40,7 @@ function getbyID(Id) {
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
-            $('#ProductDetailId').val(result.ProductDetailId);            
+            $('#ProductDetailId').val(result.ProductDetailId);
             $('#ProductoId').val(result.ProductoId);
             $('#NombreProducto').val(result.NombreProducto);
             $('#CodBarras').val(result.CodBarras);
@@ -231,11 +231,12 @@ function Add() {
     });
 }
 
-function clearTextBox(ID) {
+function clearTextBox() {
     $('#myModal1').modal('hide');
     $('.modal-backdrop').remove();
     document.getElementById('myModalLabel').innerHTML = "Crear Detalle de Producto";
-    $('#ProductoId').val(ID);
+    $('#PrecioProductoId').val("");
+    $('#ProductoId').val("");
     $('#ProductDetailId').val("");
     $('#CodBarras').val("");
     $('#RegInvima').val("");
@@ -288,7 +289,7 @@ function buscar() {
                 html += '<tr>';
                 html += '<td>' + item.NombreProducto + '</td>';
                 html += '<td>' + item.Descripcion + '</td>';
-                html += '<td><center><a href="#" onclick="return clearTextBox(' + item.ProductoId  + ')">Seleccionar</a></center></td>';
+                html += '<td><center><a href="#" onclick="return clearTextBox(' + item.ProductoId + ')">Seleccionar</a></center></td>';
                 html += '</tr>';
             });
             $('#detalle').html(html);

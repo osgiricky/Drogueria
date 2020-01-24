@@ -13,7 +13,8 @@ namespace DrogSystem.Models
 
         [Required()]
         [DisplayName("Codigo Barras")]
-        public int CodBarras { get; set; }
+        [MaxLength(30)]
+        public string CodBarras { get; set; }
 
         [DisplayName("Registro Invima")]
         [MaxLength(30)]
