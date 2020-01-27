@@ -14,7 +14,7 @@ namespace DrogSystem.EntidadesDominio
         public int CantPresentacion { get; set; }
         public int MarkerId { get; set; }
         public string NombreFabricante { get; set; }
-        public int DetailProductId { get; set; }
+        public int ProductDetailId { get; set; }
         public string CodBarras { get; set; }
         public int ProductoId { get; set; }
         public string NombreProducto { get; set; }

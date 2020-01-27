@@ -44,7 +44,7 @@ namespace DrogSystem.Controllers
                     EDProductPresentationPrice.NombrePresentacion = item.PR.NombrePresentacion;
                     EDProductPresentationPrice.CantPresentacion = item.PR.CantPresentacion;
                     EDProductPresentationPrice.MarkerId = item.M.MarkerId;
-                    EDProductPresentationPrice.DetailProductId = item.PD.ProductDetailId;
+                    EDProductPresentationPrice.ProductDetailId = item.PD.ProductDetailId;
                     EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
                     EDProductPresentationPrice.NombreFabricante = item.M.NombreFabricante;
                     EDProductPresentationPriceLista.Add(EDProductPresentationPrice);
@@ -74,7 +74,7 @@ namespace DrogSystem.Controllers
                     EDProductPresentationPrice.PresentationId = item.PPP.PresentationId;
                     EDProductPresentationPrice.MarkerId = item.PD.MarkerId;
                     EDProductPresentationPrice.NombreFabricante = item.M.NombreFabricante;
-                    EDProductPresentationPrice.DetailProductId = item.PD.ProductDetailId;
+                    EDProductPresentationPrice.ProductDetailId = item.PD.ProductDetailId;
                     EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
                     EDProductPresentationPrice.ProductoId = item.PD.ProductoId;
                     EDProductPresentationPrice.NombreProducto = item.P.NombreProducto;
@@ -121,27 +121,25 @@ namespace DrogSystem.Controllers
             bool Probar = true;
             string Mensaje = "";
             EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
-            EDProductPresentationPrice.CodBarras = ProductoDetalle.CodBarras;
-            EDProductPresentationPrice.RegInvima = ProductoDetalle.RegInvima;
-            EDProductPresentationPrice.Existencias = ProductoDetalle.Existencias;
-            EDProductPresentationPrice.ProductoId = ProductoDetalle.ProductoId;
-            EDProductPresentationPrice.MarkerId = ProductoDetalle.MarkerId;
+            EDProductPresentationPrice.PrecioProductoId = ProductoDetalle.PrecioProductoId;
+            EDProductPresentationPrice.Precio = ProductoDetalle.Precio;
+            EDProductPresentationPrice.PresentationId = ProductoDetalle.PresentationId;
+            EDProductPresentationPrice.ProductDetailId = ProductoDetalle.ProductDetailId;
 
-            ProductDetail ProductDetail = db.ProductDetails.Find(ProductoDetalle.PrecioProductoId);
-            if (ProductDetail == null)
+            ProductPresentationPrice ProductPresentationPrice = db.ProductPresentationPrices.Find(ProductoDetalle.PrecioProductoId);
+            if (ProductPresentationPrice == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + EDProductPresentationPrice.CodBarras;
+                Mensaje = " No se encuentra el registro.";
             }
             else
             {
                 try
                 {
-                    ProductDetail.CodBarras = EDProductPresentationPrice.CodBarras;
-                    ProductDetail.RegInvima = EDProductPresentationPrice.RegInvima;
-                    ProductDetail.Existencias = EDProductPresentationPrice.Existencias;
-                    ProductDetail.MarkerId = EDProductPresentationPrice.MarkerId;
-                    db.Entry(ProductDetail).State = EntityState.Modified;
+                    ProductPresentationPrice.Precio = EDProductPresentationPrice.Precio;
+                    ProductPresentationPrice.PresentationId = EDProductPresentationPrice.PresentationId;
+                    ProductPresentationPrice.ProductDetailId = EDProductPresentationPrice.ProductDetailId;
+                    db.Entry(ProductPresentationPrice).State = EntityState.Modified;
                     db.SaveChanges();
                     Mensaje = " Registro modificado con exito.";
                 }
@@ -161,20 +159,17 @@ namespace DrogSystem.Controllers
             bool Probar = true;
             string Mensaje = "";
             EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
-            EDProductPresentationPrice.CodBarras = ProductoDetalle.CodBarras;
-            EDProductPresentationPrice.RegInvima = ProductoDetalle.RegInvima;
-            EDProductPresentationPrice.Existencias = ProductoDetalle.Existencias;
-            EDProductPresentationPrice.ProductoId = ProductoDetalle.ProductoId;
-            EDProductPresentationPrice.MarkerId = ProductoDetalle.MarkerId;
+            EDProductPresentationPrice.PrecioProductoId = ProductoDetalle.PrecioProductoId;
+            EDProductPresentationPrice.Precio = ProductoDetalle.Precio;
+            EDProductPresentationPrice.PresentationId = ProductoDetalle.PresentationId;
+            EDProductPresentationPrice.ProductDetailId = ProductoDetalle.ProductDetailId;
             try
             {
-                ProductDetail ProductDetail = new ProductDetail();
-                ProductDetail.CodBarras = EDProductPresentationPrice.CodBarras;
-                ProductDetail.RegInvima = EDProductPresentationPrice.RegInvima;
-                ProductDetail.Existencias = EDProductPresentationPrice.Existencias;
-                ProductDetail.ProductoId = EDProductPresentationPrice.ProductoId;
-                ProductDetail.MarkerId = EDProductPresentationPrice.MarkerId;
-                db.ProductDetails.Add(ProductDetail);
+                ProductPresentationPrice ProductPresentationPrice = new ProductPresentationPrice();
+                ProductPresentationPrice.Precio = EDProductPresentationPrice.Precio;
+                ProductPresentationPrice.PresentationId = EDProductPresentationPrice.PresentationId;
+                ProductPresentationPrice.ProductDetailId = EDProductPresentationPrice.ProductDetailId;
+                db.ProductPresentationPrices.Add(ProductPresentationPrice);
                 db.SaveChanges();
                 Mensaje = " Registro Agregado con exito.";
             }
