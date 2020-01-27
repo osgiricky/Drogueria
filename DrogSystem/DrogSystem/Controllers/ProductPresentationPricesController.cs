@@ -57,10 +57,9 @@ namespace DrogSystem.Controllers
             var PrecioProducto = (from PPP in db.ProductPresentationPrices
                                   join PD in db.ProductDetails on PPP.ProductDetailId equals PD.ProductDetailId
                                   join P in db.Products on PD.ProductoId equals P.ProductoId
-                                  join PR in db.Presentations on PPP.PresentationId equals PR.PresentationId
                                   join M in db.Markers on PD.MarkerId equals M.MarkerId
                                   where PPP.PrecioProductoId == ID
-                                  select new { PPP, PD, P, PR, M }).ToList();
+                                  select new { PPP, PD, P, M }).ToList();
 
             EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
             if (PrecioProducto != null)
@@ -68,18 +67,21 @@ namespace DrogSystem.Controllers
                 foreach (var item in PrecioProducto)
                 {
                     FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                    List<EDMarker> ListaEDMarker = new List<EDMarker>();
-                    ListaEDMarker = FuncUsuarios.ListaFabricante();
-                    EDProductPresentationPrice.ProductDetailId = item.PD.ProductDetailId;
+                    List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+                    ListaEDPresentacion = FuncUsuarios.ListaPresentacion();
+                    EDProductPresentationPrice.PrecioProductoId = item.PPP.PrecioProductoId;
+                    EDProductPresentationPrice.Precio = item.PPP.Precio;
+                    EDProductPresentationPrice.PresentationId = item.PPP.PresentationId;
+                    EDProductPresentationPrice.MarkerId = item.PD.MarkerId;
+                    EDProductPresentationPrice.NombreFabricante = item.M.NombreFabricante;
+                    EDProductPresentationPrice.DetailProductId = item.PD.ProductDetailId;
                     EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
-                    EDProductPresentationPrice.RegInvima = item.PD.RegInvima;
-                    EDProductPresentationPrice.Existencias = item.PD.Existencias;
                     EDProductPresentationPrice.ProductoId = item.PD.ProductoId;
                     EDProductPresentationPrice.NombreProducto = item.P.NombreProducto;
-                    EDProductPresentationPrice.MarkerId = item.PD.MarkerId;
-                    EDMarker EDMarker = ListaEDMarker.Find(u => u.MarkerId == EDProductPresentationPrice.MarkerId);
-                    EDProductPresentationPrice.NombreFabricante = EDMarker.NombreFabricante;
-                    EDProductPresentationPrice.ListaFabricantes = ListaEDMarker;
+                    EDPresentacion EDPresentacion = ListaEDPresentacion.Find(u => u.PresentationId == EDProductPresentationPrice.PresentationId);
+                    EDProductPresentationPrice.NombrePresentacion = EDPresentacion.NombrePresentacion;
+                    EDProductPresentationPrice.CantPresentacion = EDPresentacion.CantPresentacion;
+                    EDProductPresentationPrice.ListaPresentacion = ListaEDPresentacion;
                 }
             }
             return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
@@ -89,17 +91,17 @@ namespace DrogSystem.Controllers
         {
             bool Probar = true;
             string Mensaje = "";
-            ProductDetail ProductDetail = db.ProductDetails.Find(ID);
-            if (ProductDetail == null)
+            ProductPresentationPrice ProductPresentationPrice = db.ProductPresentationPrices.Find(ID);
+            if (ProductPresentationPrice == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + ProductDetail.ProductDetailId;
+                Mensaje = " No se encuentra el registro";
             }
             else
             {
                 try
                 {
-                    db.ProductDetails.Remove(ProductDetail);
+                    db.ProductPresentationPrices.Remove(ProductPresentationPrice);
                     db.SaveChanges();
                     Mensaje = " Registro eliminado con exito.";
                 }
@@ -125,7 +127,7 @@ namespace DrogSystem.Controllers
             EDProductPresentationPrice.ProductoId = ProductoDetalle.ProductoId;
             EDProductPresentationPrice.MarkerId = ProductoDetalle.MarkerId;
 
-            ProductDetail ProductDetail = db.ProductDetails.Find(ProductoDetalle.ProductDetailId);
+            ProductDetail ProductDetail = db.ProductDetails.Find(ProductoDetalle.PrecioProductoId);
             if (ProductDetail == null)
             {
                 Probar = false;
