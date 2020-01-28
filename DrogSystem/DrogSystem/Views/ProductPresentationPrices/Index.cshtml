@@ -7,12 +7,12 @@
 <script src="~/Scripts/jquery-3.4.1.js"></script>
 <script src="~/Scripts/bootstrap.js"></script>
 <script src="~/Scripts/Sweetalert.js"></script>
-<script src="~/Scripts/ProductDetail.js"></script>
+<script src="~/Scripts/ProductPresentationPrice.js"></script>
 
 
 <div class="container">
     <h2>Listado de Productos</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1" onclick="clearBuscar();">Agregar Detalle Producto</button><br /><br />
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal1" onclick="clearTextBox();">Agregar Precio Producto</button><br /><br />
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -26,7 +26,7 @@
                     <center>Presentación</center>
                 </th>
                 <th>
-                    <center>Cantidad PResentación</center>
+                    <center>Cantidad Presentación</center>
                 </th>
                 <th>
                     <center>Precio</center>
@@ -48,8 +48,10 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="form-row">
-                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="PrecioProductoId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="col-md-6">
                         <input type="text" class="form-control" id="ProductoId" placeholder="Id" style="visibility:hidden" />
                     </div>
                     <div class="form-group row">
@@ -65,21 +67,21 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="RegInvima" class="col-md-4 col-form-label">Registro Invima</label>
+                        <label for="NombrePresentacion" class="col-md-4 col-form-label">Presentación</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="RegInvima" />
+                            <select class="form-control" id="NombrePresentacion"></select>
                         </div>
                     </div>                    
                     <div class="form-group row">
-                        <label for="MarkerId" class="col-md-4 col-form-label">Fabricante</label>
+                        <label for="PresentationId" class="col-md-4 col-form-label">Cantidad Presentación</label>
                         <div class="col-md-8">
-                            <select class="form-control" id="Precio"></select>
+                            <select class="form-control" id="PresentationId" onchange="buscar(this.value)"></select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Existencias" class="col-md-4 col-form-label">Existencias</label>
+                        <label for="Existencias" class="col-md-4 col-form-label">Precio</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Existencias" />
+                            <input type="number" class="form-control" id="Precio" />
                         </div>
                     </div>
                 </form>

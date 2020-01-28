@@ -5,7 +5,7 @@
 //Load Data function  
 function loadData() {
     $.ajax({
-        url: "/ProductDetails/List",
+        url: "/ProductPresentationPrices/List",
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -13,12 +13,12 @@ function loadData() {
             var html = '';
             $.each(result, function (key, item) {
                 html += '<tr>';
-                html += '<td>' + item.CodBarras + '</td>';
-                html += '<td>' + item.RegInvima + '</td>';
-                html += '<td>' + item.Existencias + '</td>';
                 html += '<td>' + item.NombreProducto + '</td>';
                 html += '<td>' + item.NombreFabricante + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.ProductDetailId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.ProductDetailId + ')">Eliminar</a></center></td>';
+                html += '<td>' + item.NombrePresentacion + '</td>';
+                html += '<td>' + item.CantPresentacion + '</td>';
+                html += '<td>' + item.Precio + '</td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.PrecioProductoId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.PrecioProductoId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
             $('#maestro').html(html);
@@ -30,22 +30,21 @@ function loadData() {
 }
 
 function getbyID(Id) {
-    document.getElementById('myModalLabel').innerHTML = "Editar Detalle Producto";
+    document.getElementById('myModalLabel').innerHTML = "Editar Precio Producto";
     $('#CodBarras').css('border-color', 'lightgrey');
-    $('#Existencias').css('border-color', 'lightgrey');
-    $('#Fabricante').css('border-color', 'lightgrey');
+    $('#NombreProducto').css('border-color', 'lightgrey');
+    $('#Precio').css('border-color', 'lightgrey');
     $.ajax({
-        url: "/ProductDetails/getbyID/" + Id,
+        url: "/ProductPresentationPrices/getbyID/" + Id,
         typr: "GET",
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
-            $('#ProductDetailId').val(result.ProductDetailId);
+            $('#ProductDetailId').val(result.PrecioProductoId);
             $('#ProductoId').val(result.ProductoId);
             $('#NombreProducto').val(result.NombreProducto);
             $('#CodBarras').val(result.CodBarras);
-            $('#RegInvima').val(result.RegInvima);
-            $('#Existencias').val(result.Existencias);
+            $('#Precio').val(result.Precio);
             var html = '';
             $.each(result.ListaFabricantes, function (key, item) {
                 if (result.MarkerId == item.MarkerId) {
@@ -81,7 +80,7 @@ function Delete(Id) {
     }).then((result) => {
         if (result.value == true) {
             $.ajax({
-                url: "/ProductDetails/Borrar/" + Id,
+                url: "/ProductPresentationPrices/Borrar/" + Id,
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -137,7 +136,7 @@ function Update() {
         MarkerId: $('#MarkerId').val(),
     };
     $.ajax({
-        url: "/ProductDetails/Editar",
+        url: "/ProductPresentationPrices/Editar",
         data: JSON.stringify(userObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -209,7 +208,7 @@ function Add() {
         MarkerId: $('#MarkerId').val(),
     };
     $.ajax({
-        url: "/ProductDetails/Crear",
+        url: "/ProductPresentationPrices/Crear",
         data: JSON.stringify(userObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
@@ -232,34 +231,31 @@ function Add() {
 }
 
 function clearTextBox() {
-    $('#myModal1').modal('hide');
-    $('.modal-backdrop').remove();
-    document.getElementById('myModalLabel').innerHTML = "Crear Detalle de Producto";
-    $('#PrecioProductoId').val("");
-    $('#ProductoId').val("");
+    document.getElementById('myModalLabel').innerHTML = "Crear Precio Producto";
     $('#ProductDetailId').val("");
+    $('#ProductoId').val("");
+    $('#NombreProducto').val("");
     $('#CodBarras').val("");
-    $('#RegInvima').val("");
-    $('#Existencias').val("");
-    $('#Fabricante').html("");
+    $('#Precio').val("");
+    $('#NombrePresentacion').html("");
+    $('#PresentationId').html("");
     $('#CodBarras').css('border-color', 'lightgrey');
-    $('#Existencias').css('border-color', 'lightgrey');
-    $('#Fabricante').css('border-color', 'lightgrey');
+    $('#Precio').css('border-color', 'lightgrey');
 
     $('#btnUpdate').hide();
     $('#btnAdd').show();
     $.ajax({
-        url: "/ProductDetails/listaFabricantes/" + ID,
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
+        url: "/ProductPresentationPrices/listaPresentacion",
+        //data: JSON.stringify(nombrePresentacion),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
-            $('#NombreProducto').val(result.EDProduct.NombreProducto);
-            var html = html += '<option value="" selected> Selecione una Opción</option>';;
-            $.each(result.ListaEDMarker, function (key, item) {
-                html += '<option value="' + item.MarkerId + '" >' + item.NombreFabricante + '</option>';
+            var html = '<option value="" selected> Selecione una Opción</option>';
+            $.each(result.ListaEDPresentacion, function (key, item) {
+                html += '<option value=' + item.NombrePresentacion + ' >' + item.NombrePresentacion + '</option>';
             });
-            $('#MarkerId').html(html);
+            $('#NombrePresentacion').html(html);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -273,26 +269,19 @@ function clearBuscar() {
     $('#myModal1').modal('show');
 }
 
-function buscar() {
-    var ProductName = {
-        NombreProducto: $('#BuscarProducto').val(),
-    };
+function buscar(nombrePresentacion) {
     $.ajax({
-        url: "/ProductDetails/BuscarXNombre/",
-        data: JSON.stringify(ProductName),
+        url: "/ProductPresentationPrices/BuscarXNombrePresentation/",
+        data: JSON.stringify(nombrePresentacion),
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
-            var html = '';
-            $.each(result.ListaProductos, function (key, item) {
-                html += '<tr>';
-                html += '<td>' + item.NombreProducto + '</td>';
-                html += '<td>' + item.Descripcion + '</td>';
-                html += '<td><center><a href="#" onclick="return clearTextBox(' + item.ProductoId + ')">Seleccionar</a></center></td>';
-                html += '</tr>';
-            });
-            $('#detalle').html(html);
+            var html = '<option value="" selected> Selecione una Opción</option>';
+            $.each(result.ListaEDPresentacion, function (key, item) {
+                html += '<option value="' + item.PresentationId + '" >' + item.CantPresentacion + '</option>';
+                });
+            $('#PresentationId').html(html);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);

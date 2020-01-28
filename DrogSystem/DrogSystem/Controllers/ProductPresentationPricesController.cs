@@ -58,8 +58,9 @@ namespace DrogSystem.Controllers
                                   join PD in db.ProductDetails on PPP.ProductDetailId equals PD.ProductDetailId
                                   join P in db.Products on PD.ProductoId equals P.ProductoId
                                   join M in db.Markers on PD.MarkerId equals M.MarkerId
+                                  join PR in db.Presentations on PPP.PresentationId equals PR.PresentationId
                                   where PPP.PrecioProductoId == ID
-                                  select new { PPP, PD, P, M }).ToList();
+                                  select new { PPP, PD, P, M, PR }).ToList();
 
             EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
             if (PrecioProducto != null)
@@ -68,7 +69,8 @@ namespace DrogSystem.Controllers
                 {
                     FuncUsuarios FuncUsuarios = new FuncUsuarios();
                     List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
-                    ListaEDPresentacion = FuncUsuarios.ListaPresentacion();
+                    List<EDPresentacion> ListaEDPresentacionNombre = new List<EDPresentacion>();
+                    ListaEDPresentacionNombre = FuncUsuarios.ListaNombrePresentacion();
                     EDProductPresentationPrice.PrecioProductoId = item.PPP.PrecioProductoId;
                     EDProductPresentationPrice.Precio = item.PPP.Precio;
                     EDProductPresentationPrice.PresentationId = item.PPP.PresentationId;
@@ -78,10 +80,11 @@ namespace DrogSystem.Controllers
                     EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
                     EDProductPresentationPrice.ProductoId = item.PD.ProductoId;
                     EDProductPresentationPrice.NombreProducto = item.P.NombreProducto;
-                    EDPresentacion EDPresentacion = ListaEDPresentacion.Find(u => u.PresentationId == EDProductPresentationPrice.PresentationId);
-                    EDProductPresentationPrice.NombrePresentacion = EDPresentacion.NombrePresentacion;
-                    EDProductPresentationPrice.CantPresentacion = EDPresentacion.CantPresentacion;
+                    EDProductPresentationPrice.CantPresentacion = item.PR.CantPresentacion;
+                    EDProductPresentationPrice.NombrePresentacion = item.PR.NombrePresentacion;
+                    ListaEDPresentacion = FuncUsuarios.ListaPresentacion(EDProductPresentationPrice.NombrePresentacion);
                     EDProductPresentationPrice.ListaPresentacion = ListaEDPresentacion;
+                    EDProductPresentationPrice.ListaNombrePresentacion = ListaEDPresentacionNombre;
                 }
             }
             return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
@@ -188,28 +191,15 @@ namespace DrogSystem.Controllers
         {
             FuncUsuarios FuncUsuarios = new FuncUsuarios();
             List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
-            ListaEDPresentacion = FuncUsuarios.ListaPresentacion();
+            ListaEDPresentacion = FuncUsuarios.ListaNombrePresentacion();
             return Json(ListaEDPresentacion, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BuscarXNombrePresentation(EDPresentacion presentation)
+        public JsonResult BuscarXNombrePresentation(string presentacion)
         {
-            var Presentacion = (from PD in db.Presentations
-                             where PD.NombrePresentacion == presentation.NombrePresentacion
-                             select new { PD }).ToList();
-
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
             List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
-            if (Presentacion != null)
-            {
-                foreach (var item in Presentacion)
-                {
-                    EDPresentacion EDPresentacion = new EDPresentacion();
-                    EDPresentacion.PresentationId = item.PD.PresentationId;
-                    EDPresentacion.NombrePresentacion = item.PD.NombrePresentacion;
-                    EDPresentacion.CantPresentacion = item.PD.CantPresentacion;
-                    ListaEDPresentacion.Add(EDPresentacion);
-                }
-            }
+            ListaEDPresentacion = FuncUsuarios.ListaPresentacion(presentacion);
             return Json(ListaEDPresentacion, JsonRequestBehavior.AllowGet);
         }
 

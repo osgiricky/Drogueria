@@ -1,9 +1,7 @@
 ﻿using DrogSystem.EntidadesDominio;
 using DrogSystem.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace DrogSystem.Funciones
 {
@@ -109,23 +107,46 @@ namespace DrogSystem.Funciones
             return ListaEDMarker;
         }
 
-        public List<EDPresentacion> ListaPresentacion()
+        public List<EDPresentacion> ListaNombrePresentacion()
         {
             List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
             List<Presentation> ListaPresentation = new List<Presentation>();
             using (DrogSystemContext db = new DrogSystemContext())
             {
 
-                var Presentation = (from s in db.Presentations
-                                    orderby s.NombrePresentacion, s.CantPresentacion
-                                    select s ).Distinct().ToList<Presentation>();
+                var Presentacion = (from s in db.Presentations
+                                    select s).ToList();
+                //Presentacion.Select(o => o.NombrePresentacion).Distinct();
+                var DistinctItems = Presentacion.GroupBy(x => x.NombrePresentacion).Select(y => y.First());
+
+                foreach (var item in DistinctItems)
+                {
+                    EDPresentacion EDPresentacion = new EDPresentacion();
+                    //EDPresentacion.PresentationId = item.PresentationId;
+                    EDPresentacion.NombrePresentacion = item.NombrePresentacion;
+                    //EDPresentacion.CantPresentacion = item.CantPresentacion;
+                    ListaEDPresentacion.Add(EDPresentacion);
+                }
+            }
+            return ListaEDPresentacion;
+        }
+        public List<EDPresentacion> ListaPresentacion(string NombrePresentacion)
+        {
+            List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+            List<Presentation> ListaPresentation = new List<Presentation>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+                var Presentation = (from PD in db.Presentations
+                                    where PD.NombrePresentacion == NombrePresentacion
+                                    select PD).ToList();
                 if (Presentation != null)
                 {
                     ListaPresentation = Presentation;
                 }
             }
-            foreach (var item in ListaPresentation)
-            {
+
+           foreach (var item in ListaPresentation)
+           {
                 EDPresentacion EDPresentacion = new EDPresentacion();
                 EDPresentacion.PresentationId = item.PresentationId;
                 EDPresentacion.NombrePresentacion = item.NombrePresentacion;
@@ -133,6 +154,7 @@ namespace DrogSystem.Funciones
                 ListaEDPresentacion.Add(EDPresentacion);
             }
             return ListaEDPresentacion;
+
         }
     }
 }
