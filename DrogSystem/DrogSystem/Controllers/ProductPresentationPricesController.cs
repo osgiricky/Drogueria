@@ -184,45 +184,33 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult listaFabricantes(int? ID)
+        public JsonResult listaPresentacion()
         {
             FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            List<EDMarker> ListaEDMarker = new List<EDMarker>();
-            ListaEDMarker = FuncUsuarios.ListaFabricante();
-            Product Product = db.Products.Find(ID);
-            EDProduct EDProduct = new EDProduct();
-            if (Product != null)
-            {
-                EDProduct.ProductoId = Product.ProductoId;
-                EDProduct.NombreProducto = Product.NombreProducto;
-                EDProduct.MinStock = Product.MinStock;
-                EDProduct.Descripcion = Product.Descripcion;
-                EDProduct.Componentes = Product.Componentes;
-            }
-            return Json(new { ListaEDMarker, EDProduct }, JsonRequestBehavior.AllowGet);
+            List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+            ListaEDPresentacion = FuncUsuarios.ListaPresentacion();
+            return Json(ListaEDPresentacion, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BuscarXNombre(EDProduct producto)
+        public JsonResult BuscarXNombrePresentation(EDPresentacion presentation)
         {
-            var Productos = (from PD in db.Products
-                             where PD.NombreProducto.Contains(producto.NombreProducto)
+            var Presentacion = (from PD in db.Presentations
+                             where PD.NombrePresentacion == presentation.NombrePresentacion
                              select new { PD }).ToList();
 
-            EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
-            if (Productos != null)
+            List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+            if (Presentacion != null)
             {
-                List<EDProduct> ListaEDProduct = new List<EDProduct>();
-                foreach (var item in Productos)
+                foreach (var item in Presentacion)
                 {
-                    EDProduct EDProduct = new EDProduct();
-                    EDProduct.ProductoId = item.PD.ProductoId;
-                    EDProduct.NombreProducto = item.PD.NombreProducto;
-                    EDProduct.Descripcion = item.PD.Descripcion;
-                    ListaEDProduct.Add(EDProduct);
+                    EDPresentacion EDPresentacion = new EDPresentacion();
+                    EDPresentacion.PresentationId = item.PD.PresentationId;
+                    EDPresentacion.NombrePresentacion = item.PD.NombrePresentacion;
+                    EDPresentacion.CantPresentacion = item.PD.CantPresentacion;
+                    ListaEDPresentacion.Add(EDPresentacion);
                 }
-                EDProductPresentationPrice.ListaProductos = ListaEDProduct;
             }
-            return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
+            return Json(ListaEDPresentacion, JsonRequestBehavior.AllowGet);
         }
 
 
