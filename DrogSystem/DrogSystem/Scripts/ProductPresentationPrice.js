@@ -260,7 +260,6 @@ function clearTextBox() {
     $('#btnAdd').show();
     $.ajax({
         url: "/ProductPresentationPrices/listaPresentacion",
-        //data: JSON.stringify(nombrePresentacion),
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
