@@ -115,19 +115,19 @@ namespace DrogSystem.Funciones
             {
 
                 var Presentacion = (from s in db.Presentations
-                                    select s).ToList();
-                //Presentacion.Select(o => o.NombrePresentacion).Distinct();
-                var DistinctItems = Presentacion.GroupBy(x => x.NombrePresentacion).Select(y => y.First());
-
-                foreach (var item in DistinctItems)
+                                    group s by s.NombrePresentacion into presenta
+                                    select presenta).ToList();
+                
+                foreach (var item in Presentacion)
                 {
                     EDPresentacion EDPresentacion = new EDPresentacion();
                     //EDPresentacion.PresentationId = item.PresentationId;
-                    EDPresentacion.NombrePresentacion = item.NombrePresentacion;
+                    EDPresentacion.NombrePresentacion = item.Key;
                     //EDPresentacion.CantPresentacion = item.CantPresentacion;
                     ListaEDPresentacion.Add(EDPresentacion);
                 }
             }
+            ListaEDPresentacion = ListaEDPresentacion.OrderBy(o => o.NombrePresentacion).ToList();
             return ListaEDPresentacion;
         }
         public List<EDPresentacion> ListaPresentacion(string NombrePresentacion)
@@ -153,6 +153,7 @@ namespace DrogSystem.Funciones
                 EDPresentacion.CantPresentacion = item.CantPresentacion;
                 ListaEDPresentacion.Add(EDPresentacion);
             }
+            ListaEDPresentacion = ListaEDPresentacion.OrderBy(o => o.CantPresentacion).ToList();
             return ListaEDPresentacion;
 
         }

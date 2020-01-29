@@ -40,22 +40,32 @@ function getbyID(Id) {
         contentType: "application/json;charset=UTF-8",
         dataType: "json",
         success: function (result) {
-            $('#ProductDetailId').val(result.PrecioProductoId);
-            $('#ProductoId').val(result.ProductoId);
+            $('#ProductDetailId').val(result.ProductDetailId);
+            $('#PrecioProductoId').val(result.PrecioProductoId);
             $('#NombreProducto').val(result.NombreProducto);
             $('#CodBarras').val(result.CodBarras);
+            $('#NombreFabricante').val(result.NombreFabricante);
             $('#Precio').val(result.Precio);
             var html = '';
-            $.each(result.ListaFabricantes, function (key, item) {
-                if (result.MarkerId == item.MarkerId) {
-                    html += '<option value="' + item.MarkerId + '" selected>' + item.NombreFabricante + '</option>';
+            $.each(result.ListaNombrePresentacion, function (key, item) {
+                if (result.NombrePresentacion == item.NombrePresentacion) {
+                    html += '<option value="' + item.NombrePresentacion + '" selected>' + item.NombrePresentacion + '</option>';
                 }
                 else {
-                    html += '<option value="' + item.MarkerId + '" >' + item.NombreFabricante + '</option>';
+                    html += '<option value="' + item.NombrePresentacion + '" >' + item.NombrePresentacion + '</option>';
                 }
             });
-            $('#MarkerId').html(html);
-
+            $('#NombrePresentacion').html(html);
+            html = '';
+            $.each(result.ListaPresentacion, function (key, item) {
+                if (result.CantPresentacion == item.CantPresentacion) {
+                    html += '<option value="' + item.PresentationId + '" selected>' + item.CantPresentacion + '</option>';
+                }
+                else {
+                    html += '<option value="' + item.PresentationId + '" >' + item.CantPresentacion + '</option>';
+                }
+            });
+            $('#PresentationId').html(html);
             $('#myModal').modal('show');
             $('#btnUpdate').show();
             $('#btnAdd').hide();
@@ -128,12 +138,10 @@ function Update() {
         return false;
     }
     var userObj = {
+        PrecioProductoId: $('#PrecioProductoId').val(),
         ProductDetailId: $('#ProductDetailId').val(),
-        CodBarras: $('#CodBarras').val(),
-        RegInvima: $('#RegInvima').val(),
-        Existencias: $('#Existencias').val(),
-        ProductoId: $('#ProductoId').val(),
-        MarkerId: $('#MarkerId').val(),
+        PresentationId: $('#PresentationId').val(),
+        Precio: $('#Precio').val(),
     };
     $.ajax({
         url: "/ProductPresentationPrices/Editar",
@@ -178,19 +186,26 @@ function validate() {
     else {
         $('#CodBarras').css('border-color', 'lightgrey');
     }
-    if ($('#Existencias value:selected').val() == "") {
-        $('#Existencias').css('border-color', 'Red');
+    if ($('#NombrePresentacion value:selected').val() == "") {
+        $('#NombrePresentacion').css('border-color', 'Red');
         isValid = false;
     }
     else {
-        $('#Existencias').css('border-color', 'lightgrey');
+        $('#NombrePresentacion').css('border-color', 'lightgrey');
     }
-    if ($('#MarkerId').val().trim() == "") {
-        $('#MarkerId').css('border-color', 'Red');
+    if ($('#PresentationId value:selected').val() == "") {
+        $('#PresentationId').css('border-color', 'Red');
         isValid = false;
     }
     else {
-        $('#MarkerId').css('border-color', 'lightgrey');
+        $('#PresentationId').css('border-color', 'lightgrey');
+    }
+    if ($('#Precio').val().trim() == "") {
+        $('#Precio').css('border-color', 'Red');
+        isValid = false;
+    }
+    else {
+        $('#Precio').css('border-color', 'lightgrey');
     }
     return isValid;
 }
@@ -201,11 +216,10 @@ function Add() {
         return false;
     }
     var userObj = {
-        CodBarras: $('#CodBarras').val(),
-        RegInvima: $('#RegInvima').val(),
-        Existencias: $('#Existencias').val(),
-        ProductoId: $('#ProductoId').val(),
-        MarkerId: $('#MarkerId').val(),
+        PrecioProductoId: $('#PrecioProductoId').val(),
+        ProductDetailId: $('#ProductDetailId').val(),
+        PresentationId: $('#PresentationId').val(),
+        Precio: $('#Precio').val(),
     };
     $.ajax({
         url: "/ProductPresentationPrices/Crear",
@@ -252,7 +266,7 @@ function clearTextBox() {
         dataType: "json",
         success: function (result) {
             var html = '<option value="" selected> Selecione una Opción</option>';
-            $.each(result.ListaEDPresentacion, function (key, item) {
+            $.each(result, function (key, item) {
                 html += '<option value=' + item.NombrePresentacion + ' >' + item.NombrePresentacion + '</option>';
             });
             $('#NombrePresentacion').html(html);
@@ -270,15 +284,16 @@ function clearBuscar() {
 }
 
 function buscar(nombrePresentacion) {
+
     $.ajax({
-        url: "/ProductPresentationPrices/BuscarXNombrePresentation/",
-        data: JSON.stringify(nombrePresentacion),
+        url: "/ProductPresentationPrices/BuscarXNombrePresentation",
+        data: '{presentacion: "' + nombrePresentacion + '" }',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
             var html = '<option value="" selected> Selecione una Opción</option>';
-            $.each(result.ListaEDPresentacion, function (key, item) {
+            $.each(result, function (key, item) {
                 html += '<option value="' + item.PresentationId + '" >' + item.CantPresentacion + '</option>';
                 });
             $('#PresentationId').html(html);
@@ -287,4 +302,37 @@ function buscar(nombrePresentacion) {
             alert(errormessage.responseText);
         }
     });
+}
+
+function buscarProduct() {
+    var CodBarra = $('#CodBarras').val();
+    if (CodBarra.length == 13) {
+        $.ajax({
+            url: "/ProductPresentationPrices/BuscarProducto",
+            data: '{CodBarras: "' + CodBarra + '" }',
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $('#ProductDetailId').val(result.ProductDetailId);
+                $('#NombreProducto').val(result.NombreProducto);
+                $('#NombreFabricante').val(result.NombreFabricante);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+    else {
+        swal.fire({
+            title: "Estimado Usuario",
+            text: "El codigo de barras debe tener una longitud de 13 caracteres.",
+            icon: 'info',
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Aceptar",
+        });
+        return false;
+
+    }
 }

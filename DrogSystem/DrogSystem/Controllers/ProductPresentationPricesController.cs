@@ -203,6 +203,32 @@ namespace DrogSystem.Controllers
             return Json(ListaEDPresentacion, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult BuscarProducto(string CodBarras)
+        {
+            var ProductoDetalle = (from PD in db.ProductDetails
+                                   join P in db.Products on PD.ProductoId equals P.ProductoId
+                                   join M in db.Markers on PD.MarkerId equals M.MarkerId
+                                   where PD.CodBarras == CodBarras
+                                   select new { PD, P, M }).ToList();
+
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            if (ProductoDetalle != null)
+            {
+                foreach (var item in ProductoDetalle)
+                {
+                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
+                    EDProductDetail.CodBarras = item.PD.CodBarras;
+                    EDProductDetail.RegInvima = item.PD.RegInvima;
+                    EDProductDetail.Existencias = item.PD.Existencias;
+                    EDProductDetail.ProductoId = item.PD.ProductoId;
+                    EDProductDetail.NombreProducto = item.P.NombreProducto;
+                    EDProductDetail.MarkerId = item.PD.MarkerId;
+                    EDProductDetail.NombreFabricante = item.M.NombreFabricante;
+                }
+            }
+            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: ProductPresentationPrices/Details/5
         public ActionResult Details(int? id)
