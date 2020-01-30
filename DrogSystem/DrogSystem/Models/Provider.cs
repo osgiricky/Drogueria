@@ -21,8 +21,9 @@ namespace DrogSystem.Models
         [MaxLength(30)]
         public string Codtercero { get; set; }
 
-        public int ProviderTypeId { get; set; }
-        public virtual ProviderType ProviderTypes { get; set; }
+        [Required]
+        [MaxLength(1)]
+        public string TipoTercero { get; set; }
 
 
         public virtual ICollection<PaymentProvider> PaymentProvider { get; set; }

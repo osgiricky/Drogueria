@@ -26,8 +26,7 @@ namespace DrogSystem.Controllers
         {
             List<EDProvider> EDProviderLista = new List<EDProvider>();
             var Listaux = (from u in db.Providers
-                           join ut in db.ProviderTypes on u.ProviderTypeId equals ut.ProviderTypeId
-                           select new { u, ut }).ToList();
+                          select new { u }).ToList();
             if (Listaux != null)
             {
                 foreach (var item in Listaux)
@@ -36,7 +35,7 @@ namespace DrogSystem.Controllers
                     EDprovider.TerceroId = item.u.TerceroId;
                     EDprovider.NombreTercero = item.u.NombreTercero;
                     EDprovider.Codtercero = item.u.Codtercero;
-                    EDprovider.TipoTercero = item.ut.TipoTercero;
+                    EDprovider.TipoTercero = item.u.TipoTercero;
                     EDProviderLista.Add(EDprovider);
                 }
             }
@@ -54,7 +53,7 @@ namespace DrogSystem.Controllers
                 EDprovider.TerceroId = Provider.TerceroId;
                 EDprovider.NombreTercero = Provider.NombreTercero;
                 EDprovider.Codtercero = Provider.Codtercero;
-                EDprovider.ProviderTypeId = Provider.ProviderTypeId;
+                //EDprovider.ProviderTypeId = Provider.ProviderTypeId;
                 EDProviderType providerdescrip = ListaTipos.Find(u => u.ProviderTypeId == EDprovider.ProviderTypeId);
                 EDprovider.TipoTercero = providerdescrip.TipoTercero;
                 EDprovider.ListaTipoTercero = ListaTipos;

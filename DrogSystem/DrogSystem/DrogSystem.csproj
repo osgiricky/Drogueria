@@ -215,7 +215,6 @@
     <Compile Include="Controllers\ProductPresentationPricesController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ProvidersController.cs" />
-    <Compile Include="Controllers\ProviderTypesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Controllers\UserTypesController.cs" />
     <Compile Include="EntidadesDominio\EDMarker.cs" />
@@ -225,7 +224,6 @@
     <Compile Include="EntidadesDominio\EDProductDetail.cs" />
     <Compile Include="EntidadesDominio\EDProductPresentationPrice.cs" />
     <Compile Include="EntidadesDominio\EDProvider.cs" />
-    <Compile Include="EntidadesDominio\EDProviderType.cs" />
     <Compile Include="EntidadesDominio\EDUser.cs" />
     <Compile Include="EntidadesDominio\EDUserType.cs" />
     <Compile Include="Funciones\FuncUsuarios.cs" />
@@ -236,7 +234,6 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Entry.cs" />
     <Compile Include="Models\EntryDetail.cs" />
-    <Compile Include="Models\ProviderType.cs" />
     <Compile Include="Models\Sale.cs" />
     <Compile Include="Models\ProductDetail.cs" />
     <Compile Include="Models\DrogSystemContext.cs" />
@@ -422,11 +419,6 @@
     <Content Include="Views\ProductPresentationPrices\Details.cshtml" />
     <Content Include="Views\ProductPresentationPrices\Edit.cshtml" />
     <Content Include="Views\ProductPresentationPrices\Index.cshtml" />
-    <Content Include="Views\ProviderTypes\Create.cshtml" />
-    <Content Include="Views\ProviderTypes\Delete.cshtml" />
-    <Content Include="Views\ProviderTypes\Details.cshtml" />
-    <Content Include="Views\ProviderTypes\Edit.cshtml" />
-    <Content Include="Views\ProviderTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
