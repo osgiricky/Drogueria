@@ -10,6 +10,7 @@
 <script src="~/Scripts/Provider.js"></script>
 
 <div class="container">
+    <br>
     <h2>Listado de Terceros</h2>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Tercero</button><br /><br />
     <table class="table table-bordered table-hover">
@@ -57,9 +58,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="ProviderTypeId" class="col-md-4 col-form-label">Tipo de Tercero</label>
+                        <label for="TipoTercero" class="col-md-4 col-form-label">Es Proveedor</label>
                         <div class="col-md-8">
-                            <select class="form-control" id="ProviderTypeId"></select>
+                            <label for="P"> Si </label>
+                            <input type="radio" name="TipoTercero" id="P" value="P">
+                            <label for="O"> No </label>
+                            <input type="radio" name="TipoTercero" id="O" value="O">
                         </div>
                     </div>
                 </form>
@@ -72,28 +76,6 @@
         </div>
     </div>
     <hr>
-    <h2>Detalle del Producto</h2>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Detalle</button><br /><br />
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>
-                    <center>Tercero</center>
-                </th>
-                <th>
-                    <center>Identificación Tercero</center>
-                </th>
-                <th>
-                    <center>Tipo de Tercero</center>
-                </th>
-                <th>
-                    <center>Operación</center>
-                </th>
-            </tr>
-        </thead>
-        <tbody class="tbody1"></tbody>
-    </table>
-
 </div>
 
 

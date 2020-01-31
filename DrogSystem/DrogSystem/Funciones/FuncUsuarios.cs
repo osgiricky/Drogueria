@@ -31,30 +31,30 @@ namespace DrogSystem.Funciones
             return ListaEDUserType;
         }
 
-        public List<EDProviderType> ListaTiposTerceros()
-        {
-            List<EDProviderType> ListaEDTipoTercero = new List<EDProviderType>();
-            List<ProviderType> ListaProviderType = new List<ProviderType>();
-            using (DrogSystemContext db = new DrogSystemContext())
-            {
+        //public List<EDProviderType> ListaTiposTerceros()
+        //{
+        //    List<EDProviderType> ListaEDTipoTercero = new List<EDProviderType>();
+        //    List<ProviderType> ListaProviderType = new List<ProviderType>();
+        //    using (DrogSystemContext db = new DrogSystemContext())
+        //    {
 
-                var Terceros = (from s in db.ProviderTypes
-                              select s).ToList<ProviderType>();
-                if (Terceros != null)
-                {
-                    ListaProviderType = Terceros;
-                }
-            }
-            foreach (var item in ListaProviderType)
-            {
-                EDProviderType EDProviderType = new EDProviderType();
-                EDProviderType.ProviderTypeId = item.ProviderTypeId;
-                EDProviderType.TipoTercero = item.TipoTercero;
-                ListaEDTipoTercero.Add(EDProviderType);
-            }
-            ListaEDTipoTercero = ListaEDTipoTercero.OrderBy(o => o.TipoTercero).ToList();
-            return ListaEDTipoTercero;
-        }
+        //        var Terceros = (from s in db.ProviderTypes
+        //                      select s).ToList<ProviderType>();
+        //        if (Terceros != null)
+        //        {
+        //            ListaProviderType = Terceros;
+        //        }
+        //    }
+        //    foreach (var item in ListaProviderType)
+        //    {
+        //        EDProviderType EDProviderType = new EDProviderType();
+        //        EDProviderType.ProviderTypeId = item.ProviderTypeId;
+        //        EDProviderType.TipoTercero = item.TipoTercero;
+        //        ListaEDTipoTercero.Add(EDProviderType);
+        //    }
+        //    ListaEDTipoTercero = ListaEDTipoTercero.OrderBy(o => o.TipoTercero).ToList();
+        //    return ListaEDTipoTercero;
+        //}
 
         public List<EDProvider> ListaTerceros()
         {

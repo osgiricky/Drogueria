@@ -47,16 +47,10 @@ namespace DrogSystem.Controllers
             EDProvider EDprovider = new EDProvider();
             if (Provider != null)
             {
-                FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                List<EDProviderType> ListaTipos = new List<EDProviderType>();
-                ListaTipos = FuncUsuarios.ListaTiposTerceros();
                 EDprovider.TerceroId = Provider.TerceroId;
                 EDprovider.NombreTercero = Provider.NombreTercero;
                 EDprovider.Codtercero = Provider.Codtercero;
-                //EDprovider.ProviderTypeId = Provider.ProviderTypeId;
-                EDProviderType providerdescrip = ListaTipos.Find(u => u.ProviderTypeId == EDprovider.ProviderTypeId);
-                EDprovider.TipoTercero = providerdescrip.TipoTercero;
-                EDprovider.ListaTipoTercero = ListaTipos;
+                EDprovider.TipoTercero = Provider.TipoTercero;
             }
             return Json(EDprovider, JsonRequestBehavior.AllowGet);
         }
@@ -98,7 +92,7 @@ namespace DrogSystem.Controllers
             EDProvider.TerceroId = proveedor.TerceroId;
             EDProvider.NombreTercero = proveedor.NombreTercero;
             EDProvider.Codtercero = proveedor.Codtercero;
-            EDProvider.ProviderTypeId = proveedor.ProviderTypeId;
+            EDProvider.TipoTercero = proveedor.TipoTercero;
 
             Provider provider = db.Providers.Find(EDProvider.TerceroId);
             if (provider == null)
@@ -112,7 +106,7 @@ namespace DrogSystem.Controllers
                 {
                     provider.NombreTercero = EDProvider.NombreTercero;
                     provider.Codtercero = EDProvider.Codtercero;
-                    provider.ProviderTypeId = EDProvider.ProviderTypeId;
+                    provider.TipoTercero = EDProvider.TipoTercero;
                     db.Entry(provider).State = EntityState.Modified;
                     db.SaveChanges();
                     Mensaje = " Registro modificado con exito.";
@@ -136,13 +130,13 @@ namespace DrogSystem.Controllers
             EDProvider.TerceroId = proveedor.TerceroId;
             EDProvider.NombreTercero = proveedor.NombreTercero;
             EDProvider.Codtercero = proveedor.Codtercero;
-            EDProvider.ProviderTypeId = proveedor.ProviderTypeId;
+            EDProvider.TipoTercero = proveedor.TipoTercero;
             try
             {
                 Provider provider = new Provider();
                 provider.NombreTercero = EDProvider.NombreTercero;
                 provider.Codtercero = EDProvider.Codtercero;
-                provider.ProviderTypeId = EDProvider.ProviderTypeId;
+                provider.TipoTercero = EDProvider.TipoTercero;
                 db.Providers.Add(provider);
                 db.SaveChanges();
                 Mensaje = " Registro modificado con exito.";
@@ -158,13 +152,13 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult listatipos()
-        {
-            FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            List<EDProviderType> ListaTipos = new List<EDProviderType>();
-            ListaTipos = FuncUsuarios.ListaTiposTerceros();
-            return Json(ListaTipos, JsonRequestBehavior.AllowGet);
-        }
+        //public JsonResult listatipos()
+        //{
+        //    FuncUsuarios FuncUsuarios = new FuncUsuarios();
+        //    List<EDProviderType> ListaTipos = new List<EDProviderType>();
+        //    ListaTipos = FuncUsuarios.ListaTiposTerceros();
+        //    return Json(ListaTipos, JsonRequestBehavior.AllowGet);
+        //}
 
         // GET: Providers/Details/5
         public ActionResult Details(int? id)

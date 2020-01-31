@@ -11,11 +11,19 @@ function loadData() {
         dataType: "json",
         success: function (result) {
             var html = '';
+            var tercero;
             $.each(result, function (key, item) {
+                tercero = '';
+                if (item.TipoTercero == "P") {
+                    tercero = 'Proveedor';
+                }
+                else if (item.TipoTercero == "O") {
+                    tercero = 'Otro';;
+                }
                 html += '<tr>';
                 html += '<td>' + item.NombreTercero + '</td>';
                 html += '<td>' + item.Codtercero + '</td>';
-                html += '<td>' + item.TipoTercero + '</td>';
+                html += '<td>' + tercero + '</td>';
                 html += '<td><center><a href="#" onclick="return getbyID(' + item.TerceroId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.TerceroId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
@@ -41,16 +49,14 @@ function getbyID(TerceroId) {
             $('#TerceroId').val(result.TerceroId);
             $('#NombreTercero').val(result.NombreTercero);
             $('#Codtercero').val(result.Codtercero);
-            var html = '';
-            $.each(result.ListaTipoTercero, function (key, item) {
-                if (result.ProviderTypeId == item.ProviderTypeId) {
-                    html += '<option value="' + item.ProviderTypeId + '" selected>' + item.TipoTercero + '</option>';
-                }
-                else {
-                    html += '<option value="' + item.ProviderTypeId + '" >' + item.TipoTercero + '</option>';
-                }
-            });
-            $('#ProviderTypeId').html(html);
+            if (result.TipoTercero == "P") {
+                $('#O').attr('checked', false);
+                $('#P').attr('checked', true);
+            }
+            else if (result.TipoTercero == "O") {
+                $('#P').attr('checked', false);
+                $('#O').attr('checked', true);
+            }
 
             $('#myModal').modal('show');
             $('#btnUpdate').show();
@@ -124,11 +130,18 @@ function Update() {
         });
         return false;
     }
+    var tipotercero = '';
+    if (document.getElementsByName('TipoTercero')[0].checked) {
+        tipotercero = 'P';
+    }
+    else if (document.getElementsByName('TipoTercero')[1].checked) {
+        tipotercero = 'O';
+    }
     var userObj = {
         TerceroId: $('#TerceroId').val(),
         NombreTercero: $('#NombreTercero').val(),
         Codtercero: $('#Codtercero').val(),
-        ProviderTypeId: $('#ProviderTypeId').val(),
+        TipoTercero: tipotercero,
     };
     $.ajax({
         url: "/Providers/Editar",

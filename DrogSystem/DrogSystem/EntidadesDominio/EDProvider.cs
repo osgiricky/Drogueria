@@ -11,5 +11,6 @@ namespace DrogSystem.EntidadesDominio
         public string NombreTercero { get; set; }
         public string Codtercero { get; set; }
         public string TipoTercero { get; set; }
+
     }
 }
