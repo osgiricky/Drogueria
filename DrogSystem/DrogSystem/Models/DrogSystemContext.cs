@@ -29,8 +29,6 @@ namespace DrogSystem.Models
 
         public System.Data.Entity.DbSet<DrogSystem.Models.User> Users { get; set; }
 
-        public System.Data.Entity.DbSet<DrogSystem.Models.UserType> UserTypes { get; set; }
-
         public System.Data.Entity.DbSet<DrogSystem.Models.Provider> Providers { get; set; }
 
         public System.Data.Entity.DbSet<DrogSystem.Models.PaymentProvider> PaymentProviders { get; set; }

@@ -11,11 +11,19 @@ function loadData() {
         dataType: "json",
         success: function (result) {
             var html = '';
+            var usuario;
             $.each(result, function (key, item) {
+                usuario = '';
+                if (item.TipoUsuario == "A") {
+                    usuario = 'Administrador';
+                }
+                else if (item.TipoUsuario == "O") {
+                    usuario = 'Otro';;
+                }
                 html += '<tr>';
                 html += '<td>' + item.Nombre + '</td>';
                 html += '<td>' + item.CodUsuario + '</td>';
-                html += '<td>' + item.Descripcion + '</td>';
+                html += '<td>' + usuario + '</td>';
                 html += '<td><center><a href="#" onclick="return getbyID(' + item.UsuarioId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.UsuarioId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
@@ -42,16 +50,14 @@ function getbyID(UsuarioId) {
             $('#Nombre').val(result.Nombre);
             $('#Clave').val(result.Clave);
             $('#CodUsuario').val(result.CodUsuario);
-            var html = '';
-            $.each(result.ListaTipoUsuario, function (key, item) {
-                if (result.TipoUsuarioId == item.TipoUsuarioId) {
-                    html += '<option value="' + item.TipoUsuarioId + '" selected>' + item.Descripcion + '</option>';
-                }
-                else {
-                    html += '<option value="' + item.TipoUsuarioId + '" >' + item.Descripcion + '</option>';
-                }
-            });
-            $('#TipoUsuarioId').html(html);
+            if (result.TipoUsuario == "A") {
+                $('#O').attr('checked', false);
+                $('#A').attr('checked', true);
+            }
+            else if (result.TipoUsuario == "O") {
+                $('#A').attr('checked', false);
+                $('#O').attr('checked', true);
+            }
 
             $('#myModal').modal('show');
             $('#btnUpdate').show();
@@ -125,12 +131,19 @@ function Update() {
         });
         return false;
     }
+    var tipousuario = '';
+    if (document.getElementsByName('TipoUsuario')[0].checked) {
+        tipousuario = 'A';
+    }
+    else if (document.getElementsByName('TipoUsuario')[1].checked) {
+        tipousuario = 'O';
+    }
     var userObj = {
         UsuarioId: $('#UsuarioId').val(),
         CodUsuario: $('#CodUsuario').val(),
         Nombre: $('#Nombre').val(),
         Clave: $('#Clave').val(),
-        TipoUsuarioId: $('#TipoUsuarioId').val(),
+        TipoUsuario: tipousuario,
     };
     $.ajax({
         url: "/Users/Editar",
@@ -188,13 +201,6 @@ function validate() {
     else {
         $('#Clave').css('border-color', 'lightgrey');
     }
-    if ($('#TipoUsuarioId value:selected').val() == "") {
-        $('#TipoUsuarioId').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#TipoUsuarioId').css('border-color', 'lightgrey');
-    }
     return isValid;
 }
 
@@ -203,12 +209,19 @@ function Add() {
     if (res == false) {
         return false;
     }
+    var tipousuario = '';
+    if (document.getElementsByName('TipoUsuario')[0].checked) {
+        tipousuario = 'A';
+    }
+    else if (document.getElementsByName('TipoUsuario')[1].checked) {
+        tipousuario = 'O';
+    }
     var userObj = {
         UsuarioId: $('#UsuarioId').val(),
         CodUsuario: $('#CodUsuario').val(),
         Nombre: $('#Nombre').val(),
         Clave: $('#Clave').val(),
-        TipoUsuarioId: $('#TipoUsuarioId').val(),
+        TipoUsuario: tipousuario,
     };
     $.ajax({
         url: "/Users/Crear",
@@ -223,7 +236,6 @@ function Add() {
             $('#Nombre').val("");
             $('#Clave').val("");
             $('#CodUsuario').val("");
-            $('#TipoUsuarioId').html("");
             $('.modal-backdrop').remove();
         },
         error: function (errormessage) {
@@ -237,28 +249,12 @@ function clearTextBox() {
     $('#Nombre').val("");
     $('#Clave').val("");
     $('#CodUsuario').val("");
-    $('#TipoUsuarioId').html("");
     $('#Nombre').css('border-color', 'lightgrey');
     $('#Clave').css('border-color', 'lightgrey');
     $('#CodUsuario').css('border-color', 'lightgrey');
-    $('#TipoUsuarioId').css('border-color', 'lightgrey');
     $('#btnUpdate').hide();
     $('#btnAdd').show();
-    $.ajax({
-        url: "/Users/listatipos/",
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
-        dataType: "json",
-        success: function (result) {
-            var html = html += '<option value="" selected> Selecione una Opción</option>';;
-            $.each(result, function (key, item) {
-                html += '<option value="' + item.TipoUsuarioId + '" >' + item.Descripcion + '</option>';
-            });
-            $('#TipoUsuarioId').html(html);            
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
+    $('#A').attr('checked', false);
+    $('#O').attr('checked', true);
    
 }

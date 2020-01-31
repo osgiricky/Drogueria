@@ -25,9 +25,11 @@ namespace DrogSystem.Models
         [MaxLength(30)]
         public string Clave { get; set; }
 
+        [Required()]
         [DisplayName("Tipo Usuario")]
-        public int TipoUsuarioId { get; set; }
+        [MaxLength(1)]
+        public string TipoUsuario { get; set; }
 
-        public virtual UserType UserType { get; set; }
+
     }
 }

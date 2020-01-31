@@ -26,19 +26,17 @@ namespace DrogSystem.Controllers
         {
             List<EDUser> EDUserLista = new List<EDUser>();
             var Listaux = (from u in db.Users
-                           join ut in db.UserTypes on u.TipoUsuarioId equals ut.TipoUsuarioId
-                           select new { u, ut }).ToList();
+                           select  u).ToList();
             if (Listaux != null)
             {
                 foreach (var item in Listaux)
                 {
                     EDUser EDUser = new EDUser();
-                    EDUser.UsuarioId = item.u.UsuarioId;
-                    EDUser.CodUsuario = item.u.CodUsuario;
-                    EDUser.Nombre = item.u.Nombre;
-                    EDUser.Clave = item.u.Clave;
-                    EDUser.TipoUsuarioId = item.u.TipoUsuarioId;
-                    EDUser.Descripcion = item.ut.Descripcion;
+                    EDUser.UsuarioId = item.UsuarioId;
+                    EDUser.CodUsuario = item.CodUsuario;
+                    EDUser.Nombre = item.Nombre;
+                    EDUser.Clave = item.Clave;
+                    EDUser.TipoUsuario = item.TipoUsuario;
                     EDUserLista.Add(EDUser);
                 }
             }
@@ -50,17 +48,11 @@ namespace DrogSystem.Controllers
             EDUser EDUsuario = new EDUser();
             if (user != null)
             {
-                FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                List<EDUserType> ListaTipos = new List<EDUserType>();
-                ListaTipos = FuncUsuarios.ListaTiposUsuario();
                 EDUsuario.UsuarioId = user.UsuarioId;
                 EDUsuario.CodUsuario = user.CodUsuario;
                 EDUsuario.Nombre = user.Nombre;
                 EDUsuario.Clave = user.Clave;
-                EDUsuario.TipoUsuarioId = user.TipoUsuarioId;
-                EDUserType userdescrip = ListaTipos.Find(u => u.TipoUsuarioId == EDUsuario.TipoUsuarioId);
-                EDUsuario.Descripcion = userdescrip.Descripcion;
-                EDUsuario.ListaTipoUsuario = ListaTipos;
+                EDUsuario.TipoUsuario = user.TipoUsuario;
             }
             return Json(EDUsuario, JsonRequestBehavior.AllowGet);
         }
@@ -103,7 +95,7 @@ namespace DrogSystem.Controllers
             EDUser.CodUsuario = usuario.CodUsuario;
             EDUser.Nombre = usuario.Nombre;
             EDUser.Clave = usuario.Clave;
-            EDUser.TipoUsuarioId = usuario.TipoUsuarioId;
+            EDUser.TipoUsuario = usuario.TipoUsuario;
 
             User user = db.Users.Find(EDUser.UsuarioId);
             if (user == null)
@@ -118,7 +110,7 @@ namespace DrogSystem.Controllers
                     user.CodUsuario = EDUser.CodUsuario;
                     user.Nombre = EDUser.Nombre;
                     user.Clave = EDUser.Clave;
-                    user.TipoUsuarioId = EDUser.TipoUsuarioId;
+                    user.TipoUsuario = EDUser.TipoUsuario;
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                     Mensaje = " Registro modificado con exito.";
@@ -143,14 +135,14 @@ namespace DrogSystem.Controllers
             EDUser.CodUsuario = usuario.CodUsuario;
             EDUser.Nombre = usuario.Nombre;
             EDUser.Clave = usuario.Clave;
-            EDUser.TipoUsuarioId = usuario.TipoUsuarioId;
+            EDUser.TipoUsuario = usuario.TipoUsuario;
             try
             {
                 User user = new User();
                 user.CodUsuario = EDUser.CodUsuario;
                 user.Nombre = EDUser.Nombre;
                 user.Clave = EDUser.Clave;
-                user.TipoUsuarioId = EDUser.TipoUsuarioId;
+                user.TipoUsuario = EDUser.TipoUsuario;
                 db.Users.Add(user);
                 db.SaveChanges();
                 Mensaje = " Registro modificado con exito.";
@@ -165,15 +157,6 @@ namespace DrogSystem.Controllers
 
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
-
-        public JsonResult listatipos()
-        {
-            FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            List<EDUserType> ListaTipos = new List<EDUserType>();
-            ListaTipos = FuncUsuarios.ListaTiposUsuario();            
-            return Json(ListaTipos, JsonRequestBehavior.AllowGet);
-        }
-
 
         // GET: Users/Details/5
         public ActionResult Details(int? id)
@@ -193,7 +176,7 @@ namespace DrogSystem.Controllers
         // GET: Users/Create
         public ActionResult Create()
         {
-            ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion");
+            //ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion");
             return View();
         }
 
@@ -211,7 +194,7 @@ namespace DrogSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
+            //ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
             return View(user);
         }
 
@@ -227,7 +210,7 @@ namespace DrogSystem.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
+            //ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
             return View(user);
         }
 
@@ -244,7 +227,7 @@ namespace DrogSystem.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
+            //ViewBag.TipoUsuarioId = new SelectList(db.UserTypes, "TipoUsuarioId", "Descripcion", user.TipoUsuarioId);
             return View(user);
         }
 

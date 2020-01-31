@@ -191,13 +191,6 @@ function validate() {
     else {
         $('#Codtercero').css('border-color', 'lightgrey');
     }
-    if ($('#ProviderTypeId value:selected').val() == "") {
-        $('#ProviderTypeId').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#ProviderTypeId').css('border-color', 'lightgrey');
-    }
     return isValid;
 }
 
@@ -206,11 +199,18 @@ function Add() {
     if (res == false) {
         return false;
     }
+    var tipotercero = '';
+    if (document.getElementsByName('TipoTercero')[0].checked) {
+        tipotercero = 'P';
+    }
+    else if (document.getElementsByName('TipoTercero')[1].checked) {
+        tipotercero = 'O';
+    }
     var userObj = {
         TerceroId: $('#TerceroId').val(),
         NombreTercero: $('#NombreTercero').val(),
         Codtercero: $('#Codtercero').val(),
-        ProviderTypeId: $('#ProviderTypeId').val(),
+        TipoTercero: tipotercero,
     };
     $.ajax({
         url: "/Providers/Crear",
@@ -224,7 +224,6 @@ function Add() {
             $('#TerceroId').val("");
             $('#NombreTercero').val("");
             $('#Codtercero').val("");
-            $('#ProviderTypeId').html("");
             $('.modal-backdrop').remove();
         },
         error: function (errormessage) {
@@ -238,28 +237,11 @@ function clearTextBox() {
     $('#TerceroId').val("");
     $('#NombreTercero').val("");
     $('#Codtercero').val("");
-    $('#ProviderTypeId').html("");
     $('#NombreTercero').css('border-color', 'lightgrey');
     $('#Codtercero').css('border-color', 'lightgrey');
-    $('#ProviderTypeId').css('border-color', 'lightgrey');
     $('#btnUpdate').hide();
     $('#btnAdd').show();
-    $.ajax({
-        url: "/Providers/listatipos/",
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
-        dataType: "json",
-        success: function (result) {
-            var html = html += '<option value="" selected> Selecione una Opción</option>';;
-            $.each(result, function (key, item) {
-                html += '<option value="' + item.ProviderTypeId + '" >' + item.TipoTercero + '</option>';
-            });
-            $('#ProviderTypeId').html(html);
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
+    $('#P').attr('checked', false);
+    $('#O').attr('checked', true);
     $('#myModal').modal('show');
-
 }

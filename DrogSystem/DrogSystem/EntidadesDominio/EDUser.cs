@@ -12,9 +12,7 @@ namespace DrogSystem.EntidadesDominio
         public string CodUsuario { get; set; }
         public string Nombre { get; set; }
         public string Clave { get; set; }
-        public int TipoUsuarioId { get; set; }
-        public string Descripcion { get; set; }
-        public List<EDUserType> ListaTipoUsuario { get; set; } 
+        public string TipoUsuario { get; set; } 
 
     }
 }
