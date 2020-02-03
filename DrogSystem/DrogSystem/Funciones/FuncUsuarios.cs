@@ -7,30 +7,31 @@ namespace DrogSystem.Funciones
 {
     public class FuncUsuarios
     {
-        //public List<EDProviderType> ListaTiposTerceros()
-        //{
-        //    List<EDProviderType> ListaEDTipoTercero = new List<EDProviderType>();
-        //    List<ProviderType> ListaProviderType = new List<ProviderType>();
-        //    using (DrogSystemContext db = new DrogSystemContext())
-        //    {
+        public List<EDProvider> ListaProveedores()
+        {
+            List<Provider> ListaProveedores = new List<Provider>();
+            List<EDProvider> ListaEDProveedores = new List<EDProvider>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
 
-        //        var Terceros = (from s in db.ProviderTypes
-        //                      select s).ToList<ProviderType>();
-        //        if (Terceros != null)
-        //        {
-        //            ListaProviderType = Terceros;
-        //        }
-        //    }
-        //    foreach (var item in ListaProviderType)
-        //    {
-        //        EDProviderType EDProviderType = new EDProviderType();
-        //        EDProviderType.ProviderTypeId = item.ProviderTypeId;
-        //        EDProviderType.TipoTercero = item.TipoTercero;
-        //        ListaEDTipoTercero.Add(EDProviderType);
-        //    }
-        //    ListaEDTipoTercero = ListaEDTipoTercero.OrderBy(o => o.TipoTercero).ToList();
-        //    return ListaEDTipoTercero;
-        //}
+                var Proveedor = (from s in db.Providers
+                                where s.TipoTercero == "P"
+                                select s).ToList();
+                if (Proveedor != null)
+                {
+                    ListaProveedores = Proveedor;
+                }
+            }
+            foreach (var item in ListaProveedores)
+            {
+                EDProvider EDProvider = new EDProvider();
+                EDProvider.TerceroId = item.TerceroId;
+                EDProvider.NombreTercero = item.NombreTercero;
+                ListaEDProveedores.Add(EDProvider);
+            }
+            ListaEDProveedores = ListaEDProveedores.OrderBy(o => o.NombreTercero).ToList();
+            return ListaEDProveedores;
+        }
 
         public List<EDProvider> ListaTerceros()
         {
