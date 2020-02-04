@@ -1,6 +1,6 @@
-﻿@model DrogSystem.EntidadesDominio.EDPaymentProvider
+﻿@model DrogSystem.EntidadesDominio.EDEntry
 @{
-    ViewBag.Title = "Pago Terceros";
+    ViewBag.Title = "Entrada de Productos";
 }
 
 <link href="~/Content/bootstrap.css" rel="stylesheet" />
@@ -12,8 +12,30 @@
 
 
 <div class="container">
-    <h2>Listado de Pagos a Terceros</h2>
+    <h2>Proveedor</h2>
+    <div class="form-group row">
+        <label for="Fecha_Pago" class="col-md-4 col-form-label">Fecha Pago</label>
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="Fecha_Ingreso" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="TerceroId" class="col-md-4 col-form-label">Proveedor</label>
+        <div class="col-md-8">
+            <select class="form-control" id="TerceroId"></select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="TipoUsuario" class="col-md-4 col-form-label">Ingreso Aprobado</label>
+        <div class="col-md-8">
+            <label for="N">  No  </label>
+            <input type="radio" name="TipoUsuario" id="N" value="N">
+            <label for="S">  Si  </label>
+            <input type="radio" name="TipoUsuario" id="S" value="S">
+        </div>
+    </div>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
+    <h2>Listado de Productos a Ingresar</h2>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>
@@ -49,7 +71,7 @@
                     <div class="form-group row">
                         <label for="Id_Pago" id="IdPagoText" class="col-md-4 col-form-label">Pago Número</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Id_Pago" placeholder="Id" disabled ="disabled"/>
+                            <input type="text" class="form-control" id="Id_Pago" placeholder="Id" disabled="disabled" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -73,7 +95,7 @@
                     <div class="form-group row">
                         <label for="Observacion" class="col-md-4 col-form-label">Observaciones</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" id="Observacion" placeholder="Observaciones" > </textarea>
+                            <textarea class="form-control" id="Observacion" placeholder="Observaciones"> </textarea>
                         </div>
                     </div>
                 </form>
@@ -111,3 +133,5 @@
         dateFormat: "dd/mm/yy",
     });
 </script>
+
+

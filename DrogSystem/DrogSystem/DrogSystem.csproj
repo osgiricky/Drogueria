@@ -206,6 +206,7 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EntryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MarkersController.cs" />
@@ -216,6 +217,8 @@
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\ProvidersController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="EntidadesDominio\EDEntry.cs" />
+    <Compile Include="EntidadesDominio\EDEntryDetails.cs" />
     <Compile Include="EntidadesDominio\EDMarker.cs" />
     <Compile Include="EntidadesDominio\EDPaymentProvider.cs" />
     <Compile Include="EntidadesDominio\EDPresentacion.cs" />
@@ -415,6 +418,7 @@
     <Content Include="Views\ProductPresentationPrices\Details.cshtml" />
     <Content Include="Views\ProductPresentationPrices\Edit.cshtml" />
     <Content Include="Views\ProductPresentationPrices\Index.cshtml" />
+    <Content Include="Views\Entry\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

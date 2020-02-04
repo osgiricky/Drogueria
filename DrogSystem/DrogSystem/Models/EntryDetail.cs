@@ -20,17 +20,10 @@ namespace DrogSystem.Models
         [DisplayName("Cantidad")]
         public int Cantidad { get; set; }
 
-        [Required()]
         [DisplayName("Lote")]
         [MaxLength(15)]
         public string Lote { get; set; }
 
-        [DisplayName("Registro Invima")]
-        [MaxLength(30)]
-        public string RegInvima { get; set; }
-
-
-        [Required()]
         [DisplayName("Fecha Vencimiento")]
         [MaxLength(15)]
         public DateTime FechaVence { get; set; }
