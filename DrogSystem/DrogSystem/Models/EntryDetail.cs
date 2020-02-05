@@ -8,7 +8,7 @@ using System.Web;
 
 namespace DrogSystem.Models
 {
-    [Table("Entradas")]
+    [Table("EntradaDetalle")]
 
     public class EntryDetail
     {
@@ -25,14 +25,13 @@ namespace DrogSystem.Models
         public string Lote { get; set; }
 
         [DisplayName("Fecha Vencimiento")]
-        [MaxLength(15)]
         public DateTime FechaVence { get; set; }
-        public int EntryId { get; set; }
 
-        public int ProductDetailId { get; set; }
-
+        public int EntradaId { get; set; }
         public virtual Entry Entry { get; set; }
-        public virtual ProductDetail ProductDetail { get; set; }
+
+        public int ProductDetailId { get; set; }       
+        public virtual ProductDetail ProductDetails { get; set; }
         
     }
 }

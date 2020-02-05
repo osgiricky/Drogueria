@@ -13,55 +13,55 @@
 
 <div class="container">
     <br>
-        <h2>Proveedor</h2>
-        <div class="form-row">
-            <input type="text" class="form-control" id="EntryId" placeholder="Id" style="visibility:hidden" />
+    <h2>Proveedor</h2>
+    <div class="form-row">
+        <input type="text" class="form-control" id="EntryId" placeholder="Id" style="visibility:hidden" />
+    </div>
+    <div class="form-group row">
+        <label for="FechaIngreso" class="col-md-4 col-form-label">Fecha de Ingreso</label>
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="FechaIngreso" />
         </div>
-        <div class="form-group row">
-            <label for="FechaIngreso" class="col-md-4 col-form-label">Fecha de Ingreso</label>
-            <div class="col-md-8">
-                <input type="text" class="form-control" id="FechaIngreso" />
-            </div>
+    </div>
+    <div class="form-group row">
+        <label for="NombreTercero" class="col-md-4 col-form-label">Proveedor</label>
+        <div class="col-md-8">
+            <select class="form-control" id="NombreTercero"></select>
         </div>
-        <div class="form-group row">
-            <label for="NombreTercero" class="col-md-4 col-form-label">Proveedor</label>
-            <div class="col-md-8">
-                <select class="form-control" id="NombreTercero"></select>
-            </div>
+    </div>
+    <div class="form-group row">
+        <label for="Aprobado" class="col-md-4 col-form-label">Ingreso Aprobado</label>
+        <div class="col-md-8">
+            <label for="S">  Si  </label>
+            <input type="radio" name="Aprobado" id="S" value="S">
+            <label for="N">  No  </label>
+            <input type="radio" name="Aprobado" id="N" value="N">
         </div>
-        <div class="form-group row">
-            <label for="Aprobado" class="col-md-4 col-form-label">Ingreso Aprobado</label>
-            <div class="col-md-8">
-                <label for="S">  Si  </label>
-                <input type="radio" name="Aprobado" id="S" value="S">
-                <label for="N">  No  </label>
-                <input type="radio" name="Aprobado" id="N" value="N">
-            </div>
-        </div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
-        <h2>Listado de Productos a Ingresar</h2>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>
-                        <center>Fecha Pago</center>
-                    </th>
-                    <th>
-                        <center>Nombre Tercero</center>
-                    </th>
-                    <th>
-                        <center>Valor Pago</center>
-                    </th>
-                    <th>
-                        <center>Observaciones</center>
-                    </th>
-                    <th>
-                        <center>Operación</center>
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="tbody"></tbody>
-        </table>
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
+    <h2>Listado de Productos a Ingresar</h2>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <center>Fecha Pago</center>
+                </th>
+                <th>
+                    <center>Nombre Tercero</center>
+                </th>
+                <th>
+                    <center>Valor Pago</center>
+                </th>
+                <th>
+                    <center>Observaciones</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
 </div>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -133,7 +133,7 @@
         yearSuffix: ''
     };
     $.datepicker.setDefaults($.datepicker.regional['es']);
-    $("#Fecha_Pago").datepicker({
+    $("#FechaIngreso").datepicker({
         dateFormat: "dd/mm/yy",
     });
 </script>

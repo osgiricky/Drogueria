@@ -1,0 +1,42 @@
+﻿@model DrogSystem.Models.Entry
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Entry</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Provider.NombreTercero)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Provider.NombreTercero)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaIngreso)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FechaIngreso)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Aprobado)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Aprobado)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.EntradaId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -14,9 +14,9 @@ namespace DrogSystem.Funciones
             using (DrogSystemContext db = new DrogSystemContext())
             {
 
-                var Proveedor = (from s in db.Providers
-                                where s.TipoTercero == "P"
-                                select s).ToList();
+                var Proveedor = (from p in db.Providers
+                                where p.TipoTercero == "P"
+                                select p).ToList();
                 if (Proveedor != null)
                 {
                     ListaProveedores = Proveedor;

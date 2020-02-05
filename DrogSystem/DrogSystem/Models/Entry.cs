@@ -12,7 +12,7 @@ namespace DrogSystem.Models
     public class Entry
     {
         [Key]
-        public int EntryId { get; set; }
+        public int EntradaId { get; set; }
 
         [Required()]
         [DisplayName("Fecha Ingreso")]
@@ -26,7 +26,7 @@ namespace DrogSystem.Models
         public int TerceroId { get; set; }
         public virtual Provider Provider { get; set; }
 
-        public virtual ICollection<EntryDetail> EntryDetail { get; set; }
+        public virtual ICollection<EntryDetail> EntryDetails { get; set; }
 
     }
 }
