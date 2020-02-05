@@ -38,22 +38,25 @@
             <input type="radio" name="Aprobado" id="N" value="N">
         </div>
     </div>
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Pago a Tercero</button><br /><br />
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearModal();">Agregar Producto</button><br /><br />
     <h2>Listado de Productos a Ingresar</h2>
-    <table class="table table-bordered table-hover">
+    <table class="table table-bordered table-hover" id="tabledetail">
         <thead>
             <tr>
                 <th>
-                    <center>Fecha Pago</center>
+                    <center>Producto</center>
                 </th>
                 <th>
-                    <center>Nombre Tercero</center>
+                    <center>Fabricante</center>
                 </th>
                 <th>
-                    <center>Valor Pago</center>
+                    <center>Cantidad</center>
                 </th>
                 <th>
-                    <center>Observaciones</center>
+                    <center>Lote</center>
+                </th>
+                <th>
+                    <center>Fecha vence</center>
                 </th>
                 <th>
                     <center>Operación</center>
@@ -68,44 +71,62 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
-                <h4 class="modal-title" id="myModalLabel">Tercero</h4>
+                <h4 class="modal-title" id="myModalLabel">Producto</h4>
             </div>
             <div class="modal-body">
                 <form>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="EntryDetailId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    </div>
                     <div class="form-group row">
-                        <label for="Id_Pago" id="IdPagoText" class="col-md-4 col-form-label">Pago Número</label>
+                        <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Id_Pago" placeholder="Id" disabled="disabled" />
+                            <input type="text" class="form-control" id="CodBarras" placeholder="Ingrese el código de barras" onchange="buscarProduct()" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Fecha_Pago" class="col-md-4 col-form-label">Fecha Pago</label>
+                        <label for="NombreProducto" class="col-md-4 col-form-label">NombreProducto</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Fecha_Pago" />
+                            <input type="text" class="form-control" id="NombreProducto" disabled />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="TerceroId" class="col-md-4 col-form-label">Tercero</label>
+                        <label for="NombreFabricante" class="col-md-4 col-form-label">Fabricado Por</label>
                         <div class="col-md-8">
-                            <select class="form-control" id="TerceroId"></select>
+                            <input type="text" class="form-control" id="NombreFabricante" disabled />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Valor_Pago" class="col-md-4 col-form-label">Valor a Pagar</label>
+                        <label for="RegInvima" class="col-md-4 col-form-label">Registro Invima</label>
                         <div class="col-md-8">
-                            <input type="number" class="form-control" id="Valor_Pago" placeholder="Valor a Pagar" />
+                            <input type="text" class="form-control" id="RegInvima" disabled />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="Observacion" class="col-md-4 col-form-label">Observaciones</label>
+                        <label for="Cantidad" class="col-md-4 col-form-label">Cantidad a Ingresar</label>
                         <div class="col-md-8">
-                            <textarea class="form-control" id="Observacion" placeholder="Observaciones"> </textarea>
+                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="FechaVence" class="col-md-4 col-form-label">Fecha de Vencimiento</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="FechaVence" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Lote" class="col-md-4 col-form-label">Lote</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Lote" />
                         </div>
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Crear</button>
-                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="Update();">Modificar</button>
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="ModificarFila();">Modificar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
                 </div>
             </div>
@@ -134,6 +155,9 @@
     };
     $.datepicker.setDefaults($.datepicker.regional['es']);
     $("#FechaIngreso").datepicker({
+        dateFormat: "dd/mm/yy",
+    });
+    $("#FechaVence").datepicker({
         dateFormat: "dd/mm/yy",
     });
 </script>
