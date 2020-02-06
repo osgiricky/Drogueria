@@ -36,17 +36,25 @@ function loadData() {
 }
 
 function AddFila() {
+    var NombreProducto = $('#NombreProducto').val();
+    var NombreFabricante = $('#NombreFabricante').val();
+    var Cantidad = $('#Cantidad').val();
+    var Lote = $('#Lote').val();
+    var FechaVence = $('#FechaVence').val();
+    var NroFila = document.getElementById("tabledetail").rows.length;
     var html = '';
     html = $('.tbody').html();
-    html += '<tr>';
-    html += '<td>' + $('$NombreProducto').val() + '</td>';
-    html += '<td>' + $('$NombreFabricante').val() + '</td>';
-    html += '<td>' + $('$Cantidad').val() + '</td>';
-    html += '<td>' + $('$Lote').val() + '</td>';
-    html += '<td>' + $('$FechaVence').val() + '</td>';
-    html += '<td><center><a href="#" onclick="return getbyID(1)">Editar</a>    |    <a href="#" onclick="Delete(1)">Eliminar</a></center></td>';
+    html += '<tr class="fila' + NroFila + '">';
+    html += '<td>' + NombreProducto + '</td>';
+    html += '<td>' + NombreFabricante + '</td>';
+    html += '<td>' + Cantidad + '</td>';
+    html += '<td>' + Lote + '</td>';
+    html += '<td>' + FechaVence + '</td>';
+    html += '<td><center><a href="#" onclick="return getbyID(fila' + NroFila + ')">Editar</a>    |    <a href="#" onclick="Delete(fila' + NroFila + ')">Eliminar</a></center></td>';
     html += '</tr>';
     $('.tbody').html(html);
+    $('#myModal').modal('hide');
+    $('.modal-backdrop').remove();
 }
 
 function getbyID(EntryDetailId) {
@@ -234,7 +242,7 @@ function Add() {
         dataType: "json",
         success: function (response) {
             loadData();
-            $('#myModal').modal('hide')
+            $('#myModal').modal('hide');
             $('#TerceroId').val("");
             $('#NombreTercero').val("");
             $('#Codtercero').val("");
@@ -279,14 +287,14 @@ function clearTextBox() {
 }
 
 function clearModal() {
-    $('$EntryDetailId').val("");
-    $('$CodBarras').val("");
-    $('$NombreProducto').val("");
-    $('$NombreFabricante').val("");
-    $('$RegInvima').val("");
-    $('$Cantidad').val("");
-    $('$FechaVence').val("");
-    $('$Lote').val("");
+    $('#EntryDetailId').val("");
+    $('#CodBarras').val("");
+    $('#NombreProducto').val("");
+    $('#NombreFabricante').val("");
+    $('#RegInvima').val("");
+    $('#Cantidad').val("");
+    $('#FechaVence').val("");
+    $('#Lote').val("");
 }
 
 function buscarProduct() {
