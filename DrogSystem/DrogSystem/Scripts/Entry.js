@@ -36,6 +36,7 @@ function loadData() {
 }
 
 function AddFila() {
+    var ProductDetailId = $('#ProductDetailId').val();
     var NombreProducto = $('#NombreProducto').val();
     var NombreFabricante = $('#NombreFabricante').val();
     var Cantidad = $('#Cantidad').val();
@@ -44,17 +45,48 @@ function AddFila() {
     var NroFila = document.getElementById("tabledetail").rows.length;
     var html = '';
     html = $('.tbody').html();
-    html += '<tr class="fila' + NroFila + '">';
+    html += '<tr ProductDetailId="' + ProductDetailId + '" EntryDetailId = "">';
     html += '<td>' + NombreProducto + '</td>';
     html += '<td>' + NombreFabricante + '</td>';
     html += '<td>' + Cantidad + '</td>';
     html += '<td>' + Lote + '</td>';
     html += '<td>' + FechaVence + '</td>';
-    html += '<td><center><a href="#" onclick="return getbyID(fila' + NroFila + ')">Editar</a>    |    <a href="#" onclick="Delete(fila' + NroFila + ')">Eliminar</a></center></td>';
+    html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     html += '</tr>';
     $('.tbody').html(html);
     $('#myModal').modal('hide');
     $('.modal-backdrop').remove();
+}
+ 
+function eliminarFila(i) {
+    var table = document.getElementById("tabledetail");
+    var rowCount = i.parentNode.parentNode.parentNode.rowIndex;
+    if (rowCount < 1)
+        alert('No se puede eliminar el encabezado');
+    else
+        table.deleteRow(rowCount);
+}
+
+function editarFila(nodo) {
+    var nodoTd = nodo.parentNode.parentNode; //Nodo TD
+    var nodoTr = nodoTd.parentNode; //Nodo TR
+    var nodosEnTr = nodoTr.getElementsByTagName('td');
+    var userObj = {
+        producto: nodosEnTr[0].textContent,
+        fabricante: nodosEnTr[1].textContent,
+        cantidad : nodosEnTr[2].textContent,
+        lote : nodosEnTr[3].textContent,
+        fechaVence : nodosEnTr[4].textContent,
+    };
+    var nuevoCodigoHtml = '';
+    html += '<td>' + NombreProducto + '</td>';
+    html += '<td>' + NombreFabricante + '</td>';
+    html += '<td>' + Cantidad + '</td>';
+    html += '<td>' + Lote + '</td>';
+    html += '<td>' + FechaVence + '</td>';
+    html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
+
+
 }
 
 function getbyID(EntryDetailId) {
