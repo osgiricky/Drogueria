@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     clearTextBox();
 });
+var Htmledit;
 
 //Load Data function  
 function loadData() {
@@ -71,22 +72,51 @@ function editarFila(nodo) {
     var nodoTd = nodo.parentNode.parentNode; //Nodo TD
     var nodoTr = nodoTd.parentNode; //Nodo TR
     var nodosEnTr = nodoTr.getElementsByTagName('td');
+    var Htmledit = nodoTr.innerHTML;
+    var diaact = nodosEnTr[4].textContent.substr(0, 2);
+    var mesact = nodosEnTr[4].textContent.substr(3, 2);
+    var anioact = nodosEnTr[4].textContent.substr(6, 4);
     var userObj = {
         producto: nodosEnTr[0].textContent,
         fabricante: nodosEnTr[1].textContent,
-        cantidad : nodosEnTr[2].textContent,
-        lote : nodosEnTr[3].textContent,
-        fechaVence : nodosEnTr[4].textContent,
+        cantidad: nodosEnTr[2].textContent,
+        lote: nodosEnTr[3].textContent,
+        fechaVence: anioact + '-' + mesact + '-' + diaact,
     };
+    var script = $('#script1').val();
     var nuevoCodigoHtml = '';
-    html += '<td>' + NombreProducto + '</td>';
-    html += '<td>' + NombreFabricante + '</td>';
-    html += '<td>' + Cantidad + '</td>';
-    html += '<td>' + Lote + '</td>';
-    html += '<td>' + FechaVence + '</td>';
-    html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
+    nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
+    nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.cantidad + '" size="10"></td>';
+    nuevoCodigoHtml += '<td><input type="text" name="lote" id="loteedit" value="' + userObj.lote + '" size="10"></td>';
+    nuevoCodigoHtml += '<td><input type="date" name="fechaVenceedit" id="fechaVenceedit" value="' + userObj.fechaVence + '" size="10"></td>';
+    nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
+    nodoTr.innerHTML = nuevoCodigoHtml;
+    
+}
 
-
+function actualizar(nodo) {
+    var nodoTd = nodo.parentNode.parentNode; //Nodo TD
+    var nodoTr = nodoTd.parentNode; //Nodo TR
+    var nodosEnTr = nodoTr.getElementsByTagName('td');
+    var nuevoCodigoHtml = '';
+    var diaact = $('#fechaVenceedit').val().substr(8, 2);
+    var mesact = $('#fechaVenceedit').val().substr(5, 2);
+    var anioact = $('#fechaVenceedit').val().substr(0, 4);
+    var userObj = {
+        producto: nodosEnTr[0].textContent,
+        fabricante: nodosEnTr[1].textContent,
+        cantidad: $('#cantidadedit').val(),
+        lote: $('#loteedit').val(),
+        fechaVence: diaact + '/' + mesact + '/' + anioact,
+    };
+    nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.cantidad + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.lote + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.fechaVence + '</td>';
+    nuevoCodigoHtml += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
+    nodoTr.innerHTML = nuevoCodigoHtml;
 }
 
 function getbyID(EntryDetailId) {

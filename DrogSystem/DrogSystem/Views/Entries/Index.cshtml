@@ -135,7 +135,7 @@
 </div>
 
 <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
-<script>
+<script id="script1">
     $.datepicker.regional['es'] = {
         closeText: 'Cerrar',
         prevText: '< Ant',
@@ -156,9 +156,13 @@
     $.datepicker.setDefaults($.datepicker.regional['es']);
     $("#FechaIngreso").datepicker({
         dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
     });
     $("#FechaVence").datepicker({
         dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
     });
 </script>
 
