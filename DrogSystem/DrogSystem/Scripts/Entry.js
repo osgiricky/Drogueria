@@ -83,7 +83,6 @@ function editarFila(nodo) {
         lote: nodosEnTr[3].textContent,
         fechaVence: anioact + '-' + mesact + '-' + diaact,
     };
-    var script = $('#script1').val();
     var nuevoCodigoHtml = '';
     nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
     nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
@@ -214,13 +213,6 @@ function Update() {
         });
         return false;
     }
-    var tipotercero = '';
-    if (document.getElementsByName('TipoTercero')[0].checked) {
-        tipotercero = 'P';
-    }
-    else if (document.getElementsByName('TipoTercero')[1].checked) {
-        tipotercero = 'O';
-    }
     var userObj = {
         TerceroId: $('#TerceroId').val(),
         NombreTercero: $('#NombreTercero').val(),
@@ -261,19 +253,12 @@ function Update() {
 
 function validate() {
     var isValid = true;
-    if ($('#CodBarras').val().trim() == "") {
-        $('#CodBarras').css('border-color', 'Red');
+    if ($('#NombreTercero').val().trim() == "") {
+        $('#NombreTercero').css('border-color', 'Red');
         isValid = false;
     }
     else {
-        $('#CodBarras').css('border-color', 'lightgrey');
-    }
-    if ($('#Cantidad').val().trim() == "") {
-        $('#Cantidad').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#Cantidad').css('border-color', 'lightgrey');
+        $('#NombreTercero').css('border-color', 'lightgrey');
     }
     return isValid;
 }
@@ -282,13 +267,6 @@ function Add() {
     var res = validate();
     if (res == false) {
         return false;
-    }
-    var tipotercero = '';
-    if (document.getElementsByName('TipoTercero')[0].checked) {
-        tipotercero = 'P';
-    }
-    else if (document.getElementsByName('TipoTercero')[1].checked) {
-        tipotercero = 'O';
     }
     var userObj = {
         TerceroId: $('#TerceroId').val(),
