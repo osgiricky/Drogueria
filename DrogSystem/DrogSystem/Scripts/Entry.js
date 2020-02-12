@@ -267,7 +267,7 @@ function Add() {
     var res = validate();
     if (res == false) {
         return false;
-    }
+    }s
     var userObj = {
         TerceroId: $('#TerceroId').val(),
         NombreTercero: $('#NombreTercero').val(),
