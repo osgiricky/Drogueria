@@ -275,10 +275,11 @@ function Add() {
     else if (document.getElementsByName('Aprobado')[1].checked) {
         Aprobado = 'N';
     }
-    var nodoTd = nodo.parentNode.parentNode; 
-    var nodoTr = nodoTd.parentNode;
+    var nodo = document.getElementsByTagName('tbody');
+    //var nodoTd = nodo.parentNode.parentNode; 
+    //var nodoTr = nodoTd.parentNode;
     var entryObj = {
-        TerceroId: $('#TerceroId').val(),
+        TerceroId: $('#NombreTercero').val(),
         FechaIngreso: $('#FechaIngreso').val(),
         Aprobado: $('input:radio[name="Aprobado"]:checked').val(),
     };
@@ -290,28 +291,45 @@ function Add() {
         Lote: '',
         FechaVence: '',
     };
+    var detailObj = {
+        ProductDetailId: '',
+        NombreProducto: '',
+        NombreFabricante: '',
+        Cantidad: '',
+        Lote: '',
+        FechaVence: '',
+    };
     var arraydetail = [];
-    for (var i = 0; i < nodoTr.parentNode.rows.length-1; i++) {
-        detailObj.ProductDetailId = nodoTr.parentNode.rows[i].attributes[0].value;
-        detailObj.NombreProducto = nodoTr.parentNode.rows[i].childNodes[0].innerText;
-        detailObj.NombreFabricante = nodoTr.parentNode.rows[i].childNodes[1].innerText;
-        detailObj.Cantidad = nodoTr.parentNode.rows[i].childNodes[2].innerText;
-        detailObj.Lote = nodoTr.parentNode.rows[i].childNodes[3].innerText;
-        detailObj.FechaVence = nodoTr.parentNode.rows[i].childNodes[4].innerText;
+    for (var i = 0; i < nodo[0].rows.length; i++) {
+        arraydetail.push({ ProductDetailId: nodo[0].rows[i].attributes[0].value,
+            NombreProducto: nodo[0].rows[i].cells[0].innerText,
+            NombreFabricante : nodo[0].rows[i].cells[1].innerText,
+            Cantidad : nodo[0].rows[i].cells[2].innerText,
+            Lote: nodo[0].rows[i].cells[3].innerText,
+            FechaVence : nodo[0].rows[i].cells[4].innerText
+        });
     }
     $.ajax({
         url: "/Entries/Crear",
-        data: JSON.stringify(entryObj),
+        data: '{DetalleEntrada: ' + JSON.stringify(arraydetail) + ', Entradas: ' + JSON.stringify(entryObj) + '}',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (response) {
-            loadData();
-            $('#myModal').modal('hide');
-            $('#TerceroId').val("");
-            $('#NombreTercero').val("");
-            $('#Codtercero').val("");
-            $('.modal-backdrop').remove();
+            if (response.Probar == true) {
+                swal.fire({
+                    title: "Estimado Usuario",
+                    text: response.Mensaje,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "OK",
+                    icon: "success",
+                    closeOnConfirm: false
+                }).then((result) => {
+                    if (result.value) {
+                        window.location.href = './Home/Index';
+                    }
+                });
+            }           
         },
         error: function (errormessage) {
             alert(errormessage.responseText);

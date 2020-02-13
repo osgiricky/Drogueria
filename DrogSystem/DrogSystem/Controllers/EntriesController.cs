@@ -154,6 +154,17 @@ namespace DrogSystem.Controllers
             EDEntry.FechaIngreso = Entradas.FechaIngreso;
             EDEntry.Aprobado = Entradas.Aprobado;
             EDEntry.TerceroId = Entradas.TerceroId;
+
+            List<EDEntryDetails> EDEntryDetails = new List<EDEntryDetails>();
+            foreach (var item in DetalleEntrada)
+            {
+                EDEntryDetails EDEntryDetail = new EDEntryDetails();
+                EDEntryDetail.Cantidad = item.Cantidad;
+                EDEntryDetail.Lote = item.Lote;
+                EDEntryDetail.FechaVence = item.FechaVence;
+                EDEntryDetail.ProductDetailId = item.ProductDetailId;
+                EDEntryDetails.Add(EDEntryDetail);
+            }
             try
             {
                 Entry Entry = new Entry();
@@ -163,6 +174,24 @@ namespace DrogSystem.Controllers
                 db.Entries.Add(Entry);
                 db.SaveChanges();
                 int IdEntrada = Entry.EntradaId;
+                foreach (var item1 in EDEntryDetails)
+                {
+                    EntryDetail EntryDetail = new EntryDetail();
+                    EntryDetail.Cantidad = item1.Cantidad;
+                    EntryDetail.Lote = item1.Lote;
+                    EntryDetail.FechaVence = DateTime.Parse(item1.FechaVence);
+                    EntryDetail.EntradaId = IdEntrada;
+                    EntryDetail.ProductDetailId = item1.ProductDetailId;
+                    db.EntryDetails.Add(EntryDetail);
+                    db.SaveChanges();
+                    if (Entry.Aprobado == "S")
+                    {
+                        ProductDetail ProductDetail = db.ProductDetails.Find(EntryDetail.ProductDetailId);
+                        ProductDetail.Existencias += EntryDetail.Cantidad;
+                        db.Entry(ProductDetail).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
                 Mensaje = " Registro Agregado con exito.";
             }
             catch (Exception)
@@ -170,9 +199,7 @@ namespace DrogSystem.Controllers
                 Probar = false;
                 Mensaje = " Se produjo un error al agregar el registro.";
 
-            }
-
-
+            }            
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
