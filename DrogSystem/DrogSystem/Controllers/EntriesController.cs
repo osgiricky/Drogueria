@@ -146,26 +146,23 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Crear(EDProductDetail ProductoDetalle)
+        public JsonResult Crear(List<EDEntryDetails> DetalleEntrada, EDEntry Entradas)
         {
             bool Probar = true;
             string Mensaje = "";
-            EDProductDetail EDProductDetail = new EDProductDetail();
-            EDProductDetail.CodBarras = ProductoDetalle.CodBarras;
-            EDProductDetail.RegInvima = ProductoDetalle.RegInvima;
-            EDProductDetail.Existencias = ProductoDetalle.Existencias;
-            EDProductDetail.ProductoId = ProductoDetalle.ProductoId;
-            EDProductDetail.MarkerId = ProductoDetalle.MarkerId;
+            EDEntry EDEntry = new EDEntry();
+            EDEntry.FechaIngreso = Entradas.FechaIngreso;
+            EDEntry.Aprobado = Entradas.Aprobado;
+            EDEntry.TerceroId = Entradas.TerceroId;
             try
             {
-                ProductDetail ProductDetail = new ProductDetail();
-                ProductDetail.CodBarras = EDProductDetail.CodBarras;
-                ProductDetail.RegInvima = EDProductDetail.RegInvima;
-                ProductDetail.Existencias = EDProductDetail.Existencias;
-                ProductDetail.ProductoId = EDProductDetail.ProductoId;
-                ProductDetail.MarkerId = EDProductDetail.MarkerId;
-                db.ProductDetails.Add(ProductDetail);
+                Entry Entry = new Entry();
+                Entry.FechaIngreso = DateTime.Parse(EDEntry.FechaIngreso);
+                Entry.TerceroId = EDEntry.TerceroId;
+                Entry.Aprobado = EDEntry.Aprobado = Entradas.Aprobado;
+                db.Entries.Add(Entry);
                 db.SaveChanges();
+                int IdEntrada = Entry.EntradaId;
                 Mensaje = " Registro Agregado con exito.";
             }
             catch (Exception)
@@ -360,5 +357,9 @@ namespace DrogSystem.Controllers
             }
             base.Dispose(disposing);
         }
+    }
+
+    public class list<T>
+    {
     }
 }

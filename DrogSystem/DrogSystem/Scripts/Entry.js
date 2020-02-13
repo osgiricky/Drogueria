@@ -267,16 +267,41 @@ function Add() {
     var res = validate();
     if (res == false) {
         return false;
-    }s
-    var userObj = {
+    }
+    var Aprobado = '';
+    if (document.getElementsByName('Aprobado')[0].checked) {
+        Aprobado = 'S';
+    }
+    else if (document.getElementsByName('Aprobado')[1].checked) {
+        Aprobado = 'N';
+    }
+    var nodoTd = nodo.parentNode.parentNode; 
+    var nodoTr = nodoTd.parentNode;
+    var entryObj = {
         TerceroId: $('#TerceroId').val(),
-        NombreTercero: $('#NombreTercero').val(),
-        Codtercero: $('#Codtercero').val(),
-        TipoTercero: tipotercero,
+        FechaIngreso: $('#FechaIngreso').val(),
+        Aprobado: $('input:radio[name="Aprobado"]:checked').val(),
     };
+    var detailObj = {
+        ProductDetailId: '',
+        NombreProducto: '',
+        NombreFabricante: '',
+        Cantidad: '',
+        Lote: '',
+        FechaVence: '',
+    };
+    var arraydetail = [];
+    for (var i = 0; i < nodoTr.parentNode.rows.length-1; i++) {
+        detailObj.ProductDetailId = nodoTr.parentNode.rows[i].attributes[0].value;
+        detailObj.NombreProducto = nodoTr.parentNode.rows[i].childNodes[0].innerText;
+        detailObj.NombreFabricante = nodoTr.parentNode.rows[i].childNodes[1].innerText;
+        detailObj.Cantidad = nodoTr.parentNode.rows[i].childNodes[2].innerText;
+        detailObj.Lote = nodoTr.parentNode.rows[i].childNodes[3].innerText;
+        detailObj.FechaVence = nodoTr.parentNode.rows[i].childNodes[4].innerText;
+    }
     $.ajax({
         url: "/Entries/Crear",
-        data: JSON.stringify(userObj),
+        data: JSON.stringify(entryObj),
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
