@@ -1,53 +1,172 @@
-﻿@model DrogSystem.Models.Entry
-
+﻿@model DrogSystem.EntidadesDominio.EDEntry
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Entrada de Productos";
 }
 
-<h2>Edit</h2>
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/themes/base/jquery-ui.css">
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<script src="~/Scripts/Entry.js"></script>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Entry</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.EntradaId)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.FechaIngreso, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FechaIngreso, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FechaIngreso, "", new { @class = "text-danger" })
-            </div>
+<div class="container">
+    <br>
+    <h2>Proveedor</h2>
+    <div class="form-row">
+        <input type="text" class="form-control" id="EntryId" placeholder="Id" style="visibility:hidden" />
+    </div>
+    <div class="form-group row">
+        <label for="FechaIngreso" class="col-md-4 col-form-label">Fecha de Ingreso</label>
+        <div class="col-md-8">
+            <input type="text" class="form-control" id="FechaIngreso" />
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Aprobado, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Aprobado, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Aprobado, "", new { @class = "text-danger" })
-            </div>
+    </div>
+    <div class="form-group row">
+        <label for="NombreTercero" class="col-md-4 col-form-label">Proveedor</label>
+        <div class="col-md-8">
+            <select class="form-control" id="NombreTercero"></select>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TerceroId, "TerceroId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("TerceroId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.TerceroId, "", new { @class = "text-danger" })
-            </div>
+    </div>
+    <div class="form-group row">
+        <label for="Aprobado" class="col-md-4 col-form-label">Ingreso Aprobado</label>
+        <div class="col-md-8">
+            <label for="S">  Si  </label>
+            <input type="radio" name="Aprobado" id="S" value="S">
+            <label for="N">  No  </label>
+            <input type="radio" name="Aprobado" id="N" value="N">
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearModal();">Agregar Producto</button><br /><br />
+    <h2>Listado de Productos a Ingresar</h2>
+    <table class="table table-bordered table-hover" id="tabledetail">
+        <thead>
+            <tr>
+                <th>
+                    <center>Producto</center>
+                </th>
+                <th>
+                    <center>Fabricante</center>
+                </th>
+                <th>
+                    <center>Cantidad</center>
+                </th>
+                <th>
+                    <center>Lote</center>
+                </th>
+                <th>
+                    <center>Fecha vence</center>
+                </th>
+                <th>
+                    <center>Operación</center>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbody"></tbody>
+    </table>
+    <button type="button" class="btn btn-primary" onclick="return Add();">Guardar</button>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="EntryDetailId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="CodBarras" placeholder="Ingrese el código de barras" onchange="buscarProduct()" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreProducto" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreFabricante" class="col-md-4 col-form-label">Fabricado Por</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreFabricante" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="RegInvima" class="col-md-4 col-form-label">Registro Invima</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="RegInvima" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Cantidad" class="col-md-4 col-form-label">Cantidad a Ingresar</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="FechaVence" class="col-md-4 col-form-label">Fecha de Vencimiento</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="FechaVence" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Lote" class="col-md-4 col-form-label">Lote</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Lote" />
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Crear</button>
+                    <button type="button" class="btn btn-primary" id="btnUpdate" style="display:none;" onclick="ModificarFila();">Modificar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
+<script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+<script id="script1">
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['es']);
+    $("#FechaIngreso").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
+    });
+    $("#FechaVence").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
+    });
+</script>
+
+
+
+
