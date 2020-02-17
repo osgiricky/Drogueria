@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
-    clearTextBox();
+    loadData();
 });
-var Htmledit;
+
 
 //Load Data function  
 function loadData() {
@@ -14,21 +14,13 @@ function loadData() {
             var html = '';
             var tercero;
             $.each(result, function (key, item) {
-                tercero = '';
-                if (item.TipoTercero == "P") {
-                    tercero = 'Proveedor';
-                }
-                else if (item.TipoTercero == "O") {
-                    tercero = 'Otro';;
-                }
                 html += '<tr>';
+                html += '<td>' + item.FechaIngreso + '</td>';
                 html += '<td>' + item.NombreTercero + '</td>';
-                html += '<td>' + item.Codtercero + '</td>';
-                html += '<td>' + tercero + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.TerceroId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.TerceroId + ')">Eliminar</a></center></td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.EntryId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.EntryId + ')">Eliminar</a></center></td>';
                 html += '</tr>';
             });
-            $('.tbody').html(html);
+            $('#maestro').html(html);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -45,7 +37,7 @@ function AddFila() {
     var FechaVence = $('#FechaVence').val();
     var NroFila = document.getElementById("tabledetail").rows.length;
     var html = '';
-    html = $('.tbody').html();
+    html = $('#detalle').html();
     html += '<tr ProductDetailId="' + ProductDetailId + '" EntryDetailId = "">';
     html += '<td>' + NombreProducto + '</td>';
     html += '<td>' + NombreFabricante + '</td>';
@@ -54,8 +46,8 @@ function AddFila() {
     html += '<td>' + FechaVence + '</td>';
     html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     html += '</tr>';
-    $('.tbody').html(html);
-    $('#myModal').modal('hide');
+    $('#detalle').html(html);
+    $('#myModal1').modal('hide');
     $('.modal-backdrop').remove();
 }
  
@@ -118,138 +110,6 @@ function actualizar(nodo) {
     nodoTr.innerHTML = nuevoCodigoHtml;
 }
 
-function getbyID(EntryDetailId) {
-    document.getElementById('myModalLabel').innerHTML = "Editar Tercero";
-    $('#NombreTercero').css('border-color', 'lightgrey');
-    $('#Codtercero').css('border-color', 'lightgrey');
-    $('#ProviderTypeId').css('border-color', 'lightgrey');
-    $.ajax({
-        url: "/Entries/getbyID/" + EntryDetailId,
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
-        dataType: "json",
-        success: function (result) {
-            $('#TerceroId').val(result.TerceroId);
-            $('#NombreTercero').val(result.NombreTercero);
-            $('#Codtercero').val(result.Codtercero);
-            if (result.TipoTercero == "P") {
-                $('#O').attr('checked', false);
-                $('#P').attr('checked', true);
-            }
-            else if (result.TipoTercero == "O") {
-                $('#P').attr('checked', false);
-                $('#O').attr('checked', true);
-            }
-
-            $('#myModal').modal('show');
-            $('#btnUpdate').show();
-            $('#btnAdd').hide();
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-    return false;
-}
-
-function Delete(EntryDetailId) {
-    Swal.fire({
-        title: "Estimado Usuario",
-        text: "Esta seguro(a) que desea eliminar registro?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: '#d33',
-        confirmButtonText: "Si",
-        cancelButtonText: "No"
-    }).then((result) => {
-        if (result.value == true) {
-            $.ajax({
-                url: "/Entries/Borrar/" + EntryDetailId,
-                type: "POST",
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                //data: ID,
-                success: function (response) {
-                    if (response.Probar == false) {
-                        swal.fire({
-                            title: "Estimado Usuario",
-                            text: response.Mensaje,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "OK",
-                            icon: "error",
-                            closeOnConfirm: false
-                        });
-                    }
-                    else {
-                        Swal.fire({
-                            title: "Estimado Usuario",
-                            text: response.Mensaje,
-                            confirmButtonColor: "#DD6B55",
-                            confirmButtonText: "OK",
-                            icon: "success",
-                            closeOnConfirm: false
-                        });
-                    }
-                    loadData();
-                },
-                error: function (errormessage) {
-                    alert(errormessage.responseText);
-                }
-            });
-        }
-    })
-}
-function Update() {
-    var res = validate();
-    if (res == false) {
-        swal.fire({
-            title: "Estimado Usuario",
-            text: "Los campos marcados en rojo son obligatorios.",
-            icon: 'warning',
-            showCancelButton: false,
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "Aceptar",
-        });
-        return false;
-    }
-    var userObj = {
-        TerceroId: $('#TerceroId').val(),
-        NombreTercero: $('#NombreTercero').val(),
-        Codtercero: $('#Codtercero').val(),
-        TipoTercero: tipotercero,
-    };
-    $.ajax({
-        url: "/Entries/Editar",
-        data: JSON.stringify(userObj),
-        type: "POST",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        success: function (response) {
-            if (response.Probar == false) {
-                swal.fire({
-                    title: "Estimado Usuario",
-                    text: response.Mensaje,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "OK",
-                    icon: "error",
-                    closeOnConfirm: false
-                });
-            }
-            else {
-                loadData();
-                $('#myModal').modal('hide');
-                $('#TerceroId').val("");
-                $('#NombreTercero').val("");
-                $('#Codtercero').val("");
-                $('#ProviderTypeId').html("");
-            }
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-}
 
 function validate() {
     var isValid = true;
@@ -276,8 +136,6 @@ function Add() {
         Aprobado = 'N';
     }
     var nodo = document.getElementsByTagName('tbody');
-    //var nodoTd = nodo.parentNode.parentNode; 
-    //var nodoTr = nodoTd.parentNode;
     var entryObj = {
         TerceroId: $('#NombreTercero').val(),
         FechaIngreso: $('#FechaIngreso').val(),

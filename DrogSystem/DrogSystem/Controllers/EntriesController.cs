@@ -24,28 +24,24 @@ namespace DrogSystem.Controllers
 
         public JsonResult List()
         {
-            List<EDProductDetail> EDProductDetailLista = new List<EDProductDetail>();
-            var Listaux = (from PD in db.ProductDetails
-                           join P in db.Products on PD.ProductoId equals P.ProductoId
-                           join M in db.Markers on PD.MarkerId equals M.MarkerId
-                           select new { PD, P, M }).ToList();
+            List<EDEntry> ListaEDEntry = new List<EDEntry>();
+            var Listaux = (from E in db.Entries
+                           join T in db.Providers on E.TerceroId equals T.TerceroId
+                           where E.Aprobado == "N"
+                           select new { E, T }).ToList();
             if (Listaux != null)
             {
                 foreach (var item in Listaux)
                 {
-                    EDProductDetail EDProductDetail = new EDProductDetail();
-                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
-                    EDProductDetail.CodBarras = item.PD.CodBarras;
-                    EDProductDetail.RegInvima = item.PD.RegInvima;
-                    EDProductDetail.Existencias = item.PD.Existencias;
-                    EDProductDetail.ProductoId = item.PD.ProductoId;
-                    EDProductDetail.NombreProducto = item.P.NombreProducto;
-                    EDProductDetail.MarkerId = item.M.MarkerId;
-                    EDProductDetail.NombreFabricante = item.M.NombreFabricante;
-                    EDProductDetailLista.Add(EDProductDetail);
+                    EDEntry EDEntry = new EDEntry();
+                    EDEntry.EntryId = item.E.EntradaId;
+                    EDEntry.FechaIngreso = item.E.FechaIngreso.ToString("dd/MM/yyyy");
+                    EDEntry.TerceroId = item.E.TerceroId;
+                    EDEntry.NombreTercero = item.T.NombreTercero;
+                    ListaEDEntry.Add(EDEntry);
                 }
             }
-            return Json(EDProductDetailLista, JsonRequestBehavior.AllowGet);
+            return Json(ListaEDEntry, JsonRequestBehavior.AllowGet);
         }
         public JsonResult GetbyID(int? ID)
         {

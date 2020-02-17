@@ -18,7 +18,7 @@ function loadData() {
                     tercero = 'Proveedor';
                 }
                 else if (item.TipoTercero == "O") {
-                    tercero = 'Otro';;
+                    tercero = 'Otro';
                 }
                 html += '<tr>';
                 html += '<td>' + item.NombreTercero + '</td>';
