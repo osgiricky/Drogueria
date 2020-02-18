@@ -15,6 +15,8 @@ namespace DrogSystem.Controllers
     public class EntriesController : Controller
     {
         private DrogSystemContext db = new DrogSystemContext();
+        private List<int> IdDetalleBorrado = new List<int>(); 
+
 
         // GET: Entries
         public ActionResult Index()
@@ -40,39 +42,51 @@ namespace DrogSystem.Controllers
                     EDEntry.NombreTercero = item.T.NombreTercero;
                     ListaEDEntry.Add(EDEntry);
                 }
+                ListaEDEntry = ListaEDEntry.OrderBy(o => o.FechaIngreso).ToList();
             }
             return Json(ListaEDEntry, JsonRequestBehavior.AllowGet);
         }
         public JsonResult GetbyID(int? ID)
         {
-            var ProductoDetalle = (from PD in db.ProductDetails
-                                   join P in db.Products on PD.ProductoId equals P.ProductoId
-                                   where PD.ProductDetailId == ID
-                                   select new { PD, P }).ToList();
+            var Entrada = (from E in db.Entries
+                                   where E.EntradaId == ID
+                                   select  E ).ToList();
 
-            EDProductDetail EDProductDetail = new EDProductDetail();
-            if (ProductoDetalle != null)
+            EDEntry EDEntry = new EDEntry();
+            if (Entrada != null)
             {
-                foreach (var item in ProductoDetalle)
+                foreach (var item in Entrada)
                 {
                     FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                    List<EDMarker> ListaEDMarker = new List<EDMarker>();
-                    ListaEDMarker = FuncUsuarios.ListaFabricante();
-                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
-                    EDProductDetail.CodBarras = item.PD.CodBarras;
-                    EDProductDetail.RegInvima = item.PD.RegInvima;
-                    EDProductDetail.Existencias = item.PD.Existencias;
-                    EDProductDetail.ProductoId = item.PD.ProductoId;
-                    EDProductDetail.NombreProducto = item.P.NombreProducto;
-                    EDProductDetail.MarkerId = item.PD.MarkerId;
-                    EDMarker EDMarker = ListaEDMarker.Find(u => u.MarkerId == EDProductDetail.MarkerId);
-                    EDProductDetail.NombreFabricante = EDMarker.NombreFabricante;
-                    EDProductDetail.ListaFabricantes = ListaEDMarker;
+                    List<EDProvider> ListaProveedor = new List<EDProvider>();
+                    List<EDEntryDetails> ListaDetalle = new List<EDEntryDetails>();
+                    ListaProveedor = FuncUsuarios.ListaProveedores();
+                    EDEntry.EntryId = item.EntradaId;
+                    EDEntry.FechaIngreso = item.FechaIngreso.ToString("dd/MM/yyyy");
+                    EDEntry.Aprobado = item.Aprobado;
+                    EDEntry.TerceroId = item.TerceroId;
+                    EDEntry.ListaTerceros = ListaProveedor;
+                    ListaDetalle = FuncUsuarios.ListaDetalleEntrada(item.EntradaId);
+                    EDEntry.ListaEntradas = ListaDetalle;
                 }
             }
-            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
+            return Json(EDEntry, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult LimpiarVar()
+        {
+            bool Probar = true;
+            IdDetalleBorrado.Clear();
+            return Json(Probar, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult IdABorrar(int ID)
+        {
+            bool Probar = true;
+            IdDetalleBorrado.Add(ID);
+            return Json( Probar, JsonRequestBehavior.AllowGet);
+
+        }
         public JsonResult Borrar(int ID)
         {
             bool Probar = true;
@@ -102,51 +116,12 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Editar(EDProductDetail ProductoDetalle)
-        {
-            bool Probar = true;
-            string Mensaje = "";
-            EDProductDetail EDProductDetail = new EDProductDetail();
-            EDProductDetail.CodBarras = ProductoDetalle.CodBarras;
-            EDProductDetail.RegInvima = ProductoDetalle.RegInvima;
-            EDProductDetail.Existencias = ProductoDetalle.Existencias;
-            EDProductDetail.ProductoId = ProductoDetalle.ProductoId;
-            EDProductDetail.MarkerId = ProductoDetalle.MarkerId;
-
-            ProductDetail ProductDetail = db.ProductDetails.Find(ProductoDetalle.ProductDetailId);
-            if (ProductDetail == null)
-            {
-                Probar = false;
-                Mensaje = " No se encuntra el registro: " + EDProductDetail.CodBarras;
-            }
-            else
-            {
-                try
-                {
-                    ProductDetail.CodBarras = EDProductDetail.CodBarras;
-                    ProductDetail.RegInvima = EDProductDetail.RegInvima;
-                    ProductDetail.Existencias = EDProductDetail.Existencias;
-                    ProductDetail.MarkerId = EDProductDetail.MarkerId;
-                    db.Entry(ProductDetail).State = EntityState.Modified;
-                    db.SaveChanges();
-                    Mensaje = " Registro modificado con exito.";
-                }
-                catch (Exception e)
-                {
-                    Probar = false;
-                    Mensaje = " Se produjo un error al modificar el registro.";
-
-                }
-            }
-
-            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
-        }
-
         public JsonResult Crear(List<EDEntryDetails> DetalleEntrada, EDEntry Entradas)
         {
             bool Probar = true;
             string Mensaje = "";
             EDEntry EDEntry = new EDEntry();
+            EDEntry.EntryId = Entradas.EntryId;
             EDEntry.FechaIngreso = Entradas.FechaIngreso;
             EDEntry.Aprobado = Entradas.Aprobado;
             EDEntry.TerceroId = Entradas.TerceroId;
@@ -164,22 +139,59 @@ namespace DrogSystem.Controllers
             try
             {
                 Entry Entry = new Entry();
+                if (EDEntry.EntryId > 0)
+                {
+                    Entry entrada = db.Entries.Find(EDEntry.EntryId);
+                    Entry = entrada;
+                }
                 Entry.FechaIngreso = DateTime.Parse(EDEntry.FechaIngreso);
                 Entry.TerceroId = EDEntry.TerceroId;
                 Entry.Aprobado = EDEntry.Aprobado = Entradas.Aprobado;
-                db.Entries.Add(Entry);
-                db.SaveChanges();
+                if (EDEntry.EntryId > 0)
+                {
+                    db.Entry(Entry).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
+                {
+                    db.Entries.Add(Entry);
+                    db.SaveChanges();
+                }
                 int IdEntrada = Entry.EntradaId;
-                foreach (var item1 in EDEntryDetails)
+                if (IdDetalleBorrado != null)
+                {
+                    foreach (var detalle in IdDetalleBorrado)
+                    {
+                        EntryDetail EntradaDetalle = db.EntryDetails.Find(detalle);
+                        db.EntryDetails.Remove(EntradaDetalle);
+                        db.SaveChanges();
+                    }
+                    IdDetalleBorrado.Clear();
+                }
+                
+               foreach (var item1 in EDEntryDetails)
                 {
                     EntryDetail EntryDetail = new EntryDetail();
+                    if (item1.EntryDetailId > 0)
+                    {
+                        EntryDetail entradaDetalle = db.EntryDetails.Find(item1.EntryDetailId);
+                        EntryDetail = entradaDetalle;
+                    }
                     EntryDetail.Cantidad = item1.Cantidad;
                     EntryDetail.Lote = item1.Lote;
                     EntryDetail.FechaVence = DateTime.Parse(item1.FechaVence);
                     EntryDetail.EntradaId = IdEntrada;
-                    EntryDetail.ProductDetailId = item1.ProductDetailId;
-                    db.EntryDetails.Add(EntryDetail);
-                    db.SaveChanges();
+                    EntryDetail.ProductDetailId = item1.ProductDetailId;                    
+                    if (EDEntry.EntryId > 0)
+                    {
+                        db.Entry(EntryDetail).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        db.EntryDetails.Add(EntryDetail);
+                        db.SaveChanges();
+                    }
                     if (Entry.Aprobado == "S")
                     {
                         ProductDetail ProductDetail = db.ProductDetails.Find(EntryDetail.ProductDetailId);
@@ -199,23 +211,6 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult listaFabricantes(int? ID)
-        {
-            FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            List<EDMarker> ListaEDMarker = new List<EDMarker>();
-            ListaEDMarker = FuncUsuarios.ListaFabricante();
-            Product Product = db.Products.Find(ID);
-            EDProduct EDProduct = new EDProduct();
-            if (Product != null)
-            {
-                EDProduct.ProductoId = Product.ProductoId;
-                EDProduct.NombreProducto = Product.NombreProducto;
-                EDProduct.MinStock = Product.MinStock;
-                EDProduct.Descripcion = Product.Descripcion;
-                EDProduct.Componentes = Product.Componentes;
-            }
-            return Json(new { ListaEDMarker, EDProduct }, JsonRequestBehavior.AllowGet);
-        }
 
         public JsonResult listaProveedores()
         {
@@ -225,29 +220,7 @@ namespace DrogSystem.Controllers
             return Json(ListaTerceros, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BuscarXNombre(EDProduct producto)
-        {
-            var Productos = (from PD in db.Products
-                             where PD.NombreProducto.Contains(producto.NombreProducto)
-                             select new { PD }).ToList();
-
-            EDProductDetail EDProductDetail = new EDProductDetail();
-            if (Productos != null)
-            {
-                List<EDProduct> ListaEDProduct = new List<EDProduct>();
-                foreach (var item in Productos)
-                {
-                    EDProduct EDProduct = new EDProduct();
-                    EDProduct.ProductoId = item.PD.ProductoId;
-                    EDProduct.NombreProducto = item.PD.NombreProducto;
-                    EDProduct.Descripcion = item.PD.Descripcion;
-                    ListaEDProduct.Add(EDProduct);
-                }
-                EDProductDetail.ListaProductos = ListaEDProduct;
-            }
-            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
-        }
-
+        
         public JsonResult BuscarProducto(string CodBarras)
         {
             var ProductoDetalle = (from PD in db.ProductDetails

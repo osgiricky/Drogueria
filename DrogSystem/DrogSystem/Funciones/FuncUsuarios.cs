@@ -33,6 +33,38 @@ namespace DrogSystem.Funciones
             return ListaEDProveedores;
         }
 
+        public List<EDEntryDetails> ListaDetalleEntrada(int IdEntrada)
+        {
+            List<EDEntryDetails> ListaEDDetalle = new List<EDEntryDetails>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+
+                var Detalle = (from ED in db.EntryDetails
+                               join PD in db.ProductDetails on ED.ProductDetailId equals PD.ProductDetailId
+                               join P in db.Products on PD.ProductoId equals P.ProductoId
+                               join M in db.Markers on PD.MarkerId equals M.MarkerId
+                               where ED.EntradaId == IdEntrada
+                               select new { ED, P.NombreProducto, M.NombreFabricante }).ToList();
+                if (Detalle != null)
+                {
+                    foreach (var item in Detalle)
+                    {
+                        EDEntryDetails EDEntryDetails = new EDEntryDetails();
+                        EDEntryDetails.EntryDetailId = item.ED.EntryDetailId;
+                        EDEntryDetails.Cantidad = item.ED.Cantidad;
+                        EDEntryDetails.Lote = item.ED.Lote;
+                        EDEntryDetails.FechaVence = item.ED.FechaVence.ToString("dd/MM/yyyy");
+                        EDEntryDetails.ProductDetailId = item.ED.ProductDetailId;
+                        EDEntryDetails.NombreFabricante = item.NombreFabricante;
+                        EDEntryDetails.NombreProducto = item.NombreProducto;
+                        ListaEDDetalle.Add(EDEntryDetails);
+                    }
+                }
+            }
+            ListaEDDetalle = ListaEDDetalle.OrderBy(o => o.EntryDetailId).ToList();
+            return ListaEDDetalle;
+        }
+
         public List<EDProvider> ListaTerceros()
         {
             List<EDProvider> ListaEDTercero = new List<EDProvider>();

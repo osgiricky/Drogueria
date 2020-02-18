@@ -52,12 +52,35 @@ function AddFila() {
 }
  
 function eliminarFila(i) {
-    var table = document.getElementById("tabledetail");
-    var rowCount = i.parentNode.parentNode.parentNode.rowIndex;
-    if (rowCount < 1)
-        alert('No se puede eliminar el encabezado');
-    else
-        table.deleteRow(rowCount);
+    Swal.fire({
+        title: "Estimado Usuario",
+        text: "Esta seguro(a) que desea eliminar registro?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: '#d33',
+        confirmButtonText: "Si",
+        cancelButtonText: "No"
+    }).then((result) => {
+        var table = document.getElementById("tabledetail");
+        var rowCount = i.parentNode.parentNode.parentNode.rowIndex;
+        var IdBorrar = i.parentNode.parentNode.parentNode.attributes[1].value;
+        $.ajax({
+            url: "/Entries/IdABorrar/" + IdBorrar,
+            typr: "GET",
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {            
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+        if (rowCount < 1)
+            alert('No se puede eliminar el encabezado');
+        else
+            table.deleteRow(rowCount);
+    })
 }
 
 function editarFila(nodo) {
@@ -135,22 +158,16 @@ function Add() {
     else if (document.getElementsByName('Aprobado')[1].checked) {
         Aprobado = 'N';
     }
-    var nodo = document.getElementsByTagName('tbody');
+    var nodo = document.getElementById('detalle');
     var entryObj = {
+        EntryId: $('#EntryId').val(),
         TerceroId: $('#NombreTercero').val(),
         FechaIngreso: $('#FechaIngreso').val(),
         Aprobado: $('input:radio[name="Aprobado"]:checked').val(),
     };
     var detailObj = {
         ProductDetailId: '',
-        NombreProducto: '',
-        NombreFabricante: '',
-        Cantidad: '',
-        Lote: '',
-        FechaVence: '',
-    };
-    var detailObj = {
-        ProductDetailId: '',
+        EntryDetailId: '',
         NombreProducto: '',
         NombreFabricante: '',
         Cantidad: '',
@@ -158,13 +175,15 @@ function Add() {
         FechaVence: '',
     };
     var arraydetail = [];
-    for (var i = 0; i < nodo[0].rows.length; i++) {
-        arraydetail.push({ ProductDetailId: nodo[0].rows[i].attributes[0].value,
-            NombreProducto: nodo[0].rows[i].cells[0].innerText,
-            NombreFabricante : nodo[0].rows[i].cells[1].innerText,
-            Cantidad : nodo[0].rows[i].cells[2].innerText,
-            Lote: nodo[0].rows[i].cells[3].innerText,
-            FechaVence : nodo[0].rows[i].cells[4].innerText
+    for (var i = 0; i < nodo.rows.length; i++) {
+        arraydetail.push({
+            ProductDetailId: nodo.rows[i].attributes[0].value,
+            EntryDetailId: nodo.rows[i].attributes[1].value,
+            NombreProducto: nodo.rows[i].cells[0].innerText,
+            NombreFabricante : nodo.rows[i].cells[1].innerText,
+            Cantidad : nodo.rows[i].cells[2].innerText,
+            Lote: nodo.rows[i].cells[3].innerText,
+            FechaVence : nodo.rows[i].cells[4].innerText
         });
     }
     $.ajax({
@@ -184,7 +203,9 @@ function Add() {
                     closeOnConfirm: false
                 }).then((result) => {
                     if (result.value) {
-                        window.location.href = './Home/Index';
+                        loadData();
+                        $('#myModal').modal('hide');
+                        $('.modal-backdrop').remove();
                     }
                 });
             }           
@@ -270,4 +291,89 @@ function buscarProduct() {
         return false;
 
     }
+}
+
+function getbyID(ID) {
+    $('#NombreTercero').css('border-color', 'lightgrey');
+    $.ajax({
+        url: "/Entries/getbyID/" + ID,
+        typr: "GET",
+        contentType: "application/json;charset=UTF-8",
+        dataType: "json",
+        success: function (result) {
+            $('#EntryId').val(result.EntryId);
+            $('#NombreProducto').val(result.NombreProducto);
+            if (result.Aprobado == "S")
+                $('#S').attr('checked', true);
+            else
+                $('#N').attr('checked', true);
+            var html = '';
+            $.each(result.ListaTerceros, function (key, item) {
+                if (result.TerceroId == item.TerceroId) {
+                    html += '<option value="' + item.TerceroId + '" selected>' + item.NombreTercero + '</option>';
+                }
+                else {
+                    html += '<option value="' + item.TerceroId + '" >' + item.NombreTercero + '</option>';
+                }
+            });
+            $('#NombreTercero').html(html);
+            $("#FechaIngreso").val(result.FechaIngreso);
+            var htmldetail = '';
+            $.each(result.ListaEntradas, function (key, item) {
+                htmldetail += '<tr ProductDetailId="' + item.ProductDetailId + '" EntryDetailId = "' + item.EntryDetailId + '">';
+                htmldetail += '<td>' + item.NombreProducto + '</td>';
+                htmldetail += '<td>' + item.NombreFabricante + '</td>';
+                htmldetail += '<td>' + item.Cantidad + '</td>';
+                htmldetail += '<td>' + item.Lote + '</td>';
+                htmldetail += '<td>' + item.FechaVence + '</td>';
+                htmldetail += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
+                htmldetail += '</tr>';
+            });
+            $('#detalle').html(htmldetail);;
+
+            $('#myModal').modal('show');
+            $('#btnUpdate').show();
+            $('#btnAdd').hide();
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    return false;
+
+    $.ajax({
+        url: "/Entries/List",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            var html = '';
+            var tercero;
+            $.each(result, function (key, item) {
+                html += '<tr>';
+                html += '<td>' + item.FechaIngreso + '</td>';
+                html += '<td>' + item.NombreTercero + '</td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.EntryId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.EntryId + ')">Eliminar</a></center></td>';
+                html += '</tr>';
+            });
+            $('#maestro').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+function limpiarVar() {
+    $.ajax({
+        url: "/Entries/LimpiarVar",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
 }

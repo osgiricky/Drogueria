@@ -12,5 +12,7 @@ namespace DrogSystem.EntidadesDominio
         public string Aprobado { get; set; }
         public int TerceroId { get; set; }
         public string NombreTercero { get; set; }
+        public List<EDProvider> ListaTerceros { get; set; }
+        public List<EDEntryDetails> ListaEntradas { get; set; }
     }
 }
