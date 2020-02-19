@@ -114,6 +114,7 @@ function Delete(Id) {
         }
     })
 }
+
 function Update() {
     var res = validate();
     if (res == false) {

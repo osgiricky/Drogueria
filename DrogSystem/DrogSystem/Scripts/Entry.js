@@ -65,17 +65,13 @@ function eliminarFila(i) {
         var table = document.getElementById("tabledetail");
         var rowCount = i.parentNode.parentNode.parentNode.rowIndex;
         var IdBorrar = i.parentNode.parentNode.parentNode.attributes[1].value;
-        $.ajax({
-            url: "/Entries/IdABorrar/" + IdBorrar,
-            typr: "GET",
-            contentType: "application/json;charset=UTF-8",
-            dataType: "json",
-            success: function (result) {            
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
-            }
-        });
+        var ArrayIdBorrar = [];
+        if (sessionStorage.getItem("IdsBorrar")) {
+            var array = sessionStorage.getItem("IdsBorrar");
+            ArrayIdBorrar = JSON.parse(array);
+        }
+        ArrayIdBorrar.push(IdBorrar);
+        sessionStorage.setItem("IdsBorrar", JSON.stringify(ArrayIdBorrar));
         if (rowCount < 1)
             alert('No se puede eliminar el encabezado');
         else
@@ -186,9 +182,11 @@ function Add() {
             FechaVence : nodo.rows[i].cells[4].innerText
         });
     }
+    var array = sessionStorage.getItem("IdsBorrar");
+    var IdBorrar = JSON.parse(array);
     $.ajax({
         url: "/Entries/Crear",
-        data: '{DetalleEntrada: ' + JSON.stringify(arraydetail) + ', Entradas: ' + JSON.stringify(entryObj) + '}',
+        data: '{DetalleEntrada: ' + JSON.stringify(arraydetail) + ', Entradas: ' + JSON.stringify(entryObj) + ', IdABorrar: ' + JSON.stringify(IdBorrar) + '}',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -203,6 +201,7 @@ function Add() {
                     closeOnConfirm: false
                 }).then((result) => {
                     if (result.value) {
+                        sessionStorage.clear();
                         loadData();
                         $('#myModal').modal('hide');
                         $('.modal-backdrop').remove();
@@ -246,17 +245,6 @@ function clearTextBox() {
     var y = fecha.getFullYear();
     var dateString = (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
     $("#FechaIngreso").val(dateString);
-}
-
-function clearModal() {
-    $('#EntryDetailId').val("");
-    $('#CodBarras').val("");
-    $('#NombreProducto').val("");
-    $('#NombreFabricante').val("");
-    $('#RegInvima').val("");
-    $('#Cantidad').val("");
-    $('#FechaVence').val("");
-    $('#Lote').val("");
 }
 
 function buscarProduct() {
@@ -329,11 +317,8 @@ function getbyID(ID) {
                 htmldetail += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
                 htmldetail += '</tr>';
             });
-            $('#detalle').html(htmldetail);;
-
+            $('#detalle').html(htmldetail);
             $('#myModal').modal('show');
-            $('#btnUpdate').show();
-            $('#btnAdd').hide();
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -365,15 +350,53 @@ function getbyID(ID) {
 }
 
 function limpiarVar() {
-    $.ajax({
-        url: "/Entries/LimpiarVar",
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
+    sessionStorage.clear();
+}
+
+function Delete(Id) {
+    Swal.fire({
+        title: "Estimado Usuario",
+        text: "Esta seguro(a) que desea eliminar registro?, recuerde que se elimina el detalle del ingreso.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: '#d33',
+        confirmButtonText: "Si",
+        cancelButtonText: "No"
+    }).then((result) => {
+        if (result.value == true) {
+            $.ajax({
+                url: "/Entries/Borrar/" + Id,
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    if (response.Probar == false) {
+                        swal.fire({
+                            title: "Estimado Usuario",
+                            text: response.Mensaje,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "OK",
+                            icon: "error",
+                            closeOnConfirm: false
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Estimado Usuario",
+                            text: response.Mensaje,
+                            confirmButtonColor: "#DD6B55",
+                            confirmButtonText: "OK",
+                            icon: "success",
+                            closeOnConfirm: false
+                        });
+                    }
+                    loadData();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
         }
-    });
+    })
 }

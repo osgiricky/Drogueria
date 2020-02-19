@@ -15,8 +15,6 @@ namespace DrogSystem.Controllers
     public class EntriesController : Controller
     {
         private DrogSystemContext db = new DrogSystemContext();
-        private List<int> IdDetalleBorrado = new List<int>(); 
-
 
         // GET: Entries
         public ActionResult Index()
@@ -73,35 +71,35 @@ namespace DrogSystem.Controllers
             return Json(EDEntry, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult LimpiarVar()
-        {
-            bool Probar = true;
-            IdDetalleBorrado.Clear();
-            return Json(Probar, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult IdABorrar(int ID)
-        {
-            bool Probar = true;
-            IdDetalleBorrado.Add(ID);
-            return Json( Probar, JsonRequestBehavior.AllowGet);
-
-        }
-        public JsonResult Borrar(int ID)
+       public JsonResult Borrar(int ID)
         {
             bool Probar = true;
             string Mensaje = "";
-            ProductDetail ProductDetail = db.ProductDetails.Find(ID);
-            if (ProductDetail == null)
+
+            Entry Entradas = db.Entries.Find(ID);
+            if (Entradas == null)
             {
                 Probar = false;
-                Mensaje = " No se encuntra el registro: " + ProductDetail.ProductDetailId;
+                Mensaje = " No se encuentra el registro: ";
             }
             else
             {
                 try
                 {
-                    db.ProductDetails.Remove(ProductDetail);
+                    var IdABorrar = (from E in db.EntryDetails
+                                     where E.EntradaId == ID
+                                     select E).ToList();
+
+                    if (IdABorrar != null)
+                    {
+                        foreach (var detalle in IdABorrar)
+                        {
+                            EntryDetail EntradaDetalle = db.EntryDetails.Find(detalle.EntryDetailId);
+                            db.EntryDetails.Remove(EntradaDetalle);
+                            db.SaveChanges();
+                        }
+                    }
+                    db.Entries.Remove(Entradas);
                     db.SaveChanges();
                     Mensaje = " Registro eliminado con exito.";
                 }
@@ -116,7 +114,7 @@ namespace DrogSystem.Controllers
             return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult Crear(List<EDEntryDetails> DetalleEntrada, EDEntry Entradas)
+        public JsonResult Crear(List<EDEntryDetails> DetalleEntrada, EDEntry Entradas, List<int> IdABorrar)
         {
             bool Probar = true;
             string Mensaje = "";
@@ -130,6 +128,7 @@ namespace DrogSystem.Controllers
             foreach (var item in DetalleEntrada)
             {
                 EDEntryDetails EDEntryDetail = new EDEntryDetails();
+                EDEntryDetail.EntryDetailId = item.EntryDetailId;
                 EDEntryDetail.Cantidad = item.Cantidad;
                 EDEntryDetail.Lote = item.Lote;
                 EDEntryDetail.FechaVence = item.FechaVence;
@@ -158,15 +157,14 @@ namespace DrogSystem.Controllers
                     db.SaveChanges();
                 }
                 int IdEntrada = Entry.EntradaId;
-                if (IdDetalleBorrado != null)
+                if (IdABorrar != null)
                 {
-                    foreach (var detalle in IdDetalleBorrado)
+                    foreach (var detalle in IdABorrar)
                     {
                         EntryDetail EntradaDetalle = db.EntryDetails.Find(detalle);
                         db.EntryDetails.Remove(EntradaDetalle);
                         db.SaveChanges();
                     }
-                    IdDetalleBorrado.Clear();
                 }
                 
                foreach (var item1 in EDEntryDetails)
@@ -182,7 +180,7 @@ namespace DrogSystem.Controllers
                     EntryDetail.FechaVence = DateTime.Parse(item1.FechaVence);
                     EntryDetail.EntradaId = IdEntrada;
                     EntryDetail.ProductDetailId = item1.ProductDetailId;                    
-                    if (EDEntry.EntryId > 0)
+                    if (EntryDetail.EntryDetailId > 0)
                     {
                         db.Entry(EntryDetail).State = EntityState.Modified;
                         db.SaveChanges();
