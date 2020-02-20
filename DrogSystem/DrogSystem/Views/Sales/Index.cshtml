@@ -1,0 +1,162 @@
+﻿@model DrogSystem.EntidadesDominio.EDSale
+@{
+    ViewBag.Title = "Facturación";
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/themes/base/jquery-ui.css">
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<script src="~/Scripts/Sale.js"></script>
+
+<div class="container">
+    <div class="modal-body">
+        <h2>Factura</h2>
+        <div class="form-row">
+            <input type="text" class="form-control" id="EntryId" placeholder="Id" style="visibility:hidden" />
+        </div>
+        <div class="form-group row">
+            <label for="NroFactura" class="col-md-4 col-form-label">Número Factura</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="NroFactura" disabled />
+            </div>            
+        </div>
+        <div class="form-group row">
+            <label for="FechaFactura" class="col-md-4 col-form-label">Fecha Factura</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="FechaFactura" disabled/>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="ValorFactura" class="col-md-4 col-form-label">Valor Factura</label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" id="ValorFactura" disabled/>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearModal();">Agregar Producto</button><br /><br />
+        <h2>Listado de Productos a Ingresar</h2>
+        <table class="table table-bordered table-hover" id="tabledetail">
+            <thead>
+                <tr>
+                    <th>
+                        <center>Producto</center>
+                    </th>
+                    <th>
+                        <center>Fabricante</center>
+                    </th>
+                    <th>
+                        <center>Presentación</center>
+                    </th>
+                    <th>
+                        <center>Cantidad</center>
+                    </th>
+                    <th>
+                        <center>Valor Unitario</center>
+                    </th>
+                    <th>
+                        <center>Valor Total</center>
+                    </th>
+                    <th>
+                        <center>Operación</center>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="tbody" id="detalle"></tbody>
+        </table>
+        <button type="button" class="btn btn-primary" onclick="return Add();">Guardar</button>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    </div>
+                    <div class="form-group row">
+                        <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="CodBarras" placeholder="Ingrese el código de barras" onchange="buscarProduct()" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreProducto" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="NombreFabricante" class="col-md-4 col-form-label">Fabricado Por</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="NombreFabricante" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Presentación" class="col-md-4 col-form-label">Presentación</label>
+                        <div class="col-md-8">
+                            <select class="form-control" id="PresentationId"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Precio" class="col-md-4 col-form-label">Precio</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="Precio"  />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Cantidad" class="col-md-4 col-form-label">Cantidad</label>
+                        <div class="col-md-8">
+                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="PrecioTotal" class="col-md-4 col-form-label">Valor Total</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="PrecioTotal" disabled/>
+                        </div>
+                    </div>
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Agregar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+<script id="script1">
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['es']);
+    $("#FechaFactura").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
+    });
+</script>
+
+

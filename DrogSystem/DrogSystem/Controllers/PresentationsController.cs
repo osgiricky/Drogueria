@@ -24,7 +24,9 @@ namespace DrogSystem.Controllers
         public JsonResult List()
         {
             List<EDPresentacion> EDPresenta = new List<EDPresentacion>();
-            var Listaux = (from s in db.Presentations select s).ToList<Presentation>();
+            var Listaux = (from s in db.Presentations
+                           orderby s.NombrePresentacion, s.CantPresentacion
+                           select s).ToList<Presentation>();
             if (Listaux != null)
             {
                 foreach (var item in Listaux)

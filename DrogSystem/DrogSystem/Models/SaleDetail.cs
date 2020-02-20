@@ -24,7 +24,7 @@ namespace DrogSystem.Models
 
         [Required()]
         [DisplayName("Precio")]
-        public decimal Precio { get; set; }
+        public decimal PrecioTotal { get; set; }
 
         public virtual Presentation Presentation { get; set; }
         public virtual ProductDetail ProductDetail { get; set; }
