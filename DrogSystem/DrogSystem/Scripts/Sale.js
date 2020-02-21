@@ -5,22 +5,20 @@
 
 //Load Data function  
 function loadData() {
+    var fecha = new Date();
+    var d = fecha.getDate();
+    var m = fecha.getMonth() + 1;
+    var y = fecha.getFullYear();
+    var dateString = (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
+    $("#FechaFactura").val(dateString);
     $.ajax({
-        url: "/Entries/List",
+        url: "/Sales/NroFactura",
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
-            var html = '';
-            var tercero;
-            $.each(result, function (key, item) {
-                html += '<tr>';
-                html += '<td>' + item.FechaIngreso + '</td>';
-                html += '<td>' + item.NombreTercero + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.EntryId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.EntryId + ')">Eliminar</a></center></td>';
-                html += '</tr>';
-            });
-            $('#maestro').html(html);
+            if(result == 0)
+                document.getElementById("NroFactura").disabled = false; 
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -216,42 +214,24 @@ function Add() {
 }
 
 function clearTextBox() {
-    $('#EntryId').val("");
-    $('#NombreTercero').html("");
-    $('#NombreTercero').css('border-color', 'lightgrey');
-    $('#btnUpdate').hide();
-    $('#btnAdd').show();
-    $('#S').attr('checked', false);
-    $('#N').attr('checked', true);
-    $.ajax({
-        url: "/Entries/listaProveedores/",
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
-        dataType: "json",
-        success: function (result) {
-            var html = html += '<option value="" selected> Selecione un Proveedor</option>';;
-            $.each(result, function (key, item) {
-                html += '<option value="' + item.TerceroId + '" >' + item.NombreTercero + '</option>';
-            });
-            $('#NombreTercero').html(html);
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-    var fecha = new Date();
-    var d = fecha.getDate();
-    var m = fecha.getMonth() + 1;
-    var y = fecha.getFullYear();
-    var dateString = (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
-    $("#FechaIngreso").val(dateString);
+    $('#ProductDetailId').val("");
+    $('#CodBarras').val("");
+    $('#NombreProducto').val("");
+    $('#NombreFabricante').val("");
+    $('#PresentationId').html("");
+    $('#Precio').val("");
+    $('#Cantidad').val("");
+    $('#PrecioTotal').val("");
+    $('#CodBarras').css('border-color', 'lightgrey');
+    $('#Precio').css('border-color', 'lightgrey');
+    $('#btnAdd').show();    
 }
 
 function buscarProduct() {
     var CodBarra = $('#CodBarras').val();
     if (CodBarra.length == 13) {
         $.ajax({
-            url: "/ProductPresentationPrices/BuscarProducto",
+            url: "/Sales/BuscarProducto",
             data: '{CodBarras: "' + CodBarra + '" }',
             type: "POST",
             contentType: "application/json;charset=utf-8",
@@ -260,7 +240,12 @@ function buscarProduct() {
                 $('#ProductDetailId').val(result.ProductDetailId);
                 $('#NombreProducto').val(result.NombreProducto);
                 $('#NombreFabricante').val(result.NombreFabricante);
-                $('#RegInvima').val(result.RegInvima);
+                var html = '';
+                $.each(result.ListaPresentacion, function (key, item) {
+                    html += '<option value="' + item.PresentationId + '" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
+                });
+                $('#PresentationId').html(html);
+                $('#Precio').val(result.Precio);
             },
             error: function (errormessage) {
                 alert(errormessage.responseText);
@@ -351,6 +336,33 @@ function getbyID(ID) {
 
 function limpiarVar() {
     sessionStorage.clear();
+}
+
+function buscarPrecio() {
+    var IdProducto = $('#ProductDetailId').val();
+    var IdPresentacion = $('#PresentationId').val();
+    $.ajax({
+        url: "/Sales/BuscarPrecio",
+        data: '{IdProducto: "' + IdProducto + '", IdPresentacion: "' + IdPresentacion + '" }',
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            $('#Precio').val(result);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    if ($('#Cantidad').val().trim() != "")
+        $('#PrecioTotal').val() = $('#Cantidad').val() * $('#Precio').val();
+}
+
+function CalcValor() {
+    var valor1 = $('#Cantidad').val();
+    var valor2 = $('#Precio').val();
+    total = valor1 * valor2;
+    $('#PrecioTotal').val(total);
 }
 
 function Delete(Id) {

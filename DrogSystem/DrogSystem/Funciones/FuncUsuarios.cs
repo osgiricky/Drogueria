@@ -130,9 +130,7 @@ namespace DrogSystem.Funciones
                 foreach (var item in Presentacion)
                 {
                     EDPresentacion EDPresentacion = new EDPresentacion();
-                    //EDPresentacion.PresentationId = item.PresentationId;
                     EDPresentacion.NombrePresentacion = item.Key;
-                    //EDPresentacion.CantPresentacion = item.CantPresentacion;
                     ListaEDPresentacion.Add(EDPresentacion);
                 }
             }
@@ -165,6 +163,45 @@ namespace DrogSystem.Funciones
             ListaEDPresentacion = ListaEDPresentacion.OrderBy(o => o.CantPresentacion).ToList();
             return ListaEDPresentacion;
 
+        }
+
+        public List<EDPresentacion> ListaProductPresentacion(int IdProduct)
+        {
+            List<EDPresentacion> ListaEDPresentacion = new List<EDPresentacion>();
+            List<Presentation> ListaPresentation = new List<Presentation>();
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+                var Presentation = (from P in db.Presentations
+                                    join R in db.ProductPresentationPrices on P.PresentationId equals R.PresentationId
+                                    where R.ProductDetailId == IdProduct
+                                    select P).ToList();
+                if (Presentation != null)
+                {
+                    ListaPresentation = Presentation;
+                }
+            }
+
+            foreach (var item in ListaPresentation)
+            {
+                EDPresentacion EDPresentacion = new EDPresentacion();
+                EDPresentacion.PresentationId = item.PresentationId;
+                EDPresentacion.NombrePresentacion = item.NombrePresentacion;
+                EDPresentacion.CantPresentacion = item.CantPresentacion;
+                ListaEDPresentacion.Add(EDPresentacion);
+            }
+            return ListaEDPresentacion;
+        }
+
+        public decimal PrecioProducto(int IdProducto, int IdPresentacion)
+        {
+            using (DrogSystemContext db = new DrogSystemContext())
+            {
+                var precio = (from R in db.ProductPresentationPrices
+                              where R.ProductDetailId == IdProducto && R.PresentationId == IdPresentacion
+                              select R.Precio).FirstOrDefault();
+
+                return precio;
+            }
         }
     }
 }

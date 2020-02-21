@@ -233,15 +233,39 @@ namespace DrogSystem.Controllers
                 foreach (var item in ProductoDetalle)
                 {
                     EDProductPresentationPrice.ProductDetailId = item.PD.ProductDetailId;
-                    EDProductPresentationPrice.CodBarras = item.PD.CodBarras;                  
+                    EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
                     EDProductPresentationPrice.ProductoId = item.PD.ProductoId;
                     EDProductPresentationPrice.NombreProducto = item.P.NombreProducto;
                     EDProductPresentationPrice.MarkerId = item.PD.MarkerId;
                     EDProductPresentationPrice.NombreFabricante = item.M.NombreFabricante;
-
+                    FuncUsuarios FuncUsuarios = new FuncUsuarios();
+                    EDProductPresentationPrice.ListaPresentacion = FuncUsuarios.ListaProductPresentacion(EDProductPresentationPrice.ProductDetailId);
+                    EDProductPresentationPrice.Precio = FuncUsuarios.PrecioProducto(item.PD.ProductDetailId,
+                        EDProductPresentationPrice.ListaPresentacion[0].PresentationId);
                 }
             }
             return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BuscarPrecio(int IdProducto, int IdPresentacion)
+        {
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            var Precio = FuncUsuarios.PrecioProducto(IdProducto, IdPresentacion);
+
+            return Json(Precio, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult NroFactura()
+        {
+            var NroFact = (from PD in db.Sales
+                           select PD).ToList();
+            int FacturaNum = 0;
+            if (NroFact.Count != 0)
+            {
+                FacturaNum = NroFact.Max(o => o.NroFactura) + 1;
+            }
+
+            return Json(FacturaNum, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Sales/Details/5
