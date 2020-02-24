@@ -30,6 +30,8 @@ function AddFila() {
     var ProductDetailId = $('#ProductDetailId').val();
     var NombreProducto = $('#NombreProducto').val();
     var NombreFabricante = $('#NombreFabricante').val();
+    var PresentacionID = $('#PresentationId').val();
+    var DescripPresentacion = $('#PresentationId')[0].selectedOptions[0].text;
     var Cantidad = $('#Cantidad').val();
     var Lote = $('#Lote').val();
     var FechaVence = $('#FechaVence').val();
