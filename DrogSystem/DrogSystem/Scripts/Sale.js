@@ -33,21 +33,25 @@ function AddFila() {
     var PresentacionID = $('#PresentationId').val();
     var DescripPresentacion = $('#PresentationId')[0].selectedOptions[0].text;
     var Cantidad = $('#Cantidad').val();
-    var Lote = $('#Lote').val();
-    var FechaVence = $('#FechaVence').val();
-    var NroFila = document.getElementById("tabledetail").rows.length;
+    var Precio = $('#Precio').val();
+    var PrecioTotal = $('#PrecioTotal').val();
+    var res = ValidarExistencias(ProductDetailId, PresentacionID, Cantidad);
+    if (res == false) {
+        return false;
+    }
     var html = '';
     html = $('#detalle').html();
-    html += '<tr ProductDetailId="' + ProductDetailId + '" EntryDetailId = "">';
+    html += '<tr ProductDetailId="' + ProductDetailId + '" PresentacionID = "' + PresentacionID + '">';
     html += '<td>' + NombreProducto + '</td>';
     html += '<td>' + NombreFabricante + '</td>';
+    html += '<td>' + DescripPresentacion + '</td>';
     html += '<td>' + Cantidad + '</td>';
-    html += '<td>' + Lote + '</td>';
-    html += '<td>' + FechaVence + '</td>';
+    html += '<td>' + Precio + '</td>';
+    html += '<td>' + PrecioTotal + '</td>';
     html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     html += '</tr>';
     $('#detalle').html(html);
-    $('#myModal1').modal('hide');
+    $('#myModal').modal('hide');
     $('.modal-backdrop').remove();
 }
 
@@ -84,23 +88,47 @@ function editarFila(nodo) {
     var nodoTr = nodoTd.parentNode; //Nodo TR
     var nodosEnTr = nodoTr.getElementsByTagName('td');
     var Htmledit = nodoTr.innerHTML;
-    var diaact = nodosEnTr[4].textContent.substr(0, 2);
-    var mesact = nodosEnTr[4].textContent.substr(3, 2);
-    var anioact = nodosEnTr[4].textContent.substr(6, 4);
     var userObj = {
         producto: nodosEnTr[0].textContent,
         fabricante: nodosEnTr[1].textContent,
-        cantidad: nodosEnTr[2].textContent,
-        lote: nodosEnTr[3].textContent,
-        fechaVence: anioact + '-' + mesact + '-' + diaact,
+        presentacion: nodosEnTr[2].textContent,
+        cantidad: nodosEnTr[3].textContent,
+        Precio: nodosEnTr[4].textContent,
+        PrecioTotal: nodosEnTr[5].textContent,
+        PresentationId: nodoTd.parentElement.attributes[1].value,
     };
     var nuevoCodigoHtml = '';
-    nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
-    nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
-    nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.cantidad + '" size="10"></td>';
-    nuevoCodigoHtml += '<td><input type="text" name="lote" id="loteedit" value="' + userObj.lote + '" size="10"></td>';
-    nuevoCodigoHtml += '<td><input type="date" name="fechaVenceedit" id="fechaVenceedit" value="' + userObj.fechaVence + '" size="10"></td>';
-    nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
+    $.ajax({
+        url: "/Sales/ListaPresentacion/" + userObj.PresentationId,
+        type: "GET",
+        async: false,
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
+            nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
+            $.each(result.ListaPresentacion, function (key, item) {
+                if (item.PresentationId == userObj.PresentationId)
+                    nuevoCodigoHtml += '<td><select value="' + item.PresentationId + '" id="PresentationIdEdit" selected>' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option></td>';
+                else
+                    nuevoCodigoHtml += '<td><select value="' + item.PresentationId + '" id="PresentationIdEdit" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option></td>';
+            });
+            nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.presentacion + '" size="10"></td>';
+            nuevoCodigoHtml += '<td>' + userObj.Precio + '</td>';
+            nuevoCodigoHtml += '<td>' + userObj.PrecioTotal + '</td>';
+            nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    //nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
+    //nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
+    //nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.presentacion + '" size="10"></td>';
+    //nuevoCodigoHtml += '<td><input type="text" name="lote" id="loteedit" value="' + userObj.cantidad + '" size="10"></td>';
+    //nuevoCodigoHtml += '<td>' + userObj.Precio + '</td>';
+    //nuevoCodigoHtml += '<td>' + userObj.PrecioTotal + '</td>';
+    //nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
     nodoTr.innerHTML = nuevoCodigoHtml;
 
 }
@@ -146,13 +174,6 @@ function Add() {
     var res = validate();
     if (res == false) {
         return false;
-    }
-    var Aprobado = '';
-    if (document.getElementsByName('Aprobado')[0].checked) {
-        Aprobado = 'S';
-    }
-    else if (document.getElementsByName('Aprobado')[1].checked) {
-        Aprobado = 'N';
     }
     var nodo = document.getElementById('detalle');
     var entryObj = {
@@ -413,4 +434,36 @@ function Delete(Id) {
             });
         }
     })
+}
+
+function ValidarExistencias(ProductDetailId, PresentacionID, Cantidad) {
+    var isValid = true;
+    //var ProductDetailId = $('#ProductDetailId').val();
+    //var PresentacionID = $('#PresentationId').val();
+    //var Cantidad = $('#Cantidad').val();
+    $.ajax({
+        url: "/Sales/ValidarExitencias",
+        data: '{ProductDetailId: "' + ProductDetailId + '", PresentacionID: "' + PresentacionID + '", Cantidad: "' + Cantidad + '" }',
+        type: "POST",
+        async: false,
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (response) {
+            if (response.HayExistencias == false) {
+                isValid = false;
+                swal.fire({
+                    title: "Estimado Usuario",
+                    text: "No hay existencias necesarias para el producto en inventario, existen " + response.CantExistente + "unidades.",
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "OK",
+                    icon: "error",
+                    closeOnConfirm: false
+                });
+            }
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    return isValid;
 }

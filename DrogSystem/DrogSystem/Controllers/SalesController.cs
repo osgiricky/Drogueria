@@ -247,6 +247,14 @@ namespace DrogSystem.Controllers
             return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult ListaPresentacion(int ProductDetailId)
+        {
+            List<EDPresentacion> ListaPresentacion = new List<EDPresentacion>();
+            FuncUsuarios FuncUsuarios = new FuncUsuarios();
+            ListaPresentacion = FuncUsuarios.ListaProductPresentacion(ProductDetailId);
+            return Json(ListaPresentacion, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult BuscarPrecio(int IdProducto, int IdPresentacion)
         {
             FuncUsuarios FuncUsuarios = new FuncUsuarios();
@@ -266,6 +274,23 @@ namespace DrogSystem.Controllers
             }
 
             return Json(FacturaNum, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ValidarExitencias(int ProductDetailId, int PresentacionID, int Cantidad)
+        {
+            bool HayExistencias = true;
+            var CantPResentacion = (from P in db.Presentations
+                          where P.PresentationId == PresentacionID 
+                          select P.CantPresentacion).FirstOrDefault();
+            var CantNecesaria = Cantidad * CantPResentacion;
+
+            var CantExistente = (from R in db.ProductDetails
+                                    where R.ProductDetailId == ProductDetailId
+                                 select R.Existencias).FirstOrDefault();
+            if (CantExistente < CantNecesaria)
+                HayExistencias = false;
+
+            return Json(new { HayExistencias, CantExistente }, JsonRequestBehavior.AllowGet);
         }
 
         // GET: Sales/Details/5
