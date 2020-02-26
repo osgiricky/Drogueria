@@ -192,12 +192,12 @@ namespace DrogSystem.Funciones
             return ListaEDPresentacion;
         }
 
-        public decimal PrecioProducto(int IdProducto, int IdPresentacion)
+        public decimal PrecioProducto(int ProductDetailId, int IdPresentacion)
         {
             using (DrogSystemContext db = new DrogSystemContext())
             {
                 var precio = (from R in db.ProductPresentationPrices
-                              where R.ProductDetailId == IdProducto && R.PresentationId == IdPresentacion
+                              where R.ProductDetailId == ProductDetailId && R.PresentationId == IdPresentacion
                               select R.Precio).FirstOrDefault();
 
                 return precio;

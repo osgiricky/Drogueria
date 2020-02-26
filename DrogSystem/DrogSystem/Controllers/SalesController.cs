@@ -255,10 +255,10 @@ namespace DrogSystem.Controllers
             return Json(ListaPresentacion, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BuscarPrecio(int IdProducto, int IdPresentacion)
+        public JsonResult BuscarPrecio(int ProductDetailId, int IdPresentacion)
         {
             FuncUsuarios FuncUsuarios = new FuncUsuarios();
-            var Precio = FuncUsuarios.PrecioProducto(IdProducto, IdPresentacion);
+            var Precio = FuncUsuarios.PrecioProducto(ProductDetailId, IdPresentacion);
 
             return Json(Precio, JsonRequestBehavior.AllowGet);
         }

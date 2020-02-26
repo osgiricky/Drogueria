@@ -33,8 +33,8 @@ function AddFila() {
     var PresentacionID = $('#PresentationId').val();
     var DescripPresentacion = $('#PresentationId')[0].selectedOptions[0].text;
     var Cantidad = $('#Cantidad').val();
-    var Precio = $('#Precio').val();
-    var PrecioTotal = $('#PrecioTotal').val();
+    var Precio = Number($('#Precio').val());
+    var PrecioTotal = Number($('#PrecioTotal').val());
     var res = ValidarExistencias(ProductDetailId, PresentacionID, Cantidad);
     if (res == false) {
         return false;
@@ -46,13 +46,14 @@ function AddFila() {
     html += '<td>' + NombreFabricante + '</td>';
     html += '<td>' + DescripPresentacion + '</td>';
     html += '<td>' + Cantidad + '</td>';
-    html += '<td>' + Precio + '</td>';
-    html += '<td>' + PrecioTotal + '</td>';
+    html += '<td>' + currencyFormat(Precio) + '</td>';
+    html += '<td>' + currencyFormat(PrecioTotal) + '</td>';
     html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     html += '</tr>';
     $('#detalle').html(html);
     $('#myModal').modal('hide');
     $('.modal-backdrop').remove();
+    CalcularTotal();
 }
 
 function eliminarFila(i) {
@@ -80,14 +81,15 @@ function eliminarFila(i) {
             alert('No se puede eliminar el encabezado');
         else
             table.deleteRow(rowCount);
-    })
+        CalcularTotal();
+    })    
 }
 
 function editarFila(nodo) {
     var nodoTd = nodo.parentNode.parentNode; //Nodo TD
     var nodoTr = nodoTd.parentNode; //Nodo TR
     var nodosEnTr = nodoTr.getElementsByTagName('td');
-    var Htmledit = nodoTr.innerHTML;
+    var ProductDetailId = nodoTd.parentElement.attributes[0].value;
     var userObj = {
         producto: nodosEnTr[0].textContent,
         fabricante: nodosEnTr[1].textContent,
@@ -99,21 +101,24 @@ function editarFila(nodo) {
     };
     var nuevoCodigoHtml = '';
     $.ajax({
-        url: "/Sales/ListaPresentacion/" + userObj.PresentationId,
-        type: "GET",
+        url: "/Sales/ListaPresentacion",
+        data: '{ProductDetailId: ' + JSON.stringify(ProductDetailId) + '}',
+        type: "POST",
         async: false,
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
             nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
             nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
-            $.each(result.ListaPresentacion, function (key, item) {
+            nuevoCodigoHtml += '<td><select id="PresentationIdedit" >';
+            $.each(result, function (key, item) {
                 if (item.PresentationId == userObj.PresentationId)
-                    nuevoCodigoHtml += '<td><select value="' + item.PresentationId + '" id="PresentationIdEdit" selected>' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option></td>';
+                    nuevoCodigoHtml += '<option value="' + item.PresentationId + '" selected>' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
                 else
-                    nuevoCodigoHtml += '<td><select value="' + item.PresentationId + '" id="PresentationIdEdit" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option></td>';
+                    nuevoCodigoHtml += '<option value="' + item.PresentationId + '" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
             });
-            nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.presentacion + '" size="10"></td>';
+            nuevoCodigoHtml += '</select> </td>';
+            nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.cantidad + '" size="10"></td>';
             nuevoCodigoHtml += '<td>' + userObj.Precio + '</td>';
             nuevoCodigoHtml += '<td>' + userObj.PrecioTotal + '</td>';
             nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
@@ -122,39 +127,54 @@ function editarFila(nodo) {
             alert(errormessage.responseText);
         }
     });
-    //nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
-    //nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
-    //nuevoCodigoHtml += '<td><input type="text" name="cantidad" id="cantidadedit" value="' + userObj.presentacion + '" size="10"></td>';
-    //nuevoCodigoHtml += '<td><input type="text" name="lote" id="loteedit" value="' + userObj.cantidad + '" size="10"></td>';
-    //nuevoCodigoHtml += '<td>' + userObj.Precio + '</td>';
-    //nuevoCodigoHtml += '<td>' + userObj.PrecioTotal + '</td>';
-    //nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
     nodoTr.innerHTML = nuevoCodigoHtml;
-
+    CalcularTotal();
 }
 
 function actualizar(nodo) {
     var nodoTd = nodo.parentNode.parentNode; //Nodo TD
     var nodoTr = nodoTd.parentNode; //Nodo TR
     var nodosEnTr = nodoTr.getElementsByTagName('td');
+    var IdPresentation = $('#PresentationIdedit').val();
+    var ProductDetailId = nodoTr.attributes[0].value;
+    var Cantidad = $('#cantidadedit').val();
+    var Precio = 0;
+    var res = ValidarExistencias(ProductDetailId, IdPresentation, Cantidad);
+    if (res == false) {
+        return false;
+    }
+    $.ajax({
+        url: "/Sales/BuscarPrecio",
+        data: '{ProductDetailId: "' + ProductDetailId + '", IdPresentacion: "' + IdPresentation + '" }',
+        type: "POST",
+        async: false,
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            Precio = result;
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    var PrecioTotal = Precio * Cantidad;
+    nodoTr.attributes[1].value = $('#PresentationIdedit').val();
     var nuevoCodigoHtml = '';
-    var diaact = $('#fechaVenceedit').val().substr(8, 2);
-    var mesact = $('#fechaVenceedit').val().substr(5, 2);
-    var anioact = $('#fechaVenceedit').val().substr(0, 4);
     var userObj = {
         producto: nodosEnTr[0].textContent,
         fabricante: nodosEnTr[1].textContent,
         cantidad: $('#cantidadedit').val(),
-        lote: $('#loteedit').val(),
-        fechaVence: diaact + '/' + mesact + '/' + anioact,
+        DescripPresentacion: $('#PresentationIdedit')[0].selectedOptions[0].text,
     };
     nuevoCodigoHtml += '<td>' + userObj.producto + '</td>';
     nuevoCodigoHtml += '<td>' + userObj.fabricante + '</td>';
+    nuevoCodigoHtml += '<td>' + userObj.DescripPresentacion + '</td>';
     nuevoCodigoHtml += '<td>' + userObj.cantidad + '</td>';
-    nuevoCodigoHtml += '<td>' + userObj.lote + '</td>';
-    nuevoCodigoHtml += '<td>' + userObj.fechaVence + '</td>';
+    nuevoCodigoHtml += '<td>' + Precio + '</td>';
+    nuevoCodigoHtml += '<td>' + PrecioTotal + '</td>';
     nuevoCodigoHtml += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     nodoTr.innerHTML = nuevoCodigoHtml;
+    CalcularTotal();
 }
 
 
@@ -362,11 +382,11 @@ function limpiarVar() {
 }
 
 function buscarPrecio() {
-    var IdProducto = $('#ProductDetailId').val();
+    var ProductDetailId = $('#ProductDetailId').val();
     var IdPresentacion = $('#PresentationId').val();
     $.ajax({
         url: "/Sales/BuscarPrecio",
-        data: '{IdProducto: "' + IdProducto + '", IdPresentacion: "' + IdPresentacion + '" }',
+        data: '{ProductDetailId: "' + ProductDetailId + '", IdPresentacion: "' + IdPresentacion + '" }',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -438,9 +458,6 @@ function Delete(Id) {
 
 function ValidarExistencias(ProductDetailId, PresentacionID, Cantidad) {
     var isValid = true;
-    //var ProductDetailId = $('#ProductDetailId').val();
-    //var PresentacionID = $('#PresentationId').val();
-    //var Cantidad = $('#Cantidad').val();
     $.ajax({
         url: "/Sales/ValidarExitencias",
         data: '{ProductDetailId: "' + ProductDetailId + '", PresentacionID: "' + PresentacionID + '", Cantidad: "' + Cantidad + '" }',
@@ -467,3 +484,19 @@ function ValidarExistencias(ProductDetailId, PresentacionID, Cantidad) {
     });
     return isValid;
 }
+
+function CalcularTotal() {
+    var nodo = document.getElementById('detalle');
+    var Total = 0;
+    for (var i = 0; i < nodo.rows.length; i++) {
+        var valor = Number(nodo.rows[i].cells[5].innerText);
+        Total = Total + valor;
+    }
+    Total = '$' + currencyFormat(Total);
+    $('#ValorFactura').val(Total);
+}
+
+function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\p)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+    
