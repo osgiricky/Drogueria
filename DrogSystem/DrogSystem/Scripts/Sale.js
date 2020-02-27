@@ -33,8 +33,8 @@ function AddFila() {
     var PresentacionID = $('#PresentationId').val();
     var DescripPresentacion = $('#PresentationId')[0].selectedOptions[0].text;
     var Cantidad = $('#Cantidad').val();
-    var Precio = Number($('#Precio').val());
-    var PrecioTotal = Number($('#PrecioTotal').val());
+    var Precio = currencyFormat($('#Precio').val());
+    var PrecioTotal = currencyFormat($('#PrecioTotal').val());
     var res = ValidarExistencias(ProductDetailId, PresentacionID, Cantidad);
     if (res == false) {
         return false;
@@ -46,8 +46,8 @@ function AddFila() {
     html += '<td>' + NombreFabricante + '</td>';
     html += '<td>' + DescripPresentacion + '</td>';
     html += '<td>' + Cantidad + '</td>';
-    html += '<td>' + currencyFormat(Precio) + '</td>';
-    html += '<td>' + currencyFormat(PrecioTotal) + '</td>';
+    html += '<td>' + Precio + '</td>';
+    html += '<td>' + PrecioTotal + '</td>';
     html += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
     html += '</tr>';
     $('#detalle').html(html);
@@ -128,7 +128,6 @@ function editarFila(nodo) {
         }
     });
     nodoTr.innerHTML = nuevoCodigoHtml;
-    CalcularTotal();
 }
 
 function actualizar(nodo) {
@@ -142,7 +141,7 @@ function actualizar(nodo) {
     var res = ValidarExistencias(ProductDetailId, IdPresentation, Cantidad);
     if (res == false) {
         return false;
-    }
+    };
     $.ajax({
         url: "/Sales/BuscarPrecio",
         data: '{ProductDetailId: "' + ProductDetailId + '", IdPresentacion: "' + IdPresentation + '" }',
@@ -158,6 +157,8 @@ function actualizar(nodo) {
         }
     });
     var PrecioTotal = Precio * Cantidad;
+    Precio = currencyFormat(Precio.toString());
+    PrecioTotal = currencyFormat(PrecioTotal.toString());
     nodoTr.attributes[1].value = $('#PresentationIdedit').val();
     var nuevoCodigoHtml = '';
     var userObj = {
@@ -489,14 +490,22 @@ function CalcularTotal() {
     var nodo = document.getElementById('detalle');
     var Total = 0;
     for (var i = 0; i < nodo.rows.length; i++) {
-        var valor = Number(nodo.rows[i].cells[5].innerText);
+        var valor = nodo.rows[i].cells[5].innerText;
+        valor = Number(currencyANumero(valor));
         Total = Total + valor;
     }
+    Total = Total.toString();
     Total = '$' + currencyFormat(Total);
     $('#ValorFactura').val(Total);
 }
 
 function currencyFormat(num) {
-    return num.toFixed(0).replace(/(\p)(?=(\d{3})+(?!\d))/g, '$1,')
+    return num.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+function currencyANumero(num) {
+    num = num.replace("$", "");
+    num = num.replace(",", "");
+    return num;
 }
     
