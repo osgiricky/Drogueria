@@ -64,7 +64,7 @@
             </thead>
             <tbody class="tbody" id="detalle"></tbody>
         </table>
-        <button type="button" class="btn btn-primary" onclick="return Add();">Guardar</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" onclick="resume();">Aceptar</button>
     </div>
 </div>
 
@@ -125,6 +125,43 @@
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Agregar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog h-100 my-0 mx-auto d-flex flex-column justify-content-center" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Totales</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <label for="TotalFact" class="col-md-4 col-form-label">Total Factura</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="TotalFact" disabled />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Efectivo" class="col-md-4 col-form-label">Efectivo</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Efectivo" oninput="CalcCambio()"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Cambio" class="col-md-4 col-form-label">Cambio</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" id="Cambio" disabled />
+                        </div>
+                    </div>                   
+                </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Aceptar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
                 </div>
             </div>

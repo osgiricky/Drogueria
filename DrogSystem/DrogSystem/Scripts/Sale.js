@@ -28,9 +28,13 @@ function loadData() {
 
 function AddFila() {
     var ProductDetailId = $('#ProductDetailId').val();
+    var PresentacionID = $('#PresentationId').val();
+    var resp = ValidarProduct(ProductDetailId, PresentacionID);
+    if (resp == false) {
+        return false;
+    }
     var NombreProducto = $('#NombreProducto').val();
     var NombreFabricante = $('#NombreFabricante').val();
-    var PresentacionID = $('#PresentationId').val();
     var DescripPresentacion = $('#PresentationId')[0].selectedOptions[0].text;
     var Cantidad = $('#Cantidad').val();
     var Precio = currencyFormat($('#Precio').val());
@@ -507,5 +511,75 @@ function currencyANumero(num) {
     num = num.replace("$", "");
     num = num.replace(",", "");
     return num;
+}
+
+function resume() {
+    var nodo = document.getElementById('detalle');
+    if(nodo.rows.length > 0){
+        $('#TotalFact').val();
+        $('#Efectivo').val();
+        $('#Cambio').val();
+        Total = $('#ValorFactura').val();
+        $('#TotalFact').val(Total);
+        $('#myModal1').modal('show');
+    }
+    else {
+        $('#myModal1').modal('hide');
+        $('.modal-backdrop').remove();
+        Swal.fire({
+            title: "Estimado Usuario",
+            text: "No existen productos en la factura.",
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "OK",
+            icon: "error",
+            closeOnConfirm: false
+        })
+    }
+
+}
+
+function ValidarProduct(ProductDetailId, PresentacionID) {
+    var isValid = true;
+    var nodo = document.getElementById('detalle');
+    for (var i = 0; i < nodo.rows.length; i++) {
+        if (ProductDetailId == nodo.rows[i].attributes[0].value) {
+            var cantidad = Number(nodo.rows[i].cells[3].textContent);
+            cantidad += Number($('#Cantidad').val());
+            var res = ValidarExistencias(ProductDetailId, PresentacionID, cantidad);
+            if (res == false) {
+                isValid = false;
+                break;
+                }
+            var valor = Number(currencyANumero(nodo.rows[i].cells[4].textContent));            
+            var valorTotal = cantidad * valor;
+            nodo.rows[i].cells[3].innerHTML = cantidad.toString();
+            nodo.rows[i].cells[5].innerHTML = currencyFormat(valorTotal.toString());
+            CalcularTotal();
+            $('#myModal').modal('hide');
+            $('.modal-backdrop').remove();
+            isValid = false;
+            //isValid = false;
+            //Swal.fire({
+            //    title: "Estimado Usuario",
+            //    text: "Producto ya existe en la factura.",
+            //    confirmButtonColor: "#DD6B55",
+            //    confirmButtonText: "OK",
+            //    icon: "info",
+            //    closeOnConfirm: false
+            //});
+            break;
+        }
+    }
+    return isValid;
+}
+
+function CalcCambio() {
+    var Total = $('#TotalFact').val();
+    var Efectivo = $('#Efectivo').val();
+    Total = Number(currencyANumero(Total));
+    var Cambio = Efectivo - Total;
+    Cambio = Cambio.toString();
+    Cambio = '$' + currencyFormat(Cambio);
+    $('#Cambio').val(Cambio);
 }
     
