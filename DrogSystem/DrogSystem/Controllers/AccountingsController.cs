@@ -65,9 +65,9 @@ namespace DrogSystem.Controllers
             return Json(EDAccounting, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult DatosCierre(string Fecha)
+        public JsonResult DatosCierre()
         {
-            var fecha = DateTime.Parse(Fecha);
+            var fecha = DateTime.Now.Date;
             var Entrada = (from A in db.Sales
                            where A.FechaFactura == fecha
                            select A).ToList();

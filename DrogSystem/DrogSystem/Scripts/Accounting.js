@@ -72,14 +72,8 @@ function Add() {
 }
 
 function clearTextBox() {
-    var fecha = new Date();
-    var d = fecha.getDate();
-    var m = fecha.getMonth() + 1;
-    var y = fecha.getFullYear();
-    var dateString = (d <= 9 ? '0' + d : d) + '/' + (m <= 9 ? '0' + m : m) + '/' + y;
     $.ajax({
         url: "/Accountings/DatosCierre",
-        data: '{Fecha: "' + dateString + '" }',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
