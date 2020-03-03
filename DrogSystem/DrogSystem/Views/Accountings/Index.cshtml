@@ -1,0 +1,88 @@
+﻿@model DrogSystem.EntidadesDominio.EDAccounting
+@{
+    ViewBag.Title = "Entrada de Productos";
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/Content/themes/base/jquery-ui.css">
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script src="~/Scripts/bootstrap.js"></script>
+<script src="~/Scripts/Sweetalert.js"></script>
+<script src="~/Scripts/Accounting.js"></script>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Crear Cierre</button><br /><br />
+<h2>Listado de Productos a Ingresar</h2>
+<table class="table table-bordered table-hover" id="tablemaster">
+    <thead>
+        <tr>
+            <th>
+                <center>Fecha</center>
+            </th>
+            <th>
+                <center>Ingresos</center>
+            </th>
+            <th>
+                <center>Egresos</center>
+            </th>
+            <th>
+                <center>Base Caja</center>
+            </th>
+            <th>
+                <center>Detalle</center>
+            </th>
+        </tr>
+    </thead>
+    <tbody class="tbody" id="maestro"></tbody>
+</table>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" id="modalmaestro">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" onclick="limpiarVar();">×</button>
+                <h4 class="modal-title" id="myModalLabel">Cierre Diario</h4>
+            </div>
+            <div class="modal-body">
+                <h2>Cierre Contable</h2>
+                <div class="form-row">
+                    <input type="text" class="form-control" id="ContabilidadId" style="visibility:hidden" />
+                </div>
+                <div class="form-group row">
+                    <label for="FechaIngreso" class="col-md-4 col-form-label">Fecha de Cierre</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="FechaCierre" disabled/>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="NombreProducto" class="col-md-4 col-form-label">Ingresos</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="Ingresos" disabled />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="NombreFabricante" class="col-md-4 col-form-label">Egresos</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="Egresos" disabled />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="RegInvima" class="col-md-4 col-form-label">Base Inicial</label>
+                    <div class="col-md-8">
+                        <input type="text" class="form-control" id="BaseInicial" disabled />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="Cantidad" class="col-md-4 col-form-label">Base Final</label>
+                    <div class="col-md-8">
+                        <input type="number" class="form-control" id="BaseCaja" placeholder="Digite Base Final" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="return Add();">Crear cierre</button>
+            </div>
+        </div>
+    </div>
+</div>
+

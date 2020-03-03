@@ -136,7 +136,7 @@ namespace DrogSystem.Controllers
             try
             {
                 Sale Sale = new Sale();
-                Sale.FechaFactura = DateTime.Now;
+                Sale.FechaFactura = DateTime.Parse(EDSale.FechaFactura);
                 Sale.NroFactura = EDSale.NroFactura;
                 Sale.ValorFactura = EDSale.ValorFactura;
                 db.Sales.Add(Sale);

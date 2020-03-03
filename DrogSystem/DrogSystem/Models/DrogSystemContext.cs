@@ -48,5 +48,7 @@ namespace DrogSystem.Models
         public System.Data.Entity.DbSet<DrogSystem.Models.Sale> Sales { get; set; }
 
         public System.Data.Entity.DbSet<DrogSystem.Models.SaleDetail> SaleDetails { get; set; }
+
+        public System.Data.Entity.DbSet<DrogSystem.Models.Accounting> Accountings { get; set; }
     }
 }

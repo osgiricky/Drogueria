@@ -28,6 +28,7 @@ namespace DrogSystem.Controllers
             var Listaux = (from E in db.Entries
                            join T in db.Providers on E.TerceroId equals T.TerceroId
                            where E.Aprobado == "N"
+                           orderby E.FechaIngreso descending
                            select new { E, T }).ToList();
             if (Listaux != null)
             {
@@ -40,7 +41,7 @@ namespace DrogSystem.Controllers
                     EDEntry.NombreTercero = item.T.NombreTercero;
                     ListaEDEntry.Add(EDEntry);
                 }
-                ListaEDEntry = ListaEDEntry.OrderBy(o => o.FechaIngreso).ToList();
+                //ListaEDEntry = ListaEDEntry.OrderBy(o => o.FechaIngreso).ToList();
             }
             return Json(ListaEDEntry, JsonRequestBehavior.AllowGet);
         }
