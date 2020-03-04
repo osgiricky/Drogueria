@@ -108,14 +108,19 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">×</button>
                 <h4 class="modal-title" id="myModalLabel">Producto</h4>
-            </div>  
+            </div>
             <div class="modal-body">
                 <form>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" id="EntryDetailId" placeholder="Id" style="visibility:hidden" />
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    <div class="form-group row">
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" id="EntryDetailId" placeholder="Id" style="visibility:hidden" />
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                        </div>
+                        <div class="col-md-8">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2" onclick="clearModal2();">Buscar Por Nombre</button>
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
@@ -161,8 +166,54 @@
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Crear</button>                    
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Crear</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Buscar Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label for="NombreProducto" class="col-md-4 col-form-label">Nombre</label>
+                        </div>                        
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="BuscarProducto" />
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-primary" id="btnAdd" onclick="return buscar();"> Buscar </button>
+                        </div>
+                    </div>                    
+                </form>
+            </div>
+            <div class="container">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <center>Nombre Producto</center>
+                            </th>
+                            <th>
+                                <center>Descripción</center>
+                            </th>
+                            <th>
+                                <center>Opción</center>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody" id="detalle2"></tbody>
+                </table>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>

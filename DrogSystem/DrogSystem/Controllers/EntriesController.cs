@@ -244,6 +244,59 @@ namespace DrogSystem.Controllers
             }
             return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult BuscarXId(int ProductDetailId)
+        {
+            var ProductoDetalle = (from PD in db.ProductDetails
+                                   join P in db.Products on PD.ProductoId equals P.ProductoId
+                                   join M in db.Markers on PD.MarkerId equals M.MarkerId
+                                   where PD.ProductDetailId == ProductDetailId
+                                   select new { PD, P, M }).ToList();
+
+            EDProductDetail EDProductDetail = new EDProductDetail();
+            if (ProductoDetalle != null)
+            {
+                foreach (var item in ProductoDetalle)
+                {
+                    EDProductDetail.ProductDetailId = item.PD.ProductDetailId;
+                    EDProductDetail.CodBarras = item.PD.CodBarras;
+                    EDProductDetail.RegInvima = item.PD.RegInvima;
+                    EDProductDetail.Existencias = item.PD.Existencias;
+                    EDProductDetail.ProductoId = item.PD.ProductoId;
+                    EDProductDetail.NombreProducto = item.P.NombreProducto;
+                    EDProductDetail.MarkerId = item.PD.MarkerId;
+                    EDProductDetail.NombreFabricante = item.M.NombreFabricante;
+                }
+            }
+            return Json(EDProductDetail, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BuscarXNombre(string NombreProducto)
+        {
+            var ProductoDetalle = (from PD in db.ProductDetails
+                                   join P in db.Products on PD.ProductoId equals P.ProductoId
+                                   join M in db.Markers on PD.MarkerId equals M.MarkerId
+                                   where P.NombreProducto.Contains(NombreProducto)
+                                   select new { PD, P, M }).ToList();
+
+            List<EDProductPresentationPrice> ListaEDProductPresentationPrice = new List<EDProductPresentationPrice>();
+            if (ProductoDetalle != null)
+            {
+                foreach (var item in ProductoDetalle)
+                {
+                    EDProductPresentationPrice EDProductPresentationPrice = new EDProductPresentationPrice();
+                    EDProductPresentationPrice.ProductDetailId = item.PD.ProductDetailId;
+                    EDProductPresentationPrice.CodBarras = item.PD.CodBarras;
+                    EDProductPresentationPrice.ProductoId = item.PD.ProductoId;
+                    EDProductPresentationPrice.NombreProducto = item.P.NombreProducto;
+                    EDProductPresentationPrice.MarkerId = item.PD.MarkerId;
+                    EDProductPresentationPrice.NombreFabricante = item.M.NombreFabricante;
+                    ListaEDProductPresentationPrice.Add(EDProductPresentationPrice);
+                }
+            }
+            return Json(ListaEDProductPresentationPrice, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: Entries/Details/5
         public ActionResult Details(int? id)
         {

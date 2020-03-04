@@ -20,18 +20,18 @@
             <label for="NroFactura" class="col-md-4 col-form-label">Número Factura</label>
             <div class="col-md-8">
                 <input type="text" class="form-control" id="NroFactura" disabled />
-            </div>            
+            </div>
         </div>
         <div class="form-group row">
             <label for="FechaFactura" class="col-md-4 col-form-label">Fecha Factura</label>
             <div class="col-md-8">
-                <input type="text" class="form-control" id="FechaFactura" disabled/>
+                <input type="text" class="form-control" id="FechaFactura" disabled />
             </div>
         </div>
         <div class="form-group row">
             <label for="ValorFactura" class="col-md-4 col-form-label">Valor Factura</label>
             <div class="col-md-8">
-                <input type="text" class="form-control" id="ValorFactura" disabled/>
+                <input type="text" class="form-control" id="ValorFactura" disabled />
             </div>
         </div>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Agregar Producto</button><br /><br />
@@ -77,8 +77,13 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <div class="col-md-12">
-                        <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                    <div class="form-group row">                          
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
+                        </div> 
+                        <div class="col-md-8">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2" onclick="clearModal2();">Buscar Por Nombre</button>
+                        </div>   
                     </div>
                     <div class="form-group row">
                         <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
@@ -107,19 +112,19 @@
                     <div class="form-group row">
                         <label for="Precio" class="col-md-4 col-form-label">Precio</label>
                         <div class="col-md-8">
-                            <input type="number" class="form-control" id="Precio"  />
+                            <input type="number" class="form-control" id="Precio" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="Cantidad" class="col-md-4 col-form-label">Cantidad</label>
                         <div class="col-md-8">
-                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" oninput="CalcValor()"/>
+                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" oninput="CalcValor()" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="PrecioTotal" class="col-md-4 col-form-label">Valor Total</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="PrecioTotal" disabled/>
+                            <input type="text" class="form-control" id="PrecioTotal" disabled />
                         </div>
                     </div>
                 </form>
@@ -150,7 +155,7 @@
                     <div class="form-group row">
                         <label for="Efectivo" class="col-md-4 col-form-label">Efectivo</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="Efectivo" oninput="CalcCambio()"/>
+                            <input type="text" class="form-control" id="Efectivo" oninput="CalcCambio()" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -158,11 +163,57 @@
                         <div class="col-md-8">
                             <input type="text" class="form-control" id="Cambio" disabled />
                         </div>
-                    </div>                   
+                    </div>
                 </form>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="btnAdd" onclick="return Add();">Aceptar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Buscar Producto</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group row">
+                        <div class="col-md-3">
+                            <label for="NombreProducto" class="col-md-4 col-form-label">Nombre</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="BuscarProducto" />
+                        </div>
+                        <div class="col-md-3">
+                            <button type="button" class="btn btn-primary" id="btnAdd" onclick="return buscar();"> Buscar </button>
+                        </div>
+                    </div>   
+                </form>
+            </div>
+            <div class="container">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                <center>Nombre Producto</center>
+                            </th>
+                            <th>
+                                <center>Descripción</center>
+                            </th>
+                            <th>
+                                <center>Opción</center>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody" id="detalle2"></tbody>
+                </table>
+                <div class="modal-footer">
                 </div>
             </div>
         </div>

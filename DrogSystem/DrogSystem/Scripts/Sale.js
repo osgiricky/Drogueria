@@ -17,13 +17,16 @@ function loadData() {
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
-            if(result == 0)
-                document.getElementById("NroFactura").disabled = false; 
+            if (result == 0)
+                document.getElementById("NroFactura").disabled = false;
+            else
+                $("#NroFactura").val(result);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
         }
     });
+    CalcularTotal();
 }
 
 function AddFila() {
@@ -86,12 +89,12 @@ function eliminarFila(i) {
         else
             table.deleteRow(rowCount);
         CalcularTotal();
-    })    
+    })
 }
 
 function editarFila(nodo) {
-    var nodoTd = nodo.parentNode.parentNode; //Nodo TD
-    var nodoTr = nodoTd.parentNode; //Nodo TR
+    var nodoTd = nodo.parentNode.parentNode;
+    var nodoTr = nodoTd.parentNode;
     var nodosEnTr = nodoTr.getElementsByTagName('td');
     var ProductDetailId = nodoTd.parentElement.attributes[0].value;
     var userObj = {
@@ -135,8 +138,8 @@ function editarFila(nodo) {
 }
 
 function actualizar(nodo) {
-    var nodoTd = nodo.parentNode.parentNode; //Nodo TD
-    var nodoTr = nodoTd.parentNode; //Nodo TR
+    var nodoTd = nodo.parentNode.parentNode;
+    var nodoTr = nodoTd.parentNode;
     var nodosEnTr = nodoTr.getElementsByTagName('td');
     var IdPresentation = $('#PresentationIdedit').val();
     var ProductDetailId = nodoTr.attributes[0].value;
@@ -183,56 +186,25 @@ function actualizar(nodo) {
 }
 
 
-function validate() {
-    var isValid = true;
-    if ($('#NombreTercero').val().trim() == "") {
-        $('#NombreTercero').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#NombreTercero').css('border-color', 'lightgrey');
-    }
-    return isValid;
-}
-
 function Add() {
-    var res = validate();
-    if (res == false) {
-        return false;
-    }
     var nodo = document.getElementById('detalle');
     var entryObj = {
-        EntryId: $('#EntryId').val(),
-        TerceroId: $('#NombreTercero').val(),
-        FechaIngreso: $('#FechaIngreso').val(),
-        Aprobado: $('input:radio[name="Aprobado"]:checked').val(),
-    };
-    var detailObj = {
-        ProductDetailId: '',
-        EntryDetailId: '',
-        NombreProducto: '',
-        NombreFabricante: '',
-        Cantidad: '',
-        Lote: '',
-        FechaVence: '',
+        NroFactura: $('#NroFactura').val(),
+        FechaFactura: $('#FechaFactura').val(),
+        ValorFactura: currencyANumero($('#ValorFactura').val()),
     };
     var arraydetail = [];
     for (var i = 0; i < nodo.rows.length; i++) {
         arraydetail.push({
             ProductDetailId: nodo.rows[i].attributes[0].value,
-            EntryDetailId: nodo.rows[i].attributes[1].value,
-            NombreProducto: nodo.rows[i].cells[0].innerText,
-            NombreFabricante: nodo.rows[i].cells[1].innerText,
-            Cantidad: nodo.rows[i].cells[2].innerText,
-            Lote: nodo.rows[i].cells[3].innerText,
-            FechaVence: nodo.rows[i].cells[4].innerText
+            PresentationId: nodo.rows[i].attributes[1].value,
+            Quantity: nodo.rows[i].cells[3].innerText,
+            PrecioTotal: currencyANumero(nodo.rows[i].cells[5].innerText),
         });
     }
-    var array = sessionStorage.getItem("IdsBorrar");
-    var IdBorrar = JSON.parse(array);
     $.ajax({
-        url: "/Entries/Crear",
-        data: '{DetalleEntrada: ' + JSON.stringify(arraydetail) + ', Entradas: ' + JSON.stringify(entryObj) + ', IdABorrar: ' + JSON.stringify(IdBorrar) + '}',
+        url: "/Sales/Crear",
+        data: '{DetalleFactura: ' + JSON.stringify(arraydetail) + ', Factura: ' + JSON.stringify(entryObj) + '}',
         type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
@@ -246,12 +218,7 @@ function Add() {
                     icon: "success",
                     closeOnConfirm: false
                 }).then((result) => {
-                    if (result.value) {
-                        sessionStorage.clear();
-                        loadData();
-                        $('#myModal').modal('hide');
-                        $('.modal-backdrop').remove();
-                    }
+                    location.href = '/Home';
                 });
             }
         },
@@ -272,118 +239,34 @@ function clearTextBox() {
     $('#PrecioTotal').val("");
     $('#CodBarras').css('border-color', 'lightgrey');
     $('#Precio').css('border-color', 'lightgrey');
-    $('#btnAdd').show();    
+    $('#btnAdd').show();
 }
 
-function buscarProduct() {
-    var CodBarra = $('#CodBarras').val();
-    if (CodBarra.length == 13) {
-        $.ajax({
-            url: "/Sales/BuscarProducto",
-            data: '{CodBarras: "' + CodBarra + '" }',
-            type: "POST",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
-                $('#ProductDetailId').val(result.ProductDetailId);
-                $('#NombreProducto').val(result.NombreProducto);
-                $('#NombreFabricante').val(result.NombreFabricante);
-                var html = '';
-                $.each(result.ListaPresentacion, function (key, item) {
-                    html += '<option value="' + item.PresentationId + '" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
-                });
-                $('#PresentationId').html(html);
-                $('#Precio').val(result.Precio);
-            },
-            error: function (errormessage) {
-                alert(errormessage.responseText);
-            }
-        });
-    }
-    else {
-        swal.fire({
-            title: "Estimado Usuario",
-            text: "El codigo de barras debe tener una longitud de 13 caracteres.",
-            icon: 'info',
-            showCancelButton: false,
-            confirmButtonColor: "#3085d6",
-            confirmButtonText: "Aceptar",
-        });
-        return false;
-
-    }
-}
-
-function getbyID(ID) {
-    $('#NombreTercero').css('border-color', 'lightgrey');
+function BuscarXId(ProductDetailId) {
     $.ajax({
-        url: "/Entries/getbyID/" + ID,
-        typr: "GET",
-        contentType: "application/json;charset=UTF-8",
-        dataType: "json",
-        success: function (result) {
-            $('#EntryId').val(result.EntryId);
-            $('#NombreProducto').val(result.NombreProducto);
-            if (result.Aprobado == "S")
-                $('#S').attr('checked', true);
-            else
-                $('#N').attr('checked', true);
-            var html = '';
-            $.each(result.ListaTerceros, function (key, item) {
-                if (result.TerceroId == item.TerceroId) {
-                    html += '<option value="' + item.TerceroId + '" selected>' + item.NombreTercero + '</option>';
-                }
-                else {
-                    html += '<option value="' + item.TerceroId + '" >' + item.NombreTercero + '</option>';
-                }
-            });
-            $('#NombreTercero').html(html);
-            $("#FechaIngreso").val(result.FechaIngreso);
-            var htmldetail = '';
-            $.each(result.ListaEntradas, function (key, item) {
-                htmldetail += '<tr ProductDetailId="' + item.ProductDetailId + '" EntryDetailId = "' + item.EntryDetailId + '">';
-                htmldetail += '<td>' + item.NombreProducto + '</td>';
-                htmldetail += '<td>' + item.NombreFabricante + '</td>';
-                htmldetail += '<td>' + item.Cantidad + '</td>';
-                htmldetail += '<td>' + item.Lote + '</td>';
-                htmldetail += '<td>' + item.FechaVence + '</td>';
-                htmldetail += '<td><center><a href="#" onclick="editarFila(this)">Editar</a>   |   <a href="#" onclick="eliminarFila(this)">Eliminar</a></center></td>';
-                htmldetail += '</tr>';
-            });
-            $('#detalle').html(htmldetail);
-            $('#myModal').modal('show');
-        },
-        error: function (errormessage) {
-            alert(errormessage.responseText);
-        }
-    });
-    return false;
-
-    $.ajax({
-        url: "/Entries/List",
-        type: "GET",
+        url: "/Sales/BuscarXId",
+        data: '{ProductDetailId: "' + ProductDetailId + '" }',
+        type: "POST",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
+            $('#CodBarras').val(result.CodBarras);
+            $('#ProductDetailId').val(result.ProductDetailId);
+            $('#NombreProducto').val(result.NombreProducto);
+            $('#NombreFabricante').val(result.NombreFabricante);
             var html = '';
-            var tercero;
-            $.each(result, function (key, item) {
-                html += '<tr>';
-                html += '<td>' + item.FechaIngreso + '</td>';
-                html += '<td>' + item.NombreTercero + '</td>';
-                html += '<td><center><a href="#" onclick="return getbyID(' + item.EntryId + ')">Editar</a>    |    <a href="#" onclick="Delete(' + item.EntryId + ')">Eliminar</a></center></td>';
-                html += '</tr>';
+            $.each(result.ListaPresentacion, function (key, item) {
+                html += '<option value="' + item.PresentationId + '" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
             });
-            $('#maestro').html(html);
+            $('#PresentationId').html(html);
+            $('#Precio').val(result.Precio);
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
         }
     });
-}
-
-function limpiarVar() {
-    sessionStorage.clear();
+    $('#myModal2').modal('hide');
+    $('.modal-backdrop').remove();
 }
 
 function buscarPrecio() {
@@ -426,7 +309,7 @@ function Delete(Id) {
     }).then((result) => {
         if (result.value == true) {
             $.ajax({
-                url: "/Entries/Borrar/" + Id,
+                url: "/Sales/Borrar/" + Id,
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
@@ -515,7 +398,7 @@ function currencyANumero(num) {
 
 function resume() {
     var nodo = document.getElementById('detalle');
-    if(nodo.rows.length > 0){
+    if (nodo.rows.length > 0) {
         $('#TotalFact').val();
         $('#Efectivo').val();
         $('#Cambio').val();
@@ -549,8 +432,8 @@ function ValidarProduct(ProductDetailId, PresentacionID) {
             if (res == false) {
                 isValid = false;
                 break;
-                }
-            var valor = Number(currencyANumero(nodo.rows[i].cells[4].textContent));            
+            }
+            var valor = Number(currencyANumero(nodo.rows[i].cells[4].textContent));
             var valorTotal = cantidad * valor;
             nodo.rows[i].cells[3].innerHTML = cantidad.toString();
             nodo.rows[i].cells[5].innerHTML = currencyFormat(valorTotal.toString());
@@ -558,15 +441,6 @@ function ValidarProduct(ProductDetailId, PresentacionID) {
             $('#myModal').modal('hide');
             $('.modal-backdrop').remove();
             isValid = false;
-            //isValid = false;
-            //Swal.fire({
-            //    title: "Estimado Usuario",
-            //    text: "Producto ya existe en la factura.",
-            //    confirmButtonColor: "#DD6B55",
-            //    confirmButtonText: "OK",
-            //    icon: "info",
-            //    closeOnConfirm: false
-            //});
             break;
         }
     }
@@ -582,4 +456,74 @@ function CalcCambio() {
     Cambio = '$' + currencyFormat(Cambio);
     $('#Cambio').val(Cambio);
 }
-    
+
+function buscar() {
+    var ProductName = {
+        NombreProducto: $('#BuscarProducto').val(),
+    };
+    $.ajax({
+        url: "/Sales/BuscarXNombre/",
+        data: JSON.stringify(ProductName),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            var html = '';
+            $.each(result, function (key, item) {
+                html += '<tr>';
+                html += '<td>' + item.NombreProducto + '</td>';
+                html += '<td>' + item.NombreFabricante + '</td>';
+                html += '<td><center><a href="#" onclick="return BuscarXId(' + item.ProductDetailId + ')">Seleccionar</a></center></td>';
+                html += '</tr>';
+            });
+            $('#detalle2').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+function clearModal2() {
+    $('#BuscarProducto').val("");
+    $('#detalle2').html("");
+}
+
+function buscarProduct() {
+    var CodBarra = $('#CodBarras').val();
+    if (CodBarra.length == 13) {
+        $.ajax({
+            url: "/Sales/BuscarProducto",
+            data: '{CodBarras: "' + CodBarra + '" }',
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                $('#ProductDetailId').val(result.ProductDetailId);
+                $('#NombreProducto').val(result.NombreProducto);
+                $('#NombreFabricante').val(result.NombreFabricante);
+                var html = '';
+                $.each(result.ListaPresentacion, function (key, item) {
+                    html += '<option value="' + item.PresentationId + '" >' + item.NombrePresentacion + ' x ' + item.CantPresentacion + '</option>';
+                });
+                $('#PresentationId').html(html);
+                $('#Precio').val(result.Precio);
+            },
+            error: function (errormessage) {
+                alert(errormessage.responseText);
+            }
+        });
+    }
+    else {
+        swal.fire({
+            title: "Estimado Usuario",
+            text: "El codigo de barras debe tener una longitud de 13 caracteres.",
+            icon: 'info',
+            showCancelButton: false,
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Aceptar",
+        });
+        return false;
+
+    }
+}

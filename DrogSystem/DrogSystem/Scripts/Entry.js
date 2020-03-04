@@ -50,7 +50,7 @@ function AddFila() {
     $('#myModal1').modal('hide');
     $('.modal-backdrop').remove();
 }
- 
+
 function eliminarFila(i) {
     Swal.fire({
         title: "Estimado Usuario",
@@ -102,7 +102,7 @@ function editarFila(nodo) {
     nuevoCodigoHtml += '<td><input type="date" name="fechaVenceedit" id="fechaVenceedit" value="' + userObj.fechaVence + '" size="10"></td>';
     nuevoCodigoHtml += '<td><center><a href="#" onclick="actualizar(this)">Actualizar</a></center></td>';
     nodoTr.innerHTML = nuevoCodigoHtml;
-    
+
 }
 
 function actualizar(nodo) {
@@ -176,10 +176,10 @@ function Add() {
             ProductDetailId: nodo.rows[i].attributes[0].value,
             EntryDetailId: nodo.rows[i].attributes[1].value,
             NombreProducto: nodo.rows[i].cells[0].innerText,
-            NombreFabricante : nodo.rows[i].cells[1].innerText,
-            Cantidad : nodo.rows[i].cells[2].innerText,
+            NombreFabricante: nodo.rows[i].cells[1].innerText,
+            Cantidad: nodo.rows[i].cells[2].innerText,
             Lote: nodo.rows[i].cells[3].innerText,
-            FechaVence : nodo.rows[i].cells[4].innerText
+            FechaVence: nodo.rows[i].cells[4].innerText
         });
     }
     var array = sessionStorage.getItem("IdsBorrar");
@@ -207,7 +207,7 @@ function Add() {
                         $('.modal-backdrop').remove();
                     }
                 });
-            }           
+            }
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
@@ -251,7 +251,7 @@ function buscarProduct() {
     var CodBarra = $('#CodBarras').val();
     if (CodBarra.length == 13) {
         $.ajax({
-            url: "/ProductPresentationPrices/BuscarProducto",
+            url: "/Entries/BuscarProducto",
             data: '{CodBarras: "' + CodBarra + '" }',
             type: "POST",
             contentType: "application/json;charset=utf-8",
@@ -399,4 +399,54 @@ function Delete(Id) {
             });
         }
     })
+}
+
+function buscar() {
+    var ProductName = {
+        NombreProducto: $('#BuscarProducto').val(),
+    };
+    $.ajax({
+        url: "/Entries/BuscarXNombre/",
+        data: JSON.stringify(ProductName),
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            var html = '';
+            $.each(result, function (key, item) {
+                html += '<tr>';
+                html += '<td>' + item.NombreProducto + '</td>';
+                html += '<td>' + item.NombreFabricante + '</td>';
+                html += '<td><center><a href="#" onclick="return BuscarXId(' + item.ProductDetailId + ')">Seleccionar</a></center></td>';
+                html += '</tr>';
+            });
+            $('#detalle2').html(html);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+}
+
+function BuscarXId(ProductDetailId) {
+    var CodBarra = $('#CodBarras').val();
+    $.ajax({
+        url: "/Entries/BuscarXId",
+        data: '{ProductDetailId: "' + ProductDetailId + '" }',
+        type: "POST",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            $('#CodBarras').val(result.CodBarras);
+            $('#ProductDetailId').val(result.ProductDetailId);
+            $('#NombreProducto').val(result.NombreProducto);
+            $('#NombreFabricante').val(result.NombreFabricante);
+            $('#RegInvima').val(result.RegInvima);
+        },
+        error: function (errormessage) {
+            alert(errormessage.responseText);
+        }
+    });
+    $('#myModal2').modal('hide');
+    $('.modal-backdrop').remove();
 }
