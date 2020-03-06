@@ -439,6 +439,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Properties\PublishProfiles\" />
     <Folder Include="Views\Accounts\" />
     <Folder Include="Views\EntryDetails\" />
     <Folder Include="Views\SaleDetails\" />
