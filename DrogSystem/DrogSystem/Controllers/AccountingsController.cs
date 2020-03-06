@@ -93,6 +93,50 @@ namespace DrogSystem.Controllers
             return Json(EDAccounting, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult ValidarCierre()
+        {
+            bool Probar = false;
+            var fecha = DateTime.Now.Date;
+            var ContabilidadId = (from A in db.Accountings
+                           where A.FechaCierre == fecha
+                           select A.ContabilidadId).FirstOrDefault();
+            if(ContabilidadId > 0)
+                Probar = true;
+            return Json(Probar, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult Crear(EDAccounting CierreDiario)
+        {
+            bool Probar = true;
+            string Mensaje = "";
+            EDAccounting EDAccounting = new EDAccounting();
+            EDAccounting.FechaCierre = CierreDiario.FechaCierre;
+            EDAccounting.Ingresos = CierreDiario.Ingresos;
+            EDAccounting.Egresos = CierreDiario.Egresos;
+            EDAccounting.BaseCaja = CierreDiario.BaseCaja;
+
+            try
+            {
+                Accounting Accounting = new Accounting();
+                Accounting.FechaCierre = DateTime.Parse(EDAccounting.FechaCierre);
+                Accounting.Ingresos = EDAccounting.Ingresos;
+                Accounting.Egresos = EDAccounting.Egresos;
+                Accounting.BaseCaja = EDAccounting.BaseCaja;
+                db.Accountings.Add(Accounting);
+                db.SaveChanges();
+                Mensaje = " Registro agregado con exito.";
+            }
+            catch (Exception)
+            {
+                Probar = false;
+                Mensaje = " Se produjo un error al modificar el registro.";
+
+            }
+
+
+            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+        }
+
 
         // GET: Accountings/Details/5
         public ActionResult Details(int? id)

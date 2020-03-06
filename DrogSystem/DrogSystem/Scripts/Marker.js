@@ -131,8 +131,7 @@ function Update() {
                     closeOnConfirm: false
                 });
             }
-            else
-            {
+            else {
                 loadData();
                 $('#myModal').modal('hide');
                 $('#MarkerId').val("");
@@ -153,7 +152,7 @@ function validate() {
     }
     else {
         $('#NombreFabricante').css('border-color', 'lightgrey');
-    }    
+    }
     return isValid;
 }
 
@@ -174,11 +173,11 @@ function Add() {
         dataType: "json",
         success: function (response) {
             loadData();
-                 $('#myModal').modal('hide')
-                 $('#MarkerId').val("");
-                 $('#NombreFabricante').val("");                 
-                 //$('#cerrar').click(); //Esto simula un click sobre el botón close de la modal, por lo que no se debe preocupar por qué clases agregar o qué clases sacar.
-                 $('.modal-backdrop').remove();
+            $('#myModal').modal('hide')
+            $('#MarkerId').val("");
+            $('#NombreFabricante').val("");
+            //$('#cerrar').click(); //Esto simula un click sobre el botón close de la modal, por lo que no se debe preocupar por qué clases agregar o qué clases sacar.
+            $('.modal-backdrop').remove();
         },
         error: function (errormessage) {
             alert(errormessage.responseText);
