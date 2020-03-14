@@ -18,7 +18,7 @@ function loadData() {
                 html += '<td>' + item.Ingresos + '</td>';
                 html += '<td>' + item.Egresos + '</td>';
                 html += '<td>' + item.BaseCaja + '</td>';
-                //html += '<td><center><a href="#" onclick="return getbyID(' + item.ContabilidadId + ')">Detalles</a></center></td>';
+                html += '<td><center><a href="#" onclick="return getbyID(' + item.ContabilidadId + ')">Detalles</a></center></td>';
                 html += '</tr>';
             });
             $('#maestro').html(html);
@@ -53,8 +53,12 @@ function Add() {
                     closeOnConfirm: false
                 }).then((result) => {
                     loadData();
-                    $('#myModal').modal('hide');
-                    $('.modal-backdrop').remove();
+                    $('#myModal').modal('hide')
+                    $('#FechaCierre').val("");
+                    $('#Ingresos').val("");
+                    $('#Egresos').val("");
+                    $('#BaseCaja').val("");
+                    $('#BaseInicial').val("");
                 });
             }
         },
@@ -86,7 +90,6 @@ function clearTextBox() {
             alert(errormessage.responseText);
         }
     });
-    $('#myModal').modal('show');
 }
 
 

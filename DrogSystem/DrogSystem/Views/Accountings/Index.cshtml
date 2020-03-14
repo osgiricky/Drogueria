@@ -10,8 +10,8 @@
 <script src="~/Scripts/Sweetalert.js"></script>
 <script src="~/Scripts/Accounting.js"></script>
 
-<button type="button" class="btn btn-primary" onclick="clearTextBox();">Crear Cierre</button><br /><br />
-<h2>Listado de Cierres</h2>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="clearTextBox();">Crear Cierre</button><br /><br />
+<h2>Listado de Productos a Ingresar</h2>
 <table class="table table-bordered table-hover" id="tablemaster">
     <thead>
         <tr>
@@ -26,7 +26,10 @@
             </th>
             <th>
                 <center>Base Caja</center>
-            </th>            
+            </th>
+            <th>
+                <center>Detalle</center>
+            </th>
         </tr>
     </thead>
     <tbody class="tbody" id="maestro"></tbody>
