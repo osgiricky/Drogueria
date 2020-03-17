@@ -22,105 +22,20 @@ namespace DrogSystem.Controllers
             return View();
         }
 
-        public JsonResult List()
-        {
-            List<EDEntry> ListaEDEntry = new List<EDEntry>();
-            var Listaux = (from E in db.Entries
-                           join T in db.Providers on E.TerceroId equals T.TerceroId
-                           where E.Aprobado == "N"
-                           select new { E, T }).ToList();
-            if (Listaux != null)
-            {
-                foreach (var item in Listaux)
-                {
-                    EDEntry EDEntry = new EDEntry();
-                    EDEntry.EntryId = item.E.EntradaId;
-                    EDEntry.FechaIngreso = item.E.FechaIngreso.ToString("dd/MM/yyyy");
-                    EDEntry.TerceroId = item.E.TerceroId;
-                    EDEntry.NombreTercero = item.T.NombreTercero;
-                    ListaEDEntry.Add(EDEntry);
-                }
-                ListaEDEntry = ListaEDEntry.OrderBy(o => o.FechaIngreso).ToList();
-            }
-            return Json(ListaEDEntry, JsonRequestBehavior.AllowGet);
-        }
-        public JsonResult GetbyID(int? ID)
-        {
-            var Entrada = (from E in db.Entries
-                           where E.EntradaId == ID
-                           select E).ToList();
-
-            EDEntry EDEntry = new EDEntry();
-            if (Entrada != null)
-            {
-                foreach (var item in Entrada)
-                {
-                    FuncUsuarios FuncUsuarios = new FuncUsuarios();
-                    List<EDProvider> ListaProveedor = new List<EDProvider>();
-                    List<EDEntryDetails> ListaDetalle = new List<EDEntryDetails>();
-                    ListaProveedor = FuncUsuarios.ListaProveedores();
-                    EDEntry.EntryId = item.EntradaId;
-                    EDEntry.FechaIngreso = item.FechaIngreso.ToString("dd/MM/yyyy");
-                    EDEntry.Aprobado = item.Aprobado;
-                    EDEntry.TerceroId = item.TerceroId;
-                    EDEntry.ListaTerceros = ListaProveedor;
-                    ListaDetalle = FuncUsuarios.ListaDetalleEntrada(item.EntradaId);
-                    EDEntry.ListaEntradas = ListaDetalle;
-                }
-            }
-            return Json(EDEntry, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult Borrar(int ID)
-        {
-            bool Probar = true;
-            string Mensaje = "";
-
-            Entry Entradas = db.Entries.Find(ID);
-            if (Entradas == null)
-            {
-                Probar = false;
-                Mensaje = " No se encuentra el registro: ";
-            }
-            else
-            {
-                try
-                {
-                    var IdABorrar = (from E in db.EntryDetails
-                                     where E.EntradaId == ID
-                                     select E).ToList();
-
-                    if (IdABorrar != null)
-                    {
-                        foreach (var detalle in IdABorrar)
-                        {
-                            EntryDetail EntradaDetalle = db.EntryDetails.Find(detalle.EntryDetailId);
-                            db.EntryDetails.Remove(EntradaDetalle);
-                            db.SaveChanges();
-                        }
-                    }
-                    db.Entries.Remove(Entradas);
-                    db.SaveChanges();
-                    Mensaje = " Registro eliminado con exito.";
-                }
-                catch (Exception)
-                {
-                    Probar = false;
-                    Mensaje = " Se produjo un error al borrar el registro.";
-
-                }
-            }
-
-            return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
-        }
-
         public JsonResult Crear(List<EDSaleDetail> DetalleFactura, EDSale Factura)
         {
             bool Probar = true;
             string Mensaje = "";
             EDSale EDSale = new EDSale();
             EDSale.FechaFactura = Factura.FechaFactura;
-            EDSale.NroFactura = Factura.NroFactura;
+            var NroFact = (from PD in db.Sales
+                           select PD).ToList();
+            int FacturaNum = 0;
+            if (NroFact.Count != 0)
+            {
+                FacturaNum = NroFact.Max(o => o.NroFactura) + 1;
+            }
+            EDSale.NroFactura = FacturaNum;
             EDSale.ValorFactura = Factura.ValorFactura;
 
             List<EDSaleDetail> ListaEDSaleDetail = new List<EDSaleDetail>();
@@ -314,16 +229,7 @@ namespace DrogSystem.Controllers
         // GET: Sales/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Sale sale = db.Sales.Find(id);
-            if (sale == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sale);
+            return View();
         }
 
         // GET: Sales/Create

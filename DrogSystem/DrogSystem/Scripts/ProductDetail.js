@@ -186,13 +186,13 @@ function validate() {
     else {
         $('#Existencias').css('border-color', 'lightgrey');
     }
-    if ($('#MarkerId').val().trim() == "") {
-        $('#MarkerId').css('border-color', 'Red');
-        isValid = false;
-    }
-    else {
-        $('#MarkerId').css('border-color', 'lightgrey');
-    }
+    //if ($('#MarkerId').val().trim() == "") {
+    //    $('#MarkerId').css('border-color', 'Red');
+    //    isValid = false;
+    //}
+    //else {
+    //    $('#MarkerId').css('border-color', 'lightgrey');
+    //}
     return isValid;
 }
 

@@ -26,6 +26,7 @@ namespace DrogSystem.Controllers
         {
             List<EDUser> EDUserLista = new List<EDUser>();
             var Listaux = (from u in db.Users
+                           orderby u.Nombre
                            select  u).ToList();
             if (Listaux != null)
             {
