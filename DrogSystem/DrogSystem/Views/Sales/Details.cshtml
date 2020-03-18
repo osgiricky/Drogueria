@@ -1,6 +1,6 @@
 ﻿@model DrogSystem.EntidadesDominio.EDSale
 @{
-    ViewBag.Title = "Facturación";
+    ViewBag.Title = "Reportes";
 }
 
 <link href="~/Content/bootstrap.css" rel="stylesheet" />
@@ -8,7 +8,7 @@
 <script src="~/Scripts/jquery-3.4.1.js"></script>
 <script src="~/Scripts/bootstrap.js"></script>
 <script src="~/Scripts/Sweetalert.js"></script>
-<script src="~/Scripts/Sale.js"></script>
+<script src="~/Scripts/Reports.js"></script>
 
 <div class="container">
     <div class="modal-body">
@@ -26,15 +26,15 @@
             </thead>
             <tbody class="tbody" id="detalle">
                 <tr>
-                    <th> Ventas Diarias </th>
+                    <th> Ventas por Fecha </th>
                     <th>
-                        <center><a href="#" onclick="VentasDiarias()">Generar</a></center>
+                        <center><a href="#" onclick="clearModal1()">Generar</a></center>
                     </th>
                 </tr>    
                 <tr>
                     <th> Ingreso Productos </th>
                     <th>
-                        <center><a href="#" onclick="IngresoProductos()">Generar</a></center>
+                        <center><a href="#" onclick="clearModal()">Generar</a></center>
                     </th>
                 </tr>              
             </tbody>
@@ -43,7 +43,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -51,60 +51,22 @@
                 <h4 class="modal-title" id="myModalLabel">Producto</h4>
             </div>
             <div class="modal-body">
-                <form>
+                <form>                    
                     <div class="form-group row">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control" id="ProductDetailId" placeholder="Id" style="visibility:hidden" />
-                        </div>
+                        <label for="FechaDesde" class="col-md-4 col-form-label">Desde</label>
                         <div class="col-md-8">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2" onclick="clearModal2();">Buscar Por Nombre</button>
+                            <input type="text" class="form-control" id="FechaDesde" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="CodBarras" class="col-md-4 col-form-label">Código de Barras</label>
+                        <label for="FechaHasta" class="col-md-4 col-form-label">Hasta</label>
                         <div class="col-md-8">
-                            <input type="text" class="form-control" id="CodBarras" placeholder="Ingrese el código de barras" onchange="buscarProduct()" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="NombreProducto" class="col-md-4 col-form-label">Nombre Producto</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" id="NombreProducto" disabled />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="NombreFabricante" class="col-md-4 col-form-label">Fabricado Por</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" id="NombreFabricante" disabled />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="Presentación" class="col-md-4 col-form-label">Presentación</label>
-                        <div class="col-md-8">
-                            <select class="form-control" id="PresentationId" onchange="buscarPrecio()"></select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="Precio" class="col-md-4 col-form-label">Precio</label>
-                        <div class="col-md-8">
-                            <input type="number" class="form-control" id="Precio" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="Cantidad" class="col-md-4 col-form-label">Cantidad</label>
-                        <div class="col-md-8">
-                            <input type="number" class="form-control" id="Cantidad" placeholder="Cantidad" oninput="CalcValor()" />
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="PrecioTotal" class="col-md-4 col-form-label">Valor Total</label>
-                        <div class="col-md-8">
-                            <input type="text" class="form-control" id="PrecioTotal" disabled />
+                            <input type="text" class="form-control" id="FechaHasta" />
                         </div>
                     </div>
                 </form>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return AddFila();">Agregar</button>
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return IngresoProduct();">Generar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="cerrar">Cerrar</button>
                 </div>
             </div>
@@ -215,10 +177,44 @@
         yearSuffix: ''
     };
     $.datepicker.setDefaults($.datepicker.regional['es']);
-    $("#FechaFactura").datepicker({
+    $("#FechaDesde").datepicker({
         dateFormat: "dd/mm/yy",
         changeYear: true,
         changeMonth: true,
+    });
+    $("#FechaHasta").datepicker({
+        dateFormat: "dd/mm/yy",
+        changeYear: true,
+        changeMonth: true,
+    });
+    $(function () {
+        var dateFormat = "dd/mm/yy",
+          from = $("#FechaDesde")
+            .datepicker({
+                defaultDate: "+1w",
+                changeMonth: true,
+            })
+            .on("change", function () {
+                to.datepicker("option", "minDate", getDate(this));
+            }),
+          to = $("#FechaHasta").datepicker({
+              defaultDate: "+1w",
+              changeMonth: true,
+          })
+          .on("change", function () {
+              from.datepicker("option", "maxDate", getDate(this));
+          });
+
+        function getDate(element) {
+            var date;
+            try {
+                date = $.datepicker.parseDate(dateFormat, element.value);
+            } catch (error) {
+                date = null;
+            }
+
+            return date;
+        }
     });
 </script>
 

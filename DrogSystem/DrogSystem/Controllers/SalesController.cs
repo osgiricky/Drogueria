@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using DrogSystem.Models;
 using DrogSystem.EntidadesDominio;
 using DrogSystem.Funciones;
+using iTextSharp.text;
+using System.IO;
+using iTextSharp.text.pdf;
 
 namespace DrogSystem.Controllers
 {
@@ -224,6 +227,52 @@ namespace DrogSystem.Controllers
                 }
             }
             return Json(EDProductPresentationPrice, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult RepEntries()
+        {
+            Response.Clear();
+            Response.ContentType = "application/pdf";
+            Document miDoc = new Document();
+            MemoryStream memDoc = new MemoryStream();
+            PdfWriter escribirDoc = PdfWriter.GetInstance(miDoc, memDoc);
+            miDoc.Open();
+            Font fuenteTitulo = FontFactory.GetFont("Arial", 20, Font.BOLD);
+            Font fuenteSubTitulo = FontFactory.GetFont("Arial", 16, Font.BOLD);
+            Font fuenteContenido = FontFactory.GetFont("Arial", 11);
+            Font fuenteTabla = FontFactory.GetFont("Arial", 10);
+            Paragraph titulo = new Paragraph("Drogueria El Progreso Duitama", fuenteTitulo);
+            Paragraph subtitulo = new Paragraph("Drogueria El Progreso Duitama", fuenteSubTitulo);
+            titulo.Alignment = Element.ALIGN_CENTER;
+            subtitulo.Alignment = Element.ALIGN_CENTER;
+            miDoc.Add(titulo);
+            miDoc.Add(subtitulo);
+
+            var Listaux = (from E in db.Entries
+                           join T in db.Providers on E.TerceroId equals T.TerceroId
+                           where E.Aprobado == "N"
+                           orderby E.FechaIngreso descending
+                           select new { E, T }).ToList();
+            if (Listaux != null)
+            {
+                foreach (var item in Listaux)
+                {
+                    EDEntry EDEntry = new EDEntry();
+                    EDEntry.EntryId = item.E.EntradaId;
+                    EDEntry.FechaIngreso = item.E.FechaIngreso.ToString("dd/MM/yyyy");
+                    EDEntry.TerceroId = item.E.TerceroId;
+                    EDEntry.NombreTercero = item.T.NombreTercero;
+                }
+            }
+            miDoc.Close();
+            escribirDoc.Flush();
+            Response.OutputStream.Write(memDoc.GetBuffer(),0,memDoc.GetBuffer().Length);
+            Response.OutputStream.Flush();
+            Response.OutputStream.Close();
+            Response.End();
+            return File(memDoc, "application/pdf", "ReportBookList.pdf");
+            //return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+
         }
 
         // GET: Sales/Details/5
