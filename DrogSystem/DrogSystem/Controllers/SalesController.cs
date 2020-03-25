@@ -12,6 +12,7 @@ using DrogSystem.Funciones;
 using iTextSharp.text;
 using System.IO;
 using iTextSharp.text.pdf;
+using CrystalDecisions.CrystalReports.Engine;
 
 namespace DrogSystem.Controllers
 {
@@ -231,26 +232,9 @@ namespace DrogSystem.Controllers
 
         public ActionResult RepEntries()
         {
-            Response.Clear();
-            Response.ContentType = "application/pdf";
-            Document miDoc = new Document();
-            MemoryStream memDoc = new MemoryStream();
-            PdfWriter escribirDoc = PdfWriter.GetInstance(miDoc, memDoc);
-            miDoc.Open();
-            Font fuenteTitulo = FontFactory.GetFont("Arial", 20, Font.BOLD);
-            Font fuenteSubTitulo = FontFactory.GetFont("Arial", 16, Font.BOLD);
-            Font fuenteContenido = FontFactory.GetFont("Arial", 11);
-            Font fuenteTabla = FontFactory.GetFont("Arial", 10);
-            Paragraph titulo = new Paragraph("Drogueria El Progreso Duitama", fuenteTitulo);
-            Paragraph subtitulo = new Paragraph("Drogueria El Progreso Duitama", fuenteSubTitulo);
-            titulo.Alignment = Element.ALIGN_CENTER;
-            subtitulo.Alignment = Element.ALIGN_CENTER;
-            miDoc.Add(titulo);
-            miDoc.Add(subtitulo);
-
+            List<EDEntry> ListaEDEntry = new List<EDEntry>();
             var Listaux = (from E in db.Entries
                            join T in db.Providers on E.TerceroId equals T.TerceroId
-                           where E.Aprobado == "N"
                            orderby E.FechaIngreso descending
                            select new { E, T }).ToList();
             if (Listaux != null)
@@ -262,16 +246,24 @@ namespace DrogSystem.Controllers
                     EDEntry.FechaIngreso = item.E.FechaIngreso.ToString("dd/MM/yyyy");
                     EDEntry.TerceroId = item.E.TerceroId;
                     EDEntry.NombreTercero = item.T.NombreTercero;
+                    ListaEDEntry.Add(EDEntry);
                 }
             }
-            miDoc.Close();
-            escribirDoc.Flush();
-            Response.OutputStream.Write(memDoc.GetBuffer(),0,memDoc.GetBuffer().Length);
-            Response.OutputStream.Flush();
-            Response.OutputStream.Close();
-            Response.End();
-            return File(memDoc, "application/pdf", "ReportBookList.pdf");
-            //return Json(new { Probar, Mensaje }, JsonRequestBehavior.AllowGet);
+            ReportDocument rd = new ReportDocument();
+            rd.FileName = Server.MapPath("~/Reports/IngresoProductos.rpt");
+            //rd.Load(Server.MapPath("~/Reports/IngresoProductos.rpt"));
+            rd.SetDatabaseLogon("sa", "Giovanni1979*", "SQLSERVER", "DrogSystem");
+            //rd.Load(Path.Combine(Server.MapPath("~/Reports"), "IngresoProductos.rpt"));
+            rd.SetDataSource(ListaEDEntry);
+
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+
+            Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+            stream.Seek(0, SeekOrigin.Begin);
+
+            return File(stream, "application/pdf", "IngresoProductos.pdf");
 
         }
 
